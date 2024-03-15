@@ -14,11 +14,11 @@ public class LeadGenerationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lead_generation);
 
-        ActionBar actionBar = getSupportActionBar();
-
-        // showing the back button in action bar
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Lead Generation");
+//        ActionBar actionBar = getSupportActionBar();
+//
+//        // showing the back button in action bar
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setTitle("Lead Generation");
 
     }
 

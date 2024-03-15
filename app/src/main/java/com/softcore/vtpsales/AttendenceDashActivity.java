@@ -23,11 +23,11 @@ public class AttendenceDashActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         TYPE=getIntent().getStringExtra("type");
 
-        ActionBar actionBar = getSupportActionBar();
+       // ActionBar actionBar = getSupportActionBar();
 
         // showing the back button in action bar
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(TYPE.equals("emp")?"Daily Attendance":"Customer Attendance");
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setTitle(TYPE.equals("emp")?"Daily Attendance":"Customer Attendance");
 
 
         binding.cardCheckIn.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +61,9 @@ public class AttendenceDashActivity extends AppCompatActivity {
         binding.cardListView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AttendenceDashActivity.this, AttendenceListActivity.class));
+                Intent intent = new Intent(AttendenceDashActivity.this, AttendenceListActivity.class);
+                intent.putExtra("type",TYPE);
+                startActivity(intent);
             }
         });
 

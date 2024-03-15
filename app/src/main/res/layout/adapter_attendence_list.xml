@@ -53,6 +53,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout
+                android:id="@+id/lay_InTime"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -67,6 +69,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:background="@drawable/back_in_label"/>
                     <TextView
+                        android:id="@+id/txtInTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10:05 AM, 25 Dec 23"
@@ -87,6 +90,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_location"/>
                     <TextView
+                        android:id="@+id/txt_InAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -97,6 +101,8 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/lay_OutTime"
+                android:visibility="visible"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -112,6 +118,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:background="@drawable/back_out_label"/>
                     <TextView
+                        android:id="@+id/txtOutTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10:05 AM, 25 Dec 23"
@@ -132,6 +139,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_location"/>
                     <TextView
+                        android:id="@+id/txt_OutAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

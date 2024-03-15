@@ -20,11 +20,14 @@ public class AttendenceHomeActivity extends AppCompatActivity {
         binding=ActivityAttendenceHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         // calling the action bar
-        ActionBar actionBar = getSupportActionBar();
+//        ActionBar actionBar = getSupportActionBar();
 
         // showing the back button in action bar
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Attendance");
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setTitle("Attendance");
+
+
+
 
 
 

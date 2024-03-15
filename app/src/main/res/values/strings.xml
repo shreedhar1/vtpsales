@@ -6,7 +6,7 @@
     <string name="splash_footer">Developed by <b>Softcore Solutions Pvt. Ltd.</b></string>
     <string name="text_splash_welcome">Welcome to\nSoftcore Solutions</string>
     <string name="title_activity_main2">MainActivity2</string>
-    <string name="title_home">Home</string>
+    <string name="title_attendance">Attendance</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Profile</string>
 </resources>

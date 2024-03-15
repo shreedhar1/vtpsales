@@ -4,6 +4,7 @@ import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -20,15 +21,33 @@ private ActivityMain2Binding binding;
      binding = ActivityMain2Binding.inflate(getLayoutInflater());
      setContentView(binding.getRoot());
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_dashboard, R.id.navigation_attendance, R.id.navigation_profile)
-                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main2);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(NavController controller, NavDestination destination, Bundle arguments) {
+                if (destination.getId() == R.id.navigation_dashboard) {
+                    binding.laybar.appbarTextView.setText("Dashboard");
+                } else if (destination.getId() == R.id.navigation_attendance) {
+                    binding.laybar.appbarTextView.setText("Attendance");
+                } else if (destination.getId() == R.id.navigation_profile) {
+                    binding.laybar.appbarTextView.setText("Profile");
+                } else {
+                    binding.laybar.appbarTextView.setText("");
+                }
+
+            }
+        });
+
+//        Button openFragmentButton = findViewById(R.id.open_fragment_button);
+//        openFragmentButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                navController.navigate(R.id.your_fragment_id);
+//            }
+//        });
+
     }
 
 }

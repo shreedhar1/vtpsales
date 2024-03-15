@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_blue_900"
+    android:background="@color/light_blue_600"
+    android:padding="10sp"
     tools:context=".LoginActivity">
-
     <TextView
         android:id="@+id/txtVersion"
         android:layout_width="wrap_content"
@@ -17,112 +17,147 @@
         android:textColor="@color/text_color"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_70sdp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVersion">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:text="@string/text_splash_welcome"
-            android:textAlignment="center"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/_28ssp" />
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:fontFamily="@font/poppins"
-            android:text="Login to your account"
-            android:textAlignment="center"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/_16ssp" />
+            android:layout_marginTop="@dimen/_70sdp"
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/DrpStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:hint="Select Company"
-            android:textColorHint="@color/text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
-            app:boxCornerRadiusBottomStart="@dimen/_20sdp"
-            app:boxCornerRadiusTopEnd="@dimen/_20sdp"
-            app:boxCornerRadiusTopStart="@dimen/_20sdp"
-            app:endIconTint="@color/white"
-            app:helperTextTextColor="@color/white"
-            app:hintTextColor="@color/white"
-            app:placeholderTextColor="@color/white"
-            app:prefixTextColor="@color/white"
-            app:suffixTextColor="@color/white">
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtVersion">
 
-            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white" />
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/text_splash_welcome"
+                android:textAlignment="center"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/_28ssp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
-            style="@style/EditextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:hint="Username"
-            android:textColorHint="@color/text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
-            app:boxCornerRadiusBottomStart="@dimen/_20sdp"
-            app:boxCornerRadiusTopEnd="@dimen/_20sdp"
-            app:boxCornerRadiusTopStart="@dimen/_20sdp"
-            app:helperTextTextColor="@color/white"
-            app:hintTextColor="@color/white"
-            app:placeholderTextColor="@color/white">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/poppins"
+                android:text="Login to your account"
+                android:textAlignment="center"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/_16ssp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/EditextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:hint="Password"
-            android:textColorHint="@color/text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
-            app:boxCornerRadiusBottomStart="@dimen/_20sdp"
-            app:boxCornerRadiusTopEnd="@dimen/_20sdp"
-            app:boxCornerRadiusTopStart="@dimen/_20sdp"
-            app:helperTextTextColor="@color/white"
-            app:hintTextColor="@color/white"
-            app:placeholderTextColor="@color/white">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <Spinner
+                android:id="@+id/spinner_dbName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_border"
+                />
+            <TextView
+                android:id="@+id/errorMessage_db"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="Please select a database name"/>
+            <com.google.android.material.textfield.TextInputLayout
 
-        </com.google.android.material.textfield.TextInputLayout>
+                style="@style/EditextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:hint="Username"
+                android:textColorHint="@color/text_color"
+                app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
+                app:boxCornerRadiusBottomStart="@dimen/_20sdp"
+                app:boxCornerRadiusTopEnd="@dimen/_20sdp"
+                app:boxCornerRadiusTopStart="@dimen/_20sdp"
+                app:helperTextTextColor="@color/white"
+                app:hintTextColor="@color/white"
+                app:placeholderTextColor="@color/white">
 
-        <Button
-            android:id="@+id/btnLogin"
-            style="@style/ButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:textColor="@color/black"
-            app:backgroundTint="@android:color/white"
-            android:text="Login" />
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="17sp"
+                    android:textCursorDrawable = "@drawable/white_cursor"
+                    android:textColor="@color/white"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/errorMessage_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="Please select a valid username"/>
+            <com.google.android.material.textfield.TextInputLayout
+
+                style="@style/EditextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:hint="Password"
+                android:textColorHint="@color/text_color"
+                app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
+                app:boxCornerRadiusBottomStart="@dimen/_20sdp"
+                app:boxCornerRadiusTopEnd="@dimen/_20sdp"
+                app:boxCornerRadiusTopStart="@dimen/_20sdp"
+                app:helperTextTextColor="@color/white"
+                app:hintTextColor="@color/white"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/white"
+
+                app:placeholderTextColor="@color/white">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="17sp"
+                    android:inputType="textPassword"
+                    android:textCursorDrawable = "@drawable/white_cursor"
+                    android:textColor="@color/white"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/errorMessage_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+
+                android:text="Please select a valid password"/>
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="100sp"
+                android:padding="10sp"
+                android:textSize="17sp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:textColor="@color/light_blue_600"
+                app:backgroundTint="@android:color/white"
+                android:text="Login" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,19 +12,23 @@ import com.softcore.vtpsales.databinding.ActivityCustAttendenceBinding;
 public class CustAttendenceActivity extends AppCompatActivity {
     String OPERATION;
     ActivityCustAttendenceBinding binding;
+    String TYPE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding=ActivityCustAttendenceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        TYPE=getIntent().getStringExtra("type");
+
+        System.out.println("TYPE:"+TYPE);
 
         OPERATION=getIntent().getStringExtra("operation");
-        ActionBar actionBar = getSupportActionBar();
-
-        // showing the back button in action bar
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Customer Clock "+ (OPERATION.equals("in")?"In":"Out"));
+//        ActionBar actionBar = getSupportActionBar();
+//
+//        // showing the back button in action bar
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setTitle("Customer Clock "+ (OPERATION.equals("in")?"In":"Out"));
 
         if (OPERATION.equals("in")){
             binding.textButton.setText("CHECK IN");

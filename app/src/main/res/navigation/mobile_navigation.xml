@@ -8,7 +8,8 @@
     <fragment
         android:id="@+id/navigation_attendance"
         android:name="com.softcore.vtpsales.ui.attendence.AttendanceFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_attendance"
+        android:layout_gravity="center"
         tools:layout="@layout/fragment_attendance" />
 
     <fragment
@@ -22,4 +23,6 @@
         android:name="com.softcore.vtpsales.ui.profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
+
+
 </navigation>
