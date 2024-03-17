@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 
 import com.softcore.vtpsales.Adaptors.AdapterBirth;
@@ -18,70 +22,91 @@ import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.ViewModel.BirthdayListViewModel;
 import com.softcore.vtpsales.databinding.ActivityBirthdayAndAnniBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BirthdayAndAnniActivity extends AppCompatActivity {
     AdapterBirth adapterBirth;
     ActivityBirthdayAndAnniBinding binding;
     String DbName;
+    private String selectedType = "All";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBirthdayAndAnniBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setTitle("Birthday & Anniversary");
+
+
+        binding.laybar.appbarTextView.setText("Birthday & Anniversary");
+
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        List<String> typesList = new ArrayList<>();
+        typesList.add("Birthday");
+        typesList.add("Anniversary");
+        typesList.add("All");
+        binding.layFilter.setHint("Select Type");
+        binding.autoCompleteTextView.setText(selectedType);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, typesList);
+
+        binding.autoCompleteTextView.setAdapter(adapter);
+
+        binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedType = adapter.getItem(position);
+                getData();
+            }
+        });
+
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapterBirth = new AdapterBirth();
         binding.recyclerView.setAdapter(adapterBirth);
 
+        getData();
+
+    }
+
+    private void getData() {
         DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
+        AppUtil.showProgressDialog(binding.getRoot(),"Loading");
         System.out.println("Database Name: "+DbName);
         BirthdayListViewModel birthdayListViewModel = new ViewModelProvider(this).get(BirthdayListViewModel.class);
         birthdayListViewModel.getBirthdayListinfo(DbName,"Birthday_Anniversary").observe(this, new Observer<CommanResorce<List<BirthdayModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<BirthdayModel>> listCommanResorce) {
 
-                System.out.println("Birthday Data Message : "+listCommanResorce.message);
-                System.out.println("Birthday Data status : "+listCommanResorce.status);
-                System.out.println("Birthday Data listCommanResorce.data : "+listCommanResorce.data.toString());
-                System.out.println("Birthday Data listCommanResorce : "+listCommanResorce.toString());
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                        if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+                    List<BirthdayModel> filteredList = new ArrayList<>();
+                    for (BirthdayModel model : listCommanResorce.data) {
+                        if(selectedType.equals("All")){
+                            adapterBirth.setData(filteredList);
+                        } else if (selectedType.equalsIgnoreCase(model.getType())) {
+                                filteredList.add(model);
+                                adapterBirth.setData(filteredList);
+                            }
+                    }
+                }else{
 
-                            adapterBirth.setData(listCommanResorce.data);
+                    binding.cardlayBirthday.setVisibility(View.GONE);
+                    binding.textPast.setText("Past (0)");
+                }
 
-
-                      }
+                AppUtil.hideProgressDialog();
             }
         });
-
-
-//
-//
-//        RemoteRepository remoteRepository = new RemoteRepository();
-//        remoteRepository.getBirthdayList() {
-//            @Override
-//            public void onSuccess(UserResponse userResponse) {
-//                adapter.setData(userResponse.getData());
-//            }
-//
-//            @Override
-//            public void onError(String message) {
-//                // Show error message
-//                AppUtil.hideProgressDialog();
-//                System.out.println("Error: "+message);
-//                Toast.makeText(Users_Screen.this, " Recyclerview Failed :"+message, Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-
-
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

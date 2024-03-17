@@ -51,12 +51,14 @@ public class AttendenceActivity extends AppCompatActivity {
     String remark;
     String CurrentLocation = "";
     String status;
-
+    private FrameLayout cameraContainer;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
     FusedLocationProviderClient fusedLocationClient;
-    private Handler handler;
 
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+
+    private Handler handler;
+    private CameraPreview cameraPreview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +68,25 @@ public class AttendenceActivity extends AppCompatActivity {
 
         OPERATION = getIntent().getStringExtra("operation");
 
-//        ActionBar actionBar = getSupportActionBar();
-//
-//        // showing the back button in action bar
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setTitle("Daily Attendance");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // Permission already granted, show camera preview
+            showCameraPreview();
+        } else {
+            // Request camera permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        }
+
+
+
+        binding.laybar.appbarTextView.setText("Daily Attendance");
+
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         handler = new Handler(Looper.getMainLooper());
 
@@ -103,6 +119,12 @@ public class AttendenceActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showCameraPreview() {
+        cameraContainer = findViewById(R.id.camera_preview);
+        cameraPreview = new CameraPreview(this);
+        cameraContainer.addView(cameraPreview);
     }
 
     private void Clock_In_Out(View v,String OPERATION) {
@@ -267,6 +289,14 @@ public class AttendenceActivity extends AppCompatActivity {
                 getLastLocation();
             } else {
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, show camera preview
+                showCameraPreview();
+            } else {
+                // Permission denied, show a message or handle the denial gracefully
             }
         }
     }

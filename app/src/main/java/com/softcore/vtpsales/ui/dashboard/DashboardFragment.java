@@ -30,10 +30,6 @@ private FragmentDashboardBinding binding;
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
 
-//        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
-//        DashboardViewModel dashboardViewModel =
-//                new ViewModelProvider(this).get(DashboardViewModel.class);
 
     binding = FragmentDashboardBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
@@ -47,7 +43,7 @@ private FragmentDashboardBinding binding;
     list.add(new DashboardModel(R.drawable.svg_lead,"Lead Generation"));
     list.add(new DashboardModel(R.drawable.svg_report,"Reports"));
     list.add(new DashboardModel(R.drawable.svg_myteams,"My Team"));
-    adapterDashboard=new AdapterDashboard(list);
+    adapterDashboard=new AdapterDashboard(list,getContext());
     binding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
     binding.recyclerView.setAdapter(adapterDashboard);
 

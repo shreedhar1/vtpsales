@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="navigation_dashboard" type="id"/>
+    <item name="navigation_attendance" type="id"/>
+    <item name="navigation_profile" type="id"/>
+    <item name="navigation_logout" type="id"/>
+</resources>

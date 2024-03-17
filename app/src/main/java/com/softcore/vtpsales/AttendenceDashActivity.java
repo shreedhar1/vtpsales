@@ -30,6 +30,16 @@ public class AttendenceDashActivity extends AppCompatActivity {
 //        actionBar.setTitle(TYPE.equals("emp")?"Daily Attendance":"Customer Attendance");
 
 
+        binding.laybar.appbarTextView.setText(TYPE.equals("emp")?"Daily Attendance":"Customer Attendance");
+
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         binding.cardCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

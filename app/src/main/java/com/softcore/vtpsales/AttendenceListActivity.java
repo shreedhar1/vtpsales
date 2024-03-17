@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.softcore.vtpsales.Adaptors.AdapterAttendance;
 import com.softcore.vtpsales.AppUtils.AppUtil;
@@ -35,6 +36,16 @@ public class AttendenceListActivity extends AppCompatActivity {
 //        ActionBar actionBar = getSupportActionBar();
 //        actionBar.setDisplayHomeAsUpEnabled(true);
 //        actionBar.setTitle("Attendance List");
+
+        binding.laybar.appbarTextView.setText("Attendance List");
+
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         TYPE=getIntent().getStringExtra("type");
         System.out.println("List Type :"+TYPE);

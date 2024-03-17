@@ -9,7 +9,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:gravity="center"
         android:background="@color/light_blue_900"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -19,10 +19,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+
             >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             >
             <LinearLayout
                 android:id="@+id/leftRight"
@@ -31,19 +34,11 @@
                 android:layout_height="wrap_content"
                 >
                 <ImageButton
-                    android:visibility="gone"
-                    android:id="@+id/menu_id"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:background="@color/light_blue_900"
-                    android:src="@drawable/baseline_menu_24"
-                    app:tint="@color/white" />
-                <ImageButton
                     android:visibility="visible"
                     android:id="@+id/back_id"
-                    android:layout_width="40dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:padding="@dimen/_10sdp"
                     android:layout_gravity="center"
                     android:background="@color/light_blue_900"
                     android:src="@drawable/baseline_arrow_back_ios_24"
@@ -54,12 +49,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/leftRight"
-                android:text="hello"
-                android:layout_marginEnd="50dp"
+                android:text="Toolbar"
+                android:padding="@dimen/_10sdp"
+                android:layout_marginEnd="55dp"
                 android:gravity="center"
+                android:fontFamily="@font/poppins"
+                android:layout_gravity="center_vertical"
                 android:layout_centerInParent="true"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"
+                android:textSize="@dimen/_14sdp"
                 android:textStyle="bold" />
 
         </LinearLayout>

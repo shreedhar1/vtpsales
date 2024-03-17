@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends Fragment {
@@ -16,14 +18,16 @@ private FragmentProfileBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel profileViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
 
     binding = FragmentProfileBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
 
-        final TextView textView = binding.textNotifications;
-        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+       String EmpName = AppUtil.getStringData(getActivity(),"EmpName","");
+       String EmpCode = AppUtil.getStringData(getActivity(),"EmpCode","");
+
+       binding.txtEmpName.setText(EmpName);
+       binding.txtEmpCode.setText(EmpCode);
+
         return root;
     }
 

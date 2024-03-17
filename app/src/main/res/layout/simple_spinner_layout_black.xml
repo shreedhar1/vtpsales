@@ -1,0 +1,17 @@
+<!-- res/layout/spinner_dropdown_item.xml -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text2"
+    style="?android:attr/spinnerDropDownItemStyle"
+    android:singleLine="true"
+    android:textSize="14sp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="#000000"
+    android:gravity="center_vertical"
+    android:drawableRight="@drawable/baseline_arrow_drop_down_24"
+    android:drawableTint="@color/black"
+    android:paddingStart="@dimen/_15sdp"
+    android:paddingBottom="@dimen/_11sdp"
+    android:paddingEnd="@dimen/_15sdp"
+    android:paddingTop="@dimen/_11sdp"
+    />

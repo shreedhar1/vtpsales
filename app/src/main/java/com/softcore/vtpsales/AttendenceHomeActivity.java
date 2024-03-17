@@ -8,27 +8,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.softcore.vtpsales.databinding.ActivityAttendenceHomeBinding;
 
 public class AttendenceHomeActivity extends AppCompatActivity {
     ActivityAttendenceHomeBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_attendence_home);
         binding=ActivityAttendenceHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        // calling the action bar
-//        ActionBar actionBar = getSupportActionBar();
 
-        // showing the back button in action bar
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setTitle("Attendance");
+        binding.laybar.appbarTextView.setText("Attendance");
 
-
-
-
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
 
         binding.cardDailyAttendence.setOnClickListener(new View.OnClickListener() {

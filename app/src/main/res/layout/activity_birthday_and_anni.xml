@@ -1,113 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/_10sdp"
-    android:paddingRight="@dimen/_10sdp"
-    android:paddingTop="@dimen/_10sdp"
-    tools:context=".BirthdayAndAnniActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layFilter"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:theme="@style/DrpStyle2"
+    <include
+        android:id="@+id/laybar"
+        layout="@layout/app_bar_main"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="All"
-        android:padding="0dp"
-
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/laybar"
+        app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <AutoCompleteTextView
-            android:fontFamily="@font/poppins"
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardBirthday"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/_20sdp"
-        app:contentPadding="@dimen/_10sdp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layFilter"
-        android:layout_marginTop="@dimen/_10sdp"
-        app:cardBackgroundColor="@color/light_blue_900">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cake"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Amri Rothem - 44"
-                android:textSize="@dimen/_12ssp"
-                android:fontFamily="@font/poppins"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Happy Anniversary"
-                android:textStyle="bold"
-                android:textSize="@dimen/_16ssp"
-                android:fontFamily="@font/poppins_medium"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="2 Years Compleated"
-                android:textSize="@dimen/_10ssp"
-                android:fontFamily="@font/poppins"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:paddingTop="@dimen/_10sdp"
+                tools:context=".BirthdayAndAnniActivity">
 
-    <TextView
-        android:id="@+id/textPast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Past (3)"
-        android:textStyle="bold"
-        android:fontFamily="@font/poppins"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardBirthday"
-        android:layout_marginTop="@dimen/_20sdp"/>
 
-    <androidx.cardview.widget.CardView
-        android:elevation="@dimen/_5sdp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_10sdp"
-        app:contentPadding="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_5sdp"
-        android:layout_marginBottom="@dimen/_5sdp"
-        app:layout_constraintTop_toBottomOf="@id/textPast"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-    <androidx.recyclerview.widget.RecyclerView
-        android:nestedScrollingEnabled="false"
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-    </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layFilter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:theme="@style/DrpStyle2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    >
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteTextView"
+                        android:fontFamily="@font/poppins"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="All"
+                        android:inputType="none"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:visibility="gone"
+                    android:id="@+id/cardBirthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/_20sdp"
+                    app:contentPadding="@dimen/_10sdp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layFilter"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:cardBackgroundColor="@color/light_blue_900">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_cake"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:text="Amri Rothem - 44"
+                            android:textSize="@dimen/_12ssp"
+                            android:fontFamily="@font/poppins"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:text="Happy Anniversary"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/_16ssp"
+                            android:fontFamily="@font/poppins_medium"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:text="2 Years Compleated"
+                            android:textSize="@dimen/_10ssp"
+                            android:fontFamily="@font/poppins"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/textPast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Past (3)"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cardBirthday"
+                    android:layout_marginTop="@dimen/_20sdp"/>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardlay_birthday"
+                    android:elevation="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:contentPadding="@dimen/_10sdp"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    app:layout_constraintTop_toBottomOf="@id/textPast"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:nestedScrollingEnabled="false"
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        />
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>

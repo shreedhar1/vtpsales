@@ -38,7 +38,12 @@ public class AdapterBirth extends RecyclerView.Adapter<AdapterBirth.UserViewHold
         BirthdayModel user = userList.get(position);
         holder.TxtNameAge.setText(user.getCustomerName());
         holder.TxtDesig.setText("");
-        holder.TxtDob.setText(user.getType()+"-"+user.getBirthDate());
+        if(user.getType().equals("Anniversary")){
+            holder.TxtDob.setText(user.getAnniversary());
+        }else if(user.getType().equals("Birthday")){
+            holder.TxtDob.setText(user.getType()+"-"+user.getBirthDate());
+        }
+
     }
 
     @Override

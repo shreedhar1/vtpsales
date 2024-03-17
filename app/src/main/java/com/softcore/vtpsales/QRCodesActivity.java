@@ -28,9 +28,9 @@ public class QRCodesActivity extends AppCompatActivity {
 //        actionBar.setDisplayHomeAsUpEnabled(true);
 //        actionBar.setTitle("QR Code");
 
-        adapterQR=new AdapterQR();
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(adapterQR);
+//        adapterQR=new AdapterQR();
+//        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        binding.recyclerView.setAdapter(adapterQR);
     }
 
     @Override

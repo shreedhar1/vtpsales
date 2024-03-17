@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_10sdp"
+    >
+    <TextView
+        android:id="@+id/txt_cusName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WE-23Y-SS-1052"
+        android:textSize="@dimen/_14sdp"
+        android:gravity="start"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/black"
+        android:layout_weight="0.5"
+        />
+    <TextView
+        android:id="@+id/txt_cusAmt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="₹ 10,00,000"
+        android:textSize="@dimen/_14sdp"
+        android:gravity="end"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/black"
+        android:layout_weight="0.5"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Posting Date : "
+            android:textSize="@dimen/_12sdp"
+            android:gravity="start"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/black"
+
+            />
+        <TextView
+            android:id="@+id/txt_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="@dimen/_12sdp"
+            android:gravity="start"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/medium_grey"
+
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doc No : "
+            android:textSize="@dimen/_12sdp"
+            android:gravity="end"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/txt_Docno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doc No. 7834"
+            android:textSize="@dimen/_12sdp"
+            android:gravity="end"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/medium_grey"
+            />
+    </LinearLayout>
+
+
+
+</LinearLayout>

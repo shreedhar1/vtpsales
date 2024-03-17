@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,6 +43,17 @@ public class MyTeamActivity extends AppCompatActivity {
 //        actionBar.setDisplayHomeAsUpEnabled(true);
 //        actionBar.setTitle("My Team");
 
+        binding.laybar.appbarTextView.setText("My Team");
+
+        binding.laybar.backId.setVisibility(View.VISIBLE);
+        binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapterMyTeam = new AdapterMyTeam();
         binding.recyclerView.setAdapter(adapterMyTeam);
@@ -51,20 +63,16 @@ public class MyTeamActivity extends AppCompatActivity {
 
         GetMyTeamList(EmpNo,DbName);
 
+
+
     }
 
     private void GetMyTeamList(String DbName,String EmpNo) {
         System.out.println(""+DbName+" "+EmpNo);
-//Testing
-//        String data = "[ { \"ExtEmpNo\": \"V20029\", \"name\": \"AJINKYA YADAV\", \"Role\": \"Member\" }, { \"ExtEmpNo\": \"V20029\", \"name\": \"Avinash Kumbhar\", \"Role\": \"Member\" } ]";
-//        try {
-//            JSONArray jsonArray = new JSONArray(data);
-//            Type listType = new TypeToken<List<MyTeamModel>>() {}.getType();
-//            List<MyTeamModel> myTeamModels = new Gson().fromJson(jsonArray.toString(), listType);
-//            adapterMyTeam.setData(myTeamModels);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+
+
+
+        AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
         MyTeamViewModel myTeamViewModel= new ViewModelProvider(this).get(MyTeamViewModel.class);
         myTeamViewModel.getMyTeamInfo(DbName,EmpNo).observe(this, new Observer<CommanResorce<List<MyTeamModel>>>() {
@@ -74,11 +82,24 @@ public class MyTeamActivity extends AppCompatActivity {
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
                     adapterMyTeam.setData(listCommanResorce.data);
-
-
+                    binding.txtNoData.setVisibility(View.GONE);
+                    binding.layoutHeader.setVisibility(View.VISIBLE);
+                }else {
+                    binding.txtNoData.setVisibility(View.VISIBLE);
+                    binding.layoutHeader.setVisibility(View.GONE);
                 }
+//Testing
+//                String data = "[ { \"ExtEmpNo\": \"V20029\", \"name\": \"AJINKYA YADAV\", \"Role\": \"Member\" }, { \"ExtEmpNo\": \"V20029\", \"name\": \"Avinash Kumbhar\", \"Role\": \"Member\" } ]";
+//                try {
+//                    JSONArray jsonArray = new JSONArray(data);
+//                    Type listType = new TypeToken<List<MyTeamModel>>() {}.getType();
+//                    List<MyTeamModel> myTeamModels = new Gson().fromJson(jsonArray.toString(), listType);
+//                    adapterMyTeam.setData(myTeamModels);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
 
-
+                AppUtil.hideProgressDialog();
             }
         });
 
