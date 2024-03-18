@@ -112,13 +112,15 @@ public class AttendenceActivity extends AppCompatActivity {
         }
 
 
-        binding.textButton.setOnClickListener(new View.OnClickListener() {
+        binding.ClockInOutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Clock_In_Out(v, OPERATION);
 
             }
         });
+
+
     }
 
     private void showCameraPreview() {
@@ -185,7 +187,7 @@ public class AttendenceActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     AppUtil.hideProgressDialog();
 
-                    Toast.makeText(AttendenceActivity.this, status+" Successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendenceActivity.this, binding.textButton.getText().toString()+" Successfully", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: "+response.code());
                     // Handle success
                 } else {

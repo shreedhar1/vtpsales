@@ -32,28 +32,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
-            <Spinner
-                android:id="@+id/spinner_customer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
 
-                android:background="@drawable/spinner_border_black"
-                />
-            <com.google.android.material.textfield.TextInputLayout
-                android:theme="@style/EditextStyle2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:hint="Address"
-                >
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:maxLines="4"
-                    android:lines="4"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_marginLeft="@dimen/_3sdp"
+                    android:theme="@style/DrpStyle2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:hint="Select Company"
+                    >
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteTextView"
+                        android:fontFamily="@font/poppins"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
 
         </LinearLayout>
 
@@ -87,7 +84,7 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:fontFamily="@font/poppins"
-            android:text="Lodha Supremus, A 333, Rd Number 22, Wagle Industrial Estate, Thane West, Mumbai, Thane, Maharashtra 400604"/>
+            android:text=""/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,20 +93,21 @@
             android:layout_gravity="center"
             >
             <androidx.cardview.widget.CardView
+                android:id="@+id/Clock_In_OutCard"
                 app:layout_constraintTop_toBottomOf="@id/txtAddress"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:layout_width="@dimen/_125sdp"
+                android:layout_width="@dimen/_105sdp"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="@dimen/_20sdp"
-                android:layout_height="@dimen/_125sdp"
+                android:layout_height="@dimen/_105sdp"
                 app:cardCornerRadius="@dimen/_65sdp"
                 app:cardBackgroundColor="@color/light_blue_A200">
                 <androidx.cardview.widget.CardView
                     android:layout_gravity="center"
-                    android:layout_width="@dimen/_120sdp"
-                    android:layout_height="@dimen/_120sdp"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp"
                     app:cardCornerRadius="@dimen/_60sdp"
                     app:cardBackgroundColor="@color/primary">
                     <LinearLayout
@@ -118,8 +116,8 @@
                         android:gravity="center"
                         android:orientation="vertical">
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_alaram"/>
                         <TextView
                             android:id="@+id/textButton"
@@ -129,7 +127,7 @@
                             android:textColor="@color/white"
                             android:fontFamily="@font/poppins_medium"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:textSize="@dimen/_14sdp"/>
+                            android:textSize="@dimen/_12sdp"/>
                         <TextView
                             android:id="@+id/txt_time"
                             android:layout_width="wrap_content"
@@ -137,7 +135,7 @@
                             android:text=""
                             android:textColor="@color/white"
                             android:fontFamily="@font/poppins"
-                            android:textSize="@dimen/_12sdp"
+                            android:textSize="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_5sdp"/>
 
                     </LinearLayout>

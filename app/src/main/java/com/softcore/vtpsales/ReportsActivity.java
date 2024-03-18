@@ -71,11 +71,11 @@ public class ReportsActivity extends AppCompatActivity {
 
         binding.imgReceipt.setImageResource(R.drawable.svg_receipt);
         binding.txtReceiptitle.setText("-");
-        binding.txtReceiptdesc.setText("Receipt");
+        binding.txtReceiptdesc.setText("Customer Outstanding");
 
         binding.imgOutstandings.setImageResource(R.drawable.svg_outstanding);
         binding.txtOutstandingstitle.setText("-");
-        binding.txtOutstandingsdesc.setText("Outstanding");
+        binding.txtOutstandingsdesc.setText("Vendor Outstaning");
 
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();
@@ -134,13 +134,13 @@ public class ReportsActivity extends AppCompatActivity {
         binding.layReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Receipt","CustomerWise_Outstanding_Amount");
+                NextActivity("Customer Outstanding","CustomerWise_Outstanding_Amount");
             }
         });
         binding.layOutstandings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Outstanding","CustomerWise_Vendor_Outstanding_Amount");
+                NextActivity("Vendor Outstanding","CustomerWise_Vendor_Outstanding_Amount");
             }
         });
 
@@ -279,7 +279,6 @@ public class ReportsActivity extends AppCompatActivity {
         // Show the Date Picker dialog
         datePickerDialog.show();
     }
-
     public void toDatepicker() {
         // Get current date
         Calendar calendar = Calendar.getInstance();

@@ -1,15 +1,22 @@
 package com.softcore.vtpsales;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -24,7 +31,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.ClockRequest;
@@ -37,7 +46,16 @@ import com.softcore.vtpsales.ViewModel.CustomerViewModel;
 import com.softcore.vtpsales.ViewModel.SlpViewModel;
 import com.softcore.vtpsales.databinding.ActivityCustAttendenceBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +74,8 @@ public class CustAttendenceActivity extends AppCompatActivity {
     private Handler handler;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     FusedLocationProviderClient fusedLocationClient;
+
+
     String CurrentLocation = "";
 
     String SlpName;
@@ -67,15 +87,17 @@ public class CustAttendenceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityCustAttendenceBinding.inflate(getLayoutInflater());
+        binding = ActivityCustAttendenceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        TYPE=getIntent().getStringExtra("type");
+        TYPE = getIntent().getStringExtra("type");
 
-        System.out.println("TYPE:"+TYPE);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        OPERATION=getIntent().getStringExtra("operation");
+        System.out.println("TYPE:" + TYPE);
 
-        binding.laybar.appbarTextView.setText("Customer Clock "+ (OPERATION.equals("in")?"In":"Out"));
+        OPERATION = getIntent().getStringExtra("operation");
+
+        binding.laybar.appbarTextView.setText("Customer Clock " + (OPERATION.equals("in") ? "In" : "Out"));
 
         binding.laybar.backId.setVisibility(View.VISIBLE);
         binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
@@ -85,16 +107,16 @@ public class CustAttendenceActivity extends AppCompatActivity {
             }
         });
 
-        if (OPERATION.equals("in")){
+        if (OPERATION.equals("in")) {
             status = "Clock In";
             binding.textButton.setText("CHECK IN");
-        }else if(OPERATION.equals("out")){
+        } else if (OPERATION.equals("out")) {
             status = "Clock Out";
             binding.textButton.setText("CHECK OUT");
 
         }
 
-        binding.textButton.setOnClickListener(new View.OnClickListener() {
+        binding.ClockInOutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Clock_In_Out(v, OPERATION);
@@ -107,10 +129,15 @@ public class CustAttendenceActivity extends AppCompatActivity {
         // Update the time every second
         handler.post(updateTimeRunnable);
 
+
+
+
+
         getCustomerList();
         getCurrentLocation();
     }
-    private void Clock_In_Out(View v,String OPERATION) {
+
+    private void Clock_In_Out(View v, String OPERATION) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         String currentDate = dateFormat.format(calendar.getTime());
@@ -118,14 +145,14 @@ public class CustAttendenceActivity extends AppCompatActivity {
         SimpleDateFormat time24Format = new SimpleDateFormat("HHmm");
         String currentTime12 = time24Format.format(calendar.getTime());
 
-        System.out.println("CurrentDate: "+currentDate);
-        System.out.println("CurrentTime: "+currentTime12);
+        System.out.println("CurrentDate: " + currentDate);
+        System.out.println("CurrentTime: " + currentTime12);
 
-        String EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
-        String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
+        String EmpName = AppUtil.getStringData(getApplicationContext(), "EmpName", "");
+        String EmpCode = AppUtil.getStringData(getApplicationContext(), "EmpCode", "");
 
-        System.out.println("EmpName: "+EmpName);
-        System.out.println("EmpCode: "+EmpCode);
+        System.out.println("EmpName: " + EmpName);
+        System.out.println("EmpCode: " + EmpCode);
 
         String ClockOutTime = "0000";
 
@@ -133,12 +160,11 @@ public class CustAttendenceActivity extends AppCompatActivity {
 
         String ClockOutRemark = "";
 
-        if (OPERATION.equals("in")){
+        if (OPERATION.equals("in")) {
             ClockOutTime = "0000";
-        }else if(OPERATION.equals("out")){
+        } else if (OPERATION.equals("out")) {
             ClockOutTime = currentTime12;
         }
-
 
 
         request = new CusClockRequest(
@@ -156,9 +182,9 @@ public class CustAttendenceActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String jsonRequest = gson.toJson(request);
 
-        System.out.println("Request String: "+jsonRequest);
+        System.out.println("Request String: " + jsonRequest);
 
-        AppUtil.showProgressDialog(v,"Loading");
+        AppUtil.showProgressDialog(v, "Loading");
 
         RemoteRepository repository = new RemoteRepository();
         repository.sendCusClockData(request, new Callback<Void>() {
@@ -167,12 +193,12 @@ public class CustAttendenceActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     AppUtil.hideProgressDialog();
 
-                    Toast.makeText(CustAttendenceActivity.this, status+" Successfully", Toast.LENGTH_SHORT).show();
-                    System.out.println("Response Code: "+response.code());
+                    Toast.makeText(CustAttendenceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
+                    System.out.println("Response Code: " + response.code());
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();
-                    System.out.println("Response Code: "+response.code());
+                    System.out.println("Response Code: " + response.code());
 
                     // Handle failure
                 }
@@ -181,56 +207,75 @@ public class CustAttendenceActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(CustAttendenceActivity.this, "Error: "+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustAttendenceActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 AppUtil.hideProgressDialog();
             }
         });
 
 
-
     }
 
     private void getCustomerList() {
-
-        String DbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
+        String dbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
 
         CustomerViewModel customerViewModel = new ViewModelProvider(this).get(CustomerViewModel.class);
-        customerViewModel.getActCusDetail(DbName, "Active_Customer_List").observe(this, new Observer<CommanResorce<List<CustomerModel>>>() {
+        customerViewModel.getActCusDetail(dbName, "Active_Customer_List").observe(this, new Observer<CommanResorce<List<CustomerModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<CustomerModel>> listCommanResorce) {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    List<String> slpnames = new ArrayList<>();
+                    List<String> slpNames = new ArrayList<>();
+                    List<CustomerModel> selectedModelList = new ArrayList<>();
 
-                    slpnames.add("SELECT CUSTOMER NAME");
-                    List<CustomerModel> selectedmodelList = new ArrayList<>();
+
                     for (CustomerModel database : listCommanResorce.data) {
-                        slpnames.add(database.getCardName());
-                        selectedmodelList.add(database);
+                        slpNames.add(database.getCardName());
+                        selectedModelList.add(database);
                     }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(CustAttendenceActivity.this,
-                            R.layout.simple_spinner_layout_black, slpnames);
+                            R.layout.simple_spinner_design, slpNames);
 
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
 
-                    binding.spinnerCustomer.setAdapter(adapter);
-
-                    binding.spinnerCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    binding.autoCompleteTextView.setAdapter(adapter);
+                    binding.autoCompleteTextView.setThreshold(1);
+                    binding.autoCompleteTextView.setDropDownHeight(800);
+                    binding.autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            binding.autoCompleteTextView.showDropDown();
+                                                                        }
+                                                                    }
+                    );
+                    binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            selectedSlpName = slpnames.get(position);
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            selectedSlpName = slpNames.get(position);
 
                             if (!selectedSlpName.equals("SELECT CUSTOMER NAME")) {
                                 SlpName = selectedSlpName;
-                                selectedmodel = selectedmodelList.get(position);
-                            System.out.println("code: "+selectedmodel.getCardCode());
+                                selectedmodel = selectedModelList.get(position); // Adjust position by -1 to account for the "SELECT CUSTOMER NAME" item
+                                System.out.println("code: " + selectedmodel.getCardCode());
                             }
+                        }
+                    });
+
+                    binding.autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
                         }
 
                         @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                            // Do nothing
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            adapter.getFilter().filter(s.toString());
+                            System.out.println(s.toString());
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
                         }
                     });
 
@@ -238,10 +283,13 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     // AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
                     System.out.println("Slp Not found");
                 }
+
                 AppUtil.hideProgressDialog();
             }
         });
     }
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -274,13 +322,10 @@ public class CustAttendenceActivity extends AppCompatActivity {
     }
 
     private void getCurrentLocation() {
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
-            getLastLocation();
+            getLoct();
         }
     }
 
@@ -292,11 +337,14 @@ public class CustAttendenceActivity extends AppCompatActivity {
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
+
                         if (location != null) {
                             double latitude = location.getLatitude();
                             double longitude = location.getLongitude();
                             // Do something with latitude and longitude
                             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+
                             try {
                                 List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                                 if (addresses != null && addresses.size() > 0) {
@@ -316,18 +364,59 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    @SuppressLint("MissingPermission")
+    private void getLoct() {
+        fusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                Location location = task.getResult();
+                if (location != null) {
+                    try {
+                        Geocoder geocoder = new Geocoder(CustAttendenceActivity.this, Locale.getDefault());
+                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                        Address address = addresses.get(0);
+
+                        StringBuilder fullAddress = new StringBuilder();
+
+                        for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                            fullAddress.append(address.getAddressLine(i));
+                            if (i < address.getMaxAddressLineIndex()) {
+                                fullAddress.append(", ");
+                            }
+                        }
+
+                        String fullAddressString = fullAddress.toString();
+
+                        binding.txtAddress.setText(fullAddressString);
+                        CurrentLocation = fullAddressString;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
+                getLoct();
             } else {
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
 
     }
+
+
 
 
 }
