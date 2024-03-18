@@ -57,6 +57,11 @@ public class AttendenceActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
+
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
+    private static final int CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE = 100;
+
     private Handler handler;
     private CameraPreview cameraPreview;
     @Override
@@ -68,15 +73,19 @@ public class AttendenceActivity extends AppCompatActivity {
 
         OPERATION = getIntent().getStringExtra("operation");
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            // Permission already granted, show camera preview
-            showCameraPreview();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request both permissions together
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                    CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            // Request camera permission
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+            showCameraPreview();
+            getCurrentLocation();
+            // Both permissions are already granted
+        //    Toast.makeText(this, "Camera and location permissions granted", Toast.LENGTH_SHORT).show();
         }
-
-
 
         binding.laybar.appbarTextView.setText("Daily Attendance");
 
@@ -95,6 +104,8 @@ public class AttendenceActivity extends AppCompatActivity {
 
 
         getCurrentLocation();
+
+
         if (OPERATION.equals("in")) {
             status = "Clock In";
             binding.textButton.setText("CHECK IN");
@@ -283,24 +294,25 @@ public class AttendenceActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
-            } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, show camera preview
+        if (requestCode == CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                // Both permissions granted
                 showCameraPreview();
+                getCurrentLocation();
+
+          //      Toast.makeText(this, "Camera and location permissions granted", Toast.LENGTH_SHORT).show();
             } else {
-                // Permission denied, show a message or handle the denial gracefully
+                // One or both permissions denied
+                Toast.makeText(this, "Camera or location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
 }
