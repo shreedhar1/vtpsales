@@ -6,13 +6,13 @@ public class BirthdayModel {
     @SerializedName("Type")
     private String type;
 
-    @SerializedName("Customer_Code")
+    @SerializedName("CardCode")
     private String customerCode;
 
-    @SerializedName("Customer_Name")
+    @SerializedName("CntctPrsn")
     private String customerName;
 
-    @SerializedName("Birth_Date")
+    @SerializedName("BirthDate")
     private String birthDate;
 
     @SerializedName("Anniversary")

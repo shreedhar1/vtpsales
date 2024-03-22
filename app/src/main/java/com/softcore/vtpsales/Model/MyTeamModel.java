@@ -1,32 +1,26 @@
 package com.softcore.vtpsales.Model;
 
-import com.google.gson.annotations.SerializedName;
+
 
 public class MyTeamModel {
+    String ExtEmpNo;
+    String name;
+    String Role;
 
-    @SerializedName("ExtEmpNo")
-    private String EmpNo;
-
-    @SerializedName("name")
-    private String Name;
-
-    @SerializedName("Role")
-    private String Role;
-
-    public String getEmpNo() {
-        return EmpNo;
+    public String getExtEmpNo() {
+        return ExtEmpNo;
     }
 
-    public void setEmpNo(String empNo) {
-        EmpNo = empNo;
+    public void setExtEmpNo(String extEmpNo) {
+        ExtEmpNo = extEmpNo;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getRole() {

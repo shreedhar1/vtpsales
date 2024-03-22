@@ -5,8 +5,27 @@ public class UserModel {
     private String firstName;
     private String lastName;
     private String EMP_Code;
+    private String mobile;
+    private String email;
+
 
     // Getters and setters
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getUser_Password() {
         return User_Password;

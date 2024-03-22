@@ -37,11 +37,11 @@ public class AdapterBirth extends RecyclerView.Adapter<AdapterBirth.UserViewHold
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         BirthdayModel user = userList.get(position);
         holder.TxtNameAge.setText(user.getCustomerName());
-        holder.TxtDesig.setText("");
+
         if(user.getType().equals("Anniversary")){
-            holder.TxtDob.setText(user.getAnniversary());
-        }else if(user.getType().equals("Birthday")){
-            holder.TxtDob.setText(user.getType()+"-"+user.getBirthDate());
+            holder.TxtDob.setText(user.getType());
+        }else if(user.getType().equals("BirthDay")){
+            holder.TxtDob.setText(user.getType()+" "+user.getBirthDate());
         }
 
     }
@@ -53,13 +53,13 @@ public class AdapterBirth extends RecyclerView.Adapter<AdapterBirth.UserViewHold
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         private TextView TxtNameAge;
-        private TextView TxtDesig;
+
         private TextView TxtDob;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             TxtNameAge = itemView.findViewById(R.id.txt_Name_Age);
-            TxtDesig = itemView.findViewById(R.id.txt_Designation);
+
             TxtDob = itemView.findViewById(R.id.txt_DOB);
 
         }

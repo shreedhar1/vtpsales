@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softcore.vtpsales.Model.BirthdayModel;
+import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.Model.MyTeamModel;
 import com.softcore.vtpsales.R;
 
@@ -16,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterMyTeam extends RecyclerView.Adapter<AdapterMyTeam.UserViewHolder> {
-    private List<MyTeamModel> userList;
+    private List<MyTeamMember> userList;
 
     public AdapterMyTeam() {
         this.userList = new ArrayList<>();
     }
 
-    public void setData(List<MyTeamModel> teamList) {
+    public void setData(List<MyTeamMember> teamList) {
         this.userList = teamList;
         notifyDataSetChanged();
     }
@@ -36,7 +37,7 @@ public class AdapterMyTeam extends RecyclerView.Adapter<AdapterMyTeam.UserViewHo
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        MyTeamModel user = userList.get(position);
+        MyTeamMember user = userList.get(position);
         holder.TxtEmpName.setText(user.getName());
         holder.TxtEmpRole.setText(user.getRole());
 

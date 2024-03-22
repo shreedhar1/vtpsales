@@ -24,10 +24,15 @@ private FragmentProfileBinding binding;
 
        String EmpName = AppUtil.getStringData(getActivity(),"EmpName","");
        String EmpCode = AppUtil.getStringData(getActivity(),"EmpCode","");
+       String EmpEmail = AppUtil.getStringData(getActivity(),"EmpEmail","");
+       String EmpMob = AppUtil.getStringData(getActivity(),"EmpMob","");
+       String EmpCompany = AppUtil.getStringData(getActivity(),"DatabaseName","");
 
        binding.txtEmpName.setText(EmpName);
        binding.txtEmpCode.setText(EmpCode);
-
+        binding.txtEmpCom.setText(EmpCompany);
+        binding.txtEmpMob.setText(EmpMob);
+        binding.txtEmpEmailid.setText(EmpEmail);
         return root;
     }
 

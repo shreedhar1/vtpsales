@@ -16,6 +16,8 @@ public class AttendanceModel {
     private String checkIn;
     @SerializedName("Check out")
     private String checkOut;
+    @SerializedName("Location")
+    private String Location;
 
     public String getEmpCode() {
         return empCode;
@@ -63,5 +65,13 @@ public class AttendanceModel {
 
     public void setCheckOut(String checkOut) {
         this.checkOut = checkOut;
+    }
+
+    public String getLocation() {
+        return Location;
+    }
+
+    public void setLocation(String location) {
+        Location = location;
     }
 }

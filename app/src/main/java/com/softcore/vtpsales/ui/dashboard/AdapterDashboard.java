@@ -18,6 +18,7 @@ import com.softcore.vtpsales.BirthdayAndAnniActivity;
 import com.softcore.vtpsales.LeadGenerationActivity;
 import com.softcore.vtpsales.MyTeamActivity;
 import com.softcore.vtpsales.QRCodesActivity;
+import com.softcore.vtpsales.Qr_Screen;
 import com.softcore.vtpsales.R;
 import com.softcore.vtpsales.ReportsActivity;
 import com.softcore.vtpsales.databinding.AdapterDashboardBinding;
@@ -60,8 +61,7 @@ public class AdapterDashboard extends RecyclerView.Adapter<AdapterDashboard.Hold
                         intent=new Intent(holder.itemView.getContext(), BirthdayAndAnniActivity.class);
                         break;
                      case 2:
-                         Toast.makeText(context, "Api Not Available", Toast.LENGTH_SHORT).show();
-                      //  intent=new Intent(holder.itemView.getContext(), QRCodesActivity.class);
+                        intent=new Intent(holder.itemView.getContext(), Qr_Screen.class);
                         break;
                     case 3:
                         intent=new Intent(holder.itemView.getContext(), LeadGenerationActivity.class);

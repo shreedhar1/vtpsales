@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.softcore.vtpsales.Adaptors.AdapterAttendance;
 import com.softcore.vtpsales.AppUtils.AppUtil;
@@ -28,6 +29,8 @@ import com.softcore.vtpsales.databinding.ActivityAttendenceListBinding;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,10 +42,8 @@ public class AttendenceListActivity extends AppCompatActivity {
     ActivityAttendenceListBinding binding;
     String DbName;
     String Flag;
-    String FromDatePost;
-    String ToDatePost;
-    String ViewFromDate;
-    String ViewToDate;
+    String FromDate;
+    String ToDate;
     String TYPE;
     String selectedSlpName;
     String SlpName;
@@ -52,9 +53,7 @@ public class AttendenceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding=ActivityAttendenceListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setTitle("Attendance List");
+
 
         binding.laybar.appbarTextView.setText("Attendance List");
 
@@ -70,28 +69,17 @@ public class AttendenceListActivity extends AppCompatActivity {
         Date currentDate = calendar.getTime();
 
         // Add 1 month to the current date
-        calendar.add(Calendar.MONTH, 1);
-        Date futureDate = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        Date pastDate = calendar.getTime();
 
-        SimpleDateFormat postfutureDate = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-        SimpleDateFormat viewfutureDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
-        String postfuturedateString = postfutureDate.format(futureDate);
-        String viewfuturedateString = viewfutureDate.format(futureDate);
+        SimpleDateFormat PastDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat CurDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        SimpleDateFormat postDate = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-        SimpleDateFormat viewDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
-        String postdateString = postDate.format(currentDate);
-        String viewdateString = viewDate.format(currentDate);
+        FromDate =  PastDate.format(pastDate);
+        ToDate = CurDate.format(currentDate);
 
-        FromDatePost = postfuturedateString;
-        ToDatePost = postdateString;
-
-        ViewFromDate = viewfuturedateString;
-        ViewToDate = viewdateString;
-
-        binding.edFromDate.setText(ViewFromDate);
-        binding.edToDate.setText(ViewToDate);
-
+        binding.edFromDate.setText(FromDate);
+        binding.edToDate.setText(ToDate);
 
         binding.edFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,31 +105,34 @@ public class AttendenceListActivity extends AppCompatActivity {
             binding.autoLay.setVisibility(View.VISIBLE);
             getCustomerList();
         }
-
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         adapterAttendence = new AdapterAttendance();
         binding.recyclerView.setAdapter(adapterAttendence);
+
+//        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        adapterAttendence = new AdapterAttendance();
+//        binding.recyclerView.setAdapter(adapterAttendence);
 
         DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
         System.out.println("Database Name: "+DbName);
-        AttendanceListViewModel attendanceListViewModel = new ViewModelProvider(this).get(AttendanceListViewModel.class);
-        attendanceListViewModel.getAttendanceListinfo(DbName,Flag).observe(this, new Observer<CommanResorce<List<AttendanceModel>>>() {
-            @Override
-            public void onChanged(CommanResorce<List<AttendanceModel>> listCommanResorce) {
+//        AttendanceListViewModel attendanceListViewModel = new ViewModelProvider(this).get(AttendanceListViewModel.class);
+//        attendanceListViewModel.getAttendanceListinfo(DbName,Flag).observe(this, new Observer<CommanResorce<List<AttendanceModel>>>() {
+//            @Override
+//            public void onChanged(CommanResorce<List<AttendanceModel>> listCommanResorce) {
+//
+//                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+//
+//                    adapterAttendence.setData(listCommanResorce.data);
+//
+//                    binding.txtNoData.setVisibility(View.GONE);
+//                }else{
+//                    binding.txtNoData.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
 
-                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
-
-                    adapterAttendence.setData(listCommanResorce.data);
-
-                    binding.txtNoData.setVisibility(View.GONE);
-                }else{
-                    binding.txtNoData.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-
+        GetData();
     }
 
     public void fromDatepicker() {
@@ -154,7 +145,8 @@ public class AttendenceListActivity extends AppCompatActivity {
         if (!binding.edFromDate.getText().toString().isEmpty()) {
             try {
                 // Parse the date from the EditText
-                Date fromDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault())
+
+                Date fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         .parse(binding.edFromDate.getText().toString());
 
                 // Update the calendar to the parsed date
@@ -168,8 +160,6 @@ public class AttendenceListActivity extends AppCompatActivity {
         }
 
 
-
-
         // Create a new DatePickerDialog instance
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
@@ -178,16 +168,20 @@ public class AttendenceListActivity extends AppCompatActivity {
 
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, monthOfYear, dayOfMonth);
-                        // Create a SimpleDateFormat instance to format the date
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
-
-                        // Format the selected date
-                        ViewFromDate = dateFormat.format(calendar.getTime());
-                        binding.edFromDate.setText(ViewFromDate);
 
 
-                        SimpleDateFormat dateFormatPost = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                        FromDatePost =  dateFormatPost.format(calendar.getTime());
+                        if (calendar.after(ToDate)) {
+                            // Show an error message or handle the invalid selection
+                            Toast.makeText(getApplicationContext(), "Invalid selection", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Create a SimpleDateFormat instance to format the date
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                            // Format the selected date
+                            FromDate = dateFormat.format(calendar.getTime());
+                            binding.edFromDate.setText(FromDate);
+                        }
+
 
 
 
@@ -211,7 +205,7 @@ public class AttendenceListActivity extends AppCompatActivity {
         if (!binding.edToDate.getText().toString().isEmpty()) {
             try {
                 // Parse the date from the EditText
-                Date toDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault())
+                Date toDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         .parse(binding.edToDate.getText().toString());
 
                 // Update the calendar to the parsed date
@@ -236,18 +230,13 @@ public class AttendenceListActivity extends AppCompatActivity {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, monthOfYear, dayOfMonth);
                         // Create a SimpleDateFormat instance to format the date
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
                         // Format the selected date
-                        ViewToDate = dateFormat.format(calendar.getTime());
-                        binding.edToDate.setText(ViewToDate);
+                        ToDate = dateFormat.format(calendar.getTime());
+                        binding.edToDate.setText(ToDate);
 
-
-                        SimpleDateFormat dateFormatPost = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                        ToDatePost =  dateFormatPost.format(calendar.getTime());
-
-
-                            GetData();
+                        GetData();
 
                     }
                 }, year, month, day);
@@ -259,6 +248,8 @@ public class AttendenceListActivity extends AppCompatActivity {
 
     private void GetData() {
 
+        System.out.println("FromDate:" + FromDate +"ToDate: "+ToDate);
+
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
 
@@ -269,10 +260,68 @@ public class AttendenceListActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
+                    List<AttendanceModel> filteredList = new ArrayList<>();
 
 
-                    adapterAttendence.setData(listCommanResorce.data);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
+                    Date fromDate = null;
+                    Date toDate = null;
+
+                    try {
+                        fromDate = formatter.parse(FromDate);
+                        toDate = formatter.parse(ToDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (AttendanceModel item : listCommanResorce.data) {
+                        try {
+                            if(item.getDate() != null){
+                                Date itemDate = formatter.parse(item.getDate().substring(0, 19));
+
+                                if (itemDate != null){
+                                    if (!itemDate.before(fromDate) && !itemDate.after(toDate)) {
+
+                                            filteredList.add(item);
+
+                                    }
+                                }
+
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    List<AttendanceModel> attList = new ArrayList<>();
+                    List<AttendanceModel> mainfilterList = new ArrayList<>();
+                    String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
+
+                    for(int i = 0; i < filteredList.size();i++){
+
+                        if(selectedmodel != null){
+                            if(selectedmodel.getCardCode() != null){
+                                if(selectedmodel.getCardCode().equals(filteredList.get(i).getCustomerCode())){
+                                    if(EmpCode.equals(filteredList.get(i).getEmpCode())) {
+                                        attList.add(filteredList.get(i));
+                                    }
+                                }
+                            }
+                        }
+
+                        if(EmpCode.equals(filteredList.get(i).getEmpCode())) {
+                            mainfilterList.add(filteredList.get(i));
+                        }
+
+                    }
+
+                    if(selectedmodel != null){
+                        adapterAttendence.setData(attList);
+                    }else {
+                        adapterAttendence.setData(mainfilterList);
+                    }
 
                     binding.txtNoData.setVisibility(View.GONE);
                 }else {

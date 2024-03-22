@@ -126,7 +126,12 @@ public class AttendenceActivity extends AppCompatActivity {
         binding.ClockInOutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Clock_In_Out(v, OPERATION);
+                if(CurrentLocation.equals("")){
+                    Toast.makeText(AttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                }else{
+                    Clock_In_Out(v, OPERATION);
+                }
+
 
             }
         });
@@ -158,15 +163,17 @@ public class AttendenceActivity extends AppCompatActivity {
         System.out.println("EmpCode: "+EmpCode);
 
         String ClockOutTime = "0000";
-
+        String ClockInTime = "0000";
         String ClockInRemark = "";
 
         String ClockOutRemark = "";
 
         if (OPERATION.equals("in")){
              ClockOutTime = "0000";
+            ClockInTime = currentTime12;
             ClockInRemark = binding.edRemark.getText().toString();
         }else if(OPERATION.equals("out")){
+            ClockInTime = "0000";
             ClockOutTime = currentTime12;
             ClockOutRemark = binding.edRemark.getText().toString();
         }
@@ -177,7 +184,7 @@ public class AttendenceActivity extends AppCompatActivity {
                 currentDate,
                 EmpCode,
                 EmpName,
-                currentTime12,
+                ClockInTime,
                 ClockInRemark,
                 ClockOutTime,
                 ClockOutRemark,
@@ -313,6 +320,5 @@ public class AttendenceActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

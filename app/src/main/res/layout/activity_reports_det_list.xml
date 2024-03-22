@@ -43,18 +43,6 @@
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/txt_SlPName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ANISH ENTERPRISES"
-        android:textSize="@dimen/_14sdp"
-        android:fontFamily="@font/poppins"
-        android:paddingStart="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_5sdp"
-        android:textColor="@color/light_grey"
-        />
     <TextView
         android:id="@+id/txt_custName"
         android:layout_width="match_parent"
@@ -71,6 +59,16 @@
         android:layout_height="0.5dp"
         android:background="@color/medium_grey"
         />
+<!--    <com.github.mikephil.charting.charts.HorizontalBarChart-->
+<!--        android:id="@+id/barchart"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/_200sdp"-->
+<!--        />-->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/idBarChart"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

@@ -26,14 +26,14 @@
         >
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCheckIn"
-
             android:layout_width="match_parent"
-            app:cardCornerRadius="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
             android:elevation="@dimen/_5sdp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_70sdp"
+                android:layout_height="wrap_content"
+
                 android:orientation="horizontal"
                 android:elevation="@dimen/_5sdp"
                 android:background="@drawable/attendence_tile_main"
@@ -42,6 +42,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:padding="@dimen/_10sdp"
+
                     android:background="@drawable/attendence_tile"
                     android:layout_weight="0.2">
                     <ImageView
@@ -66,23 +68,25 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCheckOut"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintTop_toBottomOf="@id/cardCheckIn"
             android:layout_width="match_parent"
-            app:cardCornerRadius="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
             android:elevation="@dimen/_5sdp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_70sdp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:elevation="@dimen/_5sdp"
+
                 android:background="@drawable/attendence_tile_main"
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:padding="@dimen/_10sdp"
                     android:background="@drawable/attendence_tile"
                     android:layout_weight="0.2">
                     <ImageView
@@ -107,15 +111,15 @@
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:id="@+id/cardListView"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintTop_toBottomOf="@id/cardCheckOut"
             android:layout_width="match_parent"
-            app:cardCornerRadius="@dimen/_20sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
             android:elevation="@dimen/_5sdp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_70sdp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:elevation="@dimen/_5sdp"
                 android:background="@drawable/attendence_tile_main"
@@ -124,6 +128,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:padding="@dimen/_10sdp"
                     android:background="@drawable/attendence_tile"
                     android:layout_weight="0.2">
                     <ImageView

@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,12 +20,10 @@ import com.softcore.vtpsales.Model.Database;
 import com.softcore.vtpsales.Model.UserModel;
 import com.softcore.vtpsales.ViewModel.DatabaseListViewModel;
 import com.softcore.vtpsales.ViewModel.LoginViewModel;
-import com.softcore.vtpsales.databinding.ActivityDashboardBinding;
 import com.softcore.vtpsales.databinding.ActivityLoginBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,8 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         binding=ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
        // setContentView(R.layout.activity_login);
+        View rootView = binding.getRoot();
 
-        GetDatabseList();
+        GetDatabseList(rootView);
 
 
        // binding.spinnerDbName
@@ -89,9 +87,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
     private void GetLoginDetails(String DbName,String username, String password) {
         System.out.println(DbName+" "+username+" "+password);
@@ -108,6 +103,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         AppUtil.saveStringData(getApplicationContext(),"EmpCode",listCommanResorce.data.get(0).getEMP_Code());
                         AppUtil.saveStringData(getApplicationContext(),"EmpName",listCommanResorce.data.get(0).getFirstName()+" " +listCommanResorce.data.get(0).getLastName());
+                        AppUtil.saveStringData(getApplicationContext(),"EmpEmail",listCommanResorce.data.get(0).getEmail());
+                        AppUtil.saveStringData(getApplicationContext(),"EmpMob",listCommanResorce.data.get(0).getMobile());
 
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         // Other actions after successful login
@@ -125,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
                     AppUtil.hideProgressDialog();
                 }
 
-
             }
         });
 
@@ -133,8 +129,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-     void GetDatabseList() {
+     void GetDatabseList(View rootView) {
 
+        AppUtil.showProgressDialog(rootView,"Loading Database");
         DatabaseListViewModel dbListViewModel= new ViewModelProvider(this).get(DatabaseListViewModel.class);
         dbListViewModel.getDatabaseList().observe(this, new Observer<CommanResorce<List<Database>>>() {
             @Override
@@ -170,14 +167,13 @@ public class LoginActivity extends AppCompatActivity {
                             // Do nothing
                         }
                     });
-
+                    AppUtil.hideProgressDialog();
                 } else {
-                    AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
-                    System.out.println("User not found");
+                    AppUtil.showTost(getApplicationContext(), "Failed: "+listCommanResorce.message);
                     AppUtil.hideProgressDialog();
                 }
 
-
+                AppUtil.hideProgressDialog();
             }
         });
 

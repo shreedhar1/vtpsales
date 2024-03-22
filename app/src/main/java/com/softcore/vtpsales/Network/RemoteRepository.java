@@ -10,6 +10,7 @@ import com.softcore.vtpsales.Model.CusReportWiseDetModel;
 import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
+import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.Model.MyTeamModel;
 import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Model.UserModel;
@@ -61,10 +62,15 @@ public class RemoteRepository {
         call.enqueue(callback);
     }
 
-    public void getMyTeamsDetails(String DbName,String EmpNo,Callback<List<MyTeamModel>> callback){
-        Call<List<MyTeamModel>> call= Network.getNetwork().getservices().getMyTeamsData(DbName,EmpNo);
+    public void getMyTeamsDetails(String DbName,String ExtNo,Callback<List<MyTeamMember>> callback){
+        Call<List<MyTeamMember>> call= Network.getNetwork().getservices().getMyTeamMembers(DbName,ExtNo);
         call.enqueue(callback);
     }
+
+//    public void getMyTeamsDetails(String DbName,String EmpNo,Callback<List<MyTeamModel>> callback){
+//        Call<List<MyTeamModel>> call= Network.getNetwork().getservices().getMyTeamsData(DbName,EmpNo);
+//        call.enqueue(callback);
+//    }
     public void getSlpDetails(String DbName,String Flag,Callback<List<SlpResponse>> callback){
         Call<List<SlpResponse>> call= Network.getNetwork().getservices().getSlpData(DbName,Flag);
         System.out.println("dbName: "+DbName+"Flag: "+Flag);

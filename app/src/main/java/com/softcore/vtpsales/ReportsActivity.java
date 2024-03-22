@@ -77,17 +77,36 @@ public class ReportsActivity extends AppCompatActivity {
         binding.txtOutstandingstitle.setText("-");
         binding.txtOutstandingsdesc.setText("Vendor Outstaning");
 
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
+        // Get the current date
+        Calendar today = Calendar.getInstance();
+        //today.set(2024, Calendar.APRIL, 5); testing
 
-        // Add 1 month to the current date
-        calendar.add(Calendar.MONTH, 1);
-        Date futureDate = calendar.getTime();
+
+        Calendar fromCalendar = Calendar.getInstance();
+        if (today.get(Calendar.MONTH) < Calendar.APRIL ||
+                (today.get(Calendar.MONTH) == Calendar.APRIL && today.get(Calendar.DAY_OF_MONTH) < 2)) {
+            // If the current month is before April, or it's April but before the 2nd (inclusive), consider the previous year
+        if( today.get(Calendar.MONTH) == Calendar.APRIL&& today.get(Calendar.DAY_OF_MONTH) < 2){
+            fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR));
+        }else {
+            fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR) - 1);
+        }
+
+        } else {
+            // Otherwise, consider the current year
+            fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR));
+        }
+        fromCalendar.set(Calendar.MONTH, Calendar.APRIL);
+        fromCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date finDate = fromCalendar.getTime();
+
+        //currect date
+        Date currentDate = today.getTime();
 
         SimpleDateFormat postfutureDate = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         SimpleDateFormat viewfutureDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
-        String postfuturedateString = postfutureDate.format(futureDate);
-        String viewfuturedateString = viewfutureDate.format(futureDate);
+        String postfuturedateString = postfutureDate.format(finDate);
+        String viewfuturedateString = viewfutureDate.format(finDate);
 
         SimpleDateFormat postDate = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
         SimpleDateFormat viewDate = new SimpleDateFormat("yyyy-MMM-dd", Locale.getDefault());
@@ -104,6 +123,10 @@ public class ReportsActivity extends AppCompatActivity {
         binding.edToDate.setText(ViewToDate);
 
         GetSlpList();
+
+        selectedSlpName = AppUtil.getStringData(getApplicationContext(), "SlpName", "");
+        SlpName = selectedSlpName;
+        GetData();
 
         binding.edFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,7 +268,6 @@ public class ReportsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
 
 
 

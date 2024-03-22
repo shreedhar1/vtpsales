@@ -41,14 +41,29 @@ public class AdapterAttendance extends RecyclerView.Adapter<AdapterAttendance.Us
     public void onBindViewHolder(@NonNull AdapterAttendance.UserViewHolder holder, int position) {
         AttendanceModel user = userList.get(position);
 
-        String intime = AppUtil.convertTo12HourFormat(user.getCheckIn());
-        String outtime = AppUtil.convertTo12HourFormat(user.getCheckOut());
-        String date = AppUtil.convertDateFormat(user.getDate());
+        String date = "";
+        String CheckInTime = "";
+        String CheckOutTime = "";
 
-        holder.TxtInTime.setText(intime+","+date);
-        holder.TxtInAddress.setText("");
-        holder.TxtOutTime.setText(outtime+","+date);
-        holder.TxtOutAddress.setText("");
+        if( user.getDate() != null && !user.getDate().equals("")){
+             date = ", "+AppUtil.convertDateFormat(user.getDate());
+        }
+
+        if( user.getCheckIn() != null && !user.getCheckIn().equals("")){
+            String intime = AppUtil.convertTo12HourFormat(user.getCheckIn());
+            CheckInTime = intime+date;
+        }
+
+        if( user.getCheckOut() != null && !user.getCheckOut().equals("")&&!user.getCheckOut().equals("07.10")){
+            String outtime = AppUtil.convertTo12HourFormat(user.getCheckOut());
+            CheckOutTime = outtime+date;
+        }
+
+        holder.TxtInTime.setText(CheckInTime);
+        holder.TxtOutTime.setText(CheckOutTime);
+
+        holder.TxtInAddress.setText(user.getLocation());
+        holder.TxtOutAddress.setText(user.getLocation());
 
         if(user.getCheckIn().equals("0000")){
             holder.lay_InTime.setVisibility(View.GONE);

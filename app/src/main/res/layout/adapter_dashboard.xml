@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/dashboard_tiles_back"
     android:layout_margin="@dimen/_5sdp"
-    android:layout_height="@dimen/_120sdp">
+    android:layout_height="@dimen/_140sdp">
 
     <ImageView
         android:id="@+id/img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/ic_att"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -18,7 +18,7 @@
     <LinearLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:padding="1dp"
         android:gravity="center"
         android:background="@drawable/dashboard_tile_bottom"

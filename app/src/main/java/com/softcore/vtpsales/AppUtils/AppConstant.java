@@ -15,7 +15,7 @@ package com.softcore.vtpsales.AppUtils;
 //}
 
 public class AppConstant {
-    public static final String BASE_URL = "http://103.96.42.106:7279/api/sap/";
+    public static final String BASE_URL = "http://103.96.42.106:7279/API/SAP/";
     public static final String LOGIN_URL = BASE_URL + "emp_login";
     public enum status {SUCCESS,ERROR};
 

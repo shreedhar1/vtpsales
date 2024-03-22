@@ -1,4 +1,5 @@
-package com.softcore.vtpsales.ViewModel;
+package com.softcore.vtpsales.ViewModel;//package com.softcore.vtpsales.ViewModel;
+
 
 import android.app.Application;
 
@@ -7,8 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.softcore.vtpsales.Model.CommanResorce;
-import com.softcore.vtpsales.Model.MyTeamModel;
-import com.softcore.vtpsales.Model.MyTeamModel;
+import com.softcore.vtpsales.Model.MyTeamMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +17,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyTeamViewModel extends MainViewModel{
+public class MyTeamViewModel extends MainViewModel {
 
-    MutableLiveData<CommanResorce<List<MyTeamModel>>> _data;
+    MutableLiveData<CommanResorce<List<MyTeamMember>>> _data;
 
     public MyTeamViewModel(@NonNull Application application) {
         super(application);
         _data=new MutableLiveData<>();
 
     }
-    public LiveData<CommanResorce<List<MyTeamModel>>> getMyTeamInfo(String DbName,String EmpNo){
-        CommanResorce<List<MyTeamModel>> _new_data=new CommanResorce<>();
+    public LiveData<CommanResorce<List<MyTeamMember>>> getMyTeamInfo(String DbName, String ExtNo){
+        CommanResorce<List<MyTeamMember>> _new_data=new CommanResorce<>();
         _data=new MutableLiveData<>();
-        repository.getMyTeamsDetails(DbName,EmpNo, new Callback<List<MyTeamModel>>() {
+
+        repository.getMyTeamsDetails(DbName, ExtNo, new Callback<List<MyTeamMember>>() {
             @Override
-            public void onResponse(Call<List<MyTeamModel>> call, Response<List<MyTeamModel>> response) {
+            public void onResponse(Call<List<MyTeamMember>> call, Response<List<MyTeamMember>> response) {
                 if(response.isSuccessful()){
 
                     System.out.println("sucess"+response.body());
@@ -52,7 +53,7 @@ public class MyTeamViewModel extends MainViewModel{
             }
 
             @Override
-            public void onFailure(Call<List<MyTeamModel>> call, Throwable t) {
+            public void onFailure(Call<List<MyTeamMember>> call, Throwable t) {
                 System.out.println("Failed "+t.getMessage());
                 _new_data.data=new ArrayList<>();
 //                _new_data.status= AppConst.status.ERROR;
@@ -68,3 +69,4 @@ public class MyTeamViewModel extends MainViewModel{
 
 
 }
+

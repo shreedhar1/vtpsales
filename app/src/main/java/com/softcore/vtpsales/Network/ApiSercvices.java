@@ -10,6 +10,7 @@ import com.softcore.vtpsales.Model.CusReportWiseDetModel;
 import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
+import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.Model.MyTeamModel;
 import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Model.UserModel;
@@ -19,6 +20,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -44,11 +46,19 @@ public interface ApiSercvices {
 
     @POST("SCS_CLOCK")
     Call<Void> sendClockData(@Body ClockRequest request);
-    @POST("SCS_CLOCK")
+
+    @POST("SCS_CLOCK_CUSTOMER")
     Call<Void> sendCusClockData(@Body CusClockRequest request);
 
     @GET("MY_Team")
-    Call<List<MyTeamModel>> getMyTeamsData(@Query("DB_NAME") String DbName, @Query("ExtEmpNo") String ExtEmpNo);
+    Call<List<MyTeamMember>> getMyTeamMembers(
+            @Query("DB_NAME") String dbName,
+            @Query("ExtEmpNo") String extEmpNo
+    );
+
+//    @GET("MY_Team")
+//    Call<List<MyTeamModel>> getMyTeamsData(@Query("DB_NAME") String DbName,
+//                                           @Query("ExtEmpNo") String ExtEmpNo);
 
     @GET("SCS_VTP_API")
     Call<List<SlpResponse>> getSlpData(@Query("DB_NAME") String DbName, @Query("Flag") String Flag);

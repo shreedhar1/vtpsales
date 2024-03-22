@@ -119,7 +119,15 @@ public class CustAttendenceActivity extends AppCompatActivity {
         binding.ClockInOutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Clock_In_Out(v, OPERATION);
+                if(CurrentLocation.equals("")){
+                    Toast.makeText(CustAttendenceActivity.this, "location not available", Toast.LENGTH_SHORT).show();
+                }else if(selectedmodel != null){
+                    Clock_In_Out(v, OPERATION);
+                }else {
+                    Toast.makeText(CustAttendenceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
+
+                }
+
 
             }
         });
@@ -155,15 +163,17 @@ public class CustAttendenceActivity extends AppCompatActivity {
         System.out.println("EmpCode: " + EmpCode);
 
         String ClockOutTime = "0000";
-
+        String ClockInTime = "0000";
         String ClockInRemark = "";
 
         String ClockOutRemark = "";
 
         if (OPERATION.equals("in")) {
             ClockOutTime = "0000";
+            ClockInTime = currentTime12;
         } else if (OPERATION.equals("out")) {
             ClockOutTime = currentTime12;
+            ClockInTime = "0000";
         }
 
 
@@ -171,7 +181,7 @@ public class CustAttendenceActivity extends AppCompatActivity {
                 currentDate,
                 EmpCode,
                 EmpName,
-                currentTime12,
+                ClockInTime,
                 "",
                 ClockOutTime,
                 ClockOutRemark,
@@ -329,41 +339,7 @@ public class CustAttendenceActivity extends AppCompatActivity {
         }
     }
 
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
 
-                        if (location != null) {
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
-                            // Do something with latitude and longitude
-                            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-
-                            try {
-                                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                                if (addresses != null && addresses.size() > 0) {
-                                    Address address = addresses.get(0);
-                                    String addressString = address.getAddressLine(0); // Get the first line of the address
-                                    // Toast.makeText(getApplicationContext(), "Address: " + addressString, Toast.LENGTH_SHORT).show();
-                                    CurrentLocation = addressString;
-                                    binding.txtAddress.setText(addressString);
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        } else {
-                            Toast.makeText(CustAttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
 
 
     @SuppressLint("MissingPermission")
@@ -376,21 +352,14 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     try {
                         Geocoder geocoder = new Geocoder(CustAttendenceActivity.this, Locale.getDefault());
                         List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
                         Address address = addresses.get(0);
+                        String addressString = address.getAddressLine(0); // Get the first line of the address
+                        // Toast.makeText(getApplicationContext(), "Address: " + addressString, Toast.LENGTH_SHORT).show();
+                        CurrentLocation = addressString;
+                        binding.txtAddress.setText(addressString);
 
-                        StringBuilder fullAddress = new StringBuilder();
 
-                        for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                            fullAddress.append(address.getAddressLine(i));
-                            if (i < address.getMaxAddressLineIndex()) {
-                                fullAddress.append(", ");
-                            }
-                        }
-
-                        String fullAddressString = fullAddress.toString();
-
-                        binding.txtAddress.setText(fullAddressString);
-                        CurrentLocation = fullAddressString;
 
                     } catch (IOException e) {
                         e.printStackTrace();

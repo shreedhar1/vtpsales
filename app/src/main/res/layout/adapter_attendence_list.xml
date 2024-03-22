@@ -72,7 +72,7 @@
                         android:id="@+id/txtInTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10:05 AM, 25 Dec 23"
+                        android:text=""
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:textColor="@color/color_green"
                         android:fontFamily="@font/poppins_medium"
@@ -96,7 +96,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:fontFamily="@font/poppins"
-                        android:text="Lodha Supremus, A 333, Rd Number 22, Wagle Industrial Estate, Thane West, Mumbai, Thane, Maharashtra 400604"/>
+                        android:text=""/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -121,7 +121,7 @@
                         android:id="@+id/txtOutTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10:05 AM, 25 Dec 23"
+                        android:text=""
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:textColor="@color/color_red"
                         android:fontFamily="@font/poppins_medium"
@@ -145,7 +145,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:fontFamily="@font/poppins"
-                        android:text="Lodha Supremus, A 333, Rd Number 22, Wagle Industrial Estate, Thane West, Mumbai, Thane, Maharashtra 400604"/>
+                        android:text=""/>
                 </LinearLayout>
 
             </LinearLayout>

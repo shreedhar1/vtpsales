@@ -1,5 +1,7 @@
 package com.softcore.vtpsales;
 
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +19,7 @@ import android.widget.AutoCompleteTextView;
 
 
 import com.softcore.vtpsales.Adaptors.AdapterBirth;
+import com.softcore.vtpsales.Adaptors.ImageSliderAdapter;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.BirthdayModel;
 import com.softcore.vtpsales.Model.CommanResorce;
@@ -49,9 +53,9 @@ public class BirthdayAndAnniActivity extends AppCompatActivity {
         });
 
         List<String> typesList = new ArrayList<>();
-        typesList.add("Birthday");
-        typesList.add("Anniversary");
         typesList.add("All");
+        typesList.add("BirthDay");
+        typesList.add("Anniversary");
         binding.layFilter.setHint("Select Type");
         binding.autoCompleteTextView.setText(selectedType);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, typesList);
@@ -87,18 +91,59 @@ public class BirthdayAndAnniActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    List<BirthdayModel> filteredList = new ArrayList<>();
-                    for (BirthdayModel model : listCommanResorce.data) {
-                        if(selectedType.equals("All")){
-                            adapterBirth.setData(filteredList);
-                        } else if (selectedType.equalsIgnoreCase(model.getType())) {
-                                filteredList.add(model);
-                                adapterBirth.setData(filteredList);
-                            }
-                    }
-                }else{
+                   // List<BirthdayModel> filteredList = new ArrayList<>();
 
-                    binding.cardlayBirthday.setVisibility(View.GONE);
+
+
+
+                        if (selectedType.equals("All")) {
+                            adapterBirth.setData(listCommanResorce.data);
+                        } else {
+                            List<BirthdayModel> filteredList = new ArrayList<>();
+                            for (BirthdayModel modell : listCommanResorce.data) {
+                                if (selectedType.equalsIgnoreCase(modell.getType())) {
+                                    filteredList.add(modell);
+                                }
+                            }
+
+                                adapterBirth.setData(filteredList);
+
+                        }
+                    List<BirthdayModel> filList = new ArrayList<>();
+                    for (BirthdayModel model : listCommanResorce.data) {
+
+                    if (AppUtil.isToday(model.getBirthDate())) {
+                        filList.add(model);
+                    }
+
+                    if(filList.isEmpty()){
+                        binding.viewPager.setVisibility(View.GONE);
+                    }else {
+                        binding.viewPager.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
+                ImageSliderAdapter adapter = new ImageSliderAdapter(getApplicationContext(), filList,false);
+                binding.viewPager.setAdapter(adapter);
+                final Handler handler = new Handler();
+                final Runnable update = new Runnable() {
+                    public void run() {
+                        int currentPage = binding.viewPager.getCurrentItem();
+                        int nextPage = currentPage + 1;
+                        if (nextPage >= adapter.getCount()) {
+                            nextPage = 0;
+                        }
+                        binding.viewPager.setCurrentItem(nextPage, true);
+                        handler.postDelayed(this, 8000); // Repeat every 3 seconds
+                    }
+                };
+
+                // Start auto-slide
+                handler.postDelayed(update, 3000); // Delayed start after 3 seconds
+
+                }else{
+                  //  binding.cardlayBirthday.setVisibility(View.GONE);
                     binding.textPast.setText("Past (0)");
                 }
 

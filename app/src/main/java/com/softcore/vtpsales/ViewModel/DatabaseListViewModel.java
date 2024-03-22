@@ -46,7 +46,7 @@ public class DatabaseListViewModel extends MainViewModel{
                     System.out.println("failed code"+response.code());
                     _new_data.data=new ArrayList<>();
 //                    _new_data.status= AppConst.status.ERROR;
-//                    _new_data.message="failer Error";
+                    _new_data.message="Failed Loading Database list";
                 }
                 _data.postValue(_new_data);
             }
@@ -56,7 +56,7 @@ public class DatabaseListViewModel extends MainViewModel{
                 System.out.println("Failed "+t.getMessage());
                 _new_data.data=new ArrayList<>();
 //                _new_data.status= AppConst.status.ERROR;
-//                _new_data.message="failer Error";
+                _new_data.message=t.getMessage();
                 _data.postValue(_new_data);
 //                Log.e("error",""+t.getMessage());
             }
