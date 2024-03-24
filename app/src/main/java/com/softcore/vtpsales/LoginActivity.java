@@ -31,6 +31,9 @@ public class LoginActivity extends AppCompatActivity {
     String selectedDatabaseName = "";
     private static final int TIME_INTERVAL = 2000; // Time between two back presses in milliseconds
     private long backPressedTime;
+    String rememberme = "N";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +46,40 @@ public class LoginActivity extends AppCompatActivity {
        // setContentView(R.layout.activity_login);
         View rootView = binding.getRoot();
 
+        rememberme = AppUtil.getStringData(getApplicationContext(),"Rem","");
+
+
+        if(rememberme.equals("Y")){
+            String userName = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
+            String password = AppUtil.getStringData(getApplicationContext(),"EmpPass","");
+            String dbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
+            String rem = AppUtil.getStringData(getApplicationContext(),"Rem","");
+
+             rememberme = rem;
+             binding.edUsername.setText(userName);
+             binding.edPassword.setText(password);
+             selectedDatabaseName = dbName;
+
+
+
+
+        }
+
+        if(rememberme.equals("Y")){
+            binding.rememberCheckBox.setChecked(true);
+        }
         GetDatabseList(rootView);
 
 
        // binding.spinnerDbName
+
+        binding.rememberCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                rememberme = "Y";
+            } else {
+                rememberme = "N";
+            }
+        });
 
 
 
@@ -59,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
                 String dbName = selectedDatabaseName.trim();
                 String userName = binding.edUsername.getText().toString().trim();
                 String password = binding.edPassword.getText().toString().trim();
-
 
                 if (dbName.equals("SELECT DATABASE")) {
                     binding.errorMessageDb.setVisibility(View.VISIBLE);
@@ -100,11 +132,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
                     String apiPassword = listCommanResorce.data.get(0).getUser_Password();
                     if (apiPassword.equals(password)) {
+                        AppUtil.saveStringData(getApplicationContext(),"Rem",rememberme);
 
                         AppUtil.saveStringData(getApplicationContext(),"EmpCode",listCommanResorce.data.get(0).getEMP_Code());
                         AppUtil.saveStringData(getApplicationContext(),"EmpName",listCommanResorce.data.get(0).getFirstName()+" " +listCommanResorce.data.get(0).getLastName());
                         AppUtil.saveStringData(getApplicationContext(),"EmpEmail",listCommanResorce.data.get(0).getEmail());
                         AppUtil.saveStringData(getApplicationContext(),"EmpMob",listCommanResorce.data.get(0).getMobile());
+                        AppUtil.saveStringData(getApplicationContext(),"EmpPass",listCommanResorce.data.get(0).getUser_Password());
 
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         // Other actions after successful login
@@ -167,6 +201,14 @@ public class LoginActivity extends AppCompatActivity {
                             // Do nothing
                         }
                     });
+                    if (selectedDatabaseName != null) {
+                        // Find the position of the selected database name in the list
+                        int index = databaseNames.indexOf(selectedDatabaseName);
+                        // Set the selected item in the spinner
+                        if (index != -1) {
+                            binding.spinnerDbName.setSelection(index);
+                        }
+                    }
                     AppUtil.hideProgressDialog();
                 } else {
                     AppUtil.showTost(getApplicationContext(), "Failed: "+listCommanResorce.message);

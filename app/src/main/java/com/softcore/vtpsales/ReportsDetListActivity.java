@@ -1,19 +1,33 @@
 package com.softcore.vtpsales;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.softcore.vtpsales.Adaptors.AdapterCustWiseDetReport;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
@@ -30,6 +44,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -92,6 +107,14 @@ public class ReportsDetListActivity extends AppCompatActivity {
         adapter = new AdapterCustWiseDetReport();
         binding.recyclerView.setAdapter(adapter);
 
+        binding.btnSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> stringList = Arrays.asList("Bills", "Ledger Group", "Voucher Group","Stock Item","Stock Group","Stock Category","Cost Center");
+                showBottomSheet(stringList);
+
+            }
+        });
 
     }
 
@@ -224,12 +247,33 @@ public class ReportsDetListActivity extends AppCompatActivity {
         BarDataSet dataSet = new BarDataSet(entries, "Balance Due");
         BarData barData = new BarData(dataSet);
         binding.idBarChart.setData(barData);
-
+        dataSet.setColor(Color.parseColor("#013F8F")); // Dark blue color
         XAxis xAxis = binding.idBarChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxis.setGranularity(1f);
-        //binding.idBarChart.getXAxis().setDrawGridLines(false);
-        //binding.idBarChart.getAxisLeft().setDrawGridLines(false);
+        dataSet.setValueTextColor(Color.parseColor("#013F8F"));
+
+        Legend legend = binding.idBarChart.getLegend();
+
+        LegendEntry[] legendEntries = new LegendEntry[1];
+        LegendEntry entry = new LegendEntry();
+        entry.label = "Balance Due"; // Your label
+        entry.formColor = Color.parseColor("#013F8F"); // Dark blue color
+        entry.form = Legend.LegendForm.SQUARE; // Use a square form
+        legendEntries[0] = entry;
+
+// Set the custom legend entry
+        legend.setCustom(legendEntries);
+
+        YAxis rightYAxis = binding.idBarChart.getAxisRight();
+
+// Disable drawing of Y-axis labels on the right side
+        rightYAxis.setDrawLabels(false);
+
+      // Dark blue color
+        binding.idBarChart.getXAxis().setDrawGridLines(false);
+        binding.idBarChart.getAxisLeft().setDrawGridLines(false);
+        rightYAxis.setDrawGridLines(false);
         binding.idBarChart.getDescription().setEnabled(false);
         binding.idBarChart.setTouchEnabled(true);
         binding.idBarChart.setDragEnabled(true);
@@ -327,5 +371,70 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
         return jsonArray;
     }
+    private void showBottomSheet(List<String> stringList) {
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this); // Apply custom style
+
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+
+        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); // Optional: Add divider
+
+        // Create a custom adapter for the RecyclerView
+        RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottomsheet_design, parent, false);
+                return new RecyclerView.ViewHolder(itemView) {};
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+                TextView textView = holder.itemView.findViewById(R.id.names);
+                textView.setText(stringList.get(position));
+                textView.setTextColor(Color.WHITE); // Set text color to white
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String selectedString = stringList.get(position);
+                        binding.txtselect.setText(selectedString);
+                        bottomSheetDialog.dismiss(); // Dismiss the bottom
+                    }
+                });
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return stringList.size();
+            }
+        };
+
+        recyclerView.setAdapter(adapter);
+
+        bottomSheetDialog.show();
+    }
+
+//    private void showBottomSheet(List<String> stringList) {
+//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+//        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+//        bottomSheetDialog.setContentView(bottomSheetView);
+//
+//        ListView listView = bottomSheetView.findViewById(R.id.list_view);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, stringList);
+//        listView.setAdapter(adapter);
+//
+//
+//        listView.setOnItemClickListener((parent, view, position, id) -> {
+//            String selectedString = stringList.get(position);
+//            binding.txtselect.setText(selectedString);
+//            bottomSheetDialog.dismiss(); // Dismiss the bottom sheet after selecting an item
+//        });
+//        bottomSheetDialog.show();
+//    }
 
 }

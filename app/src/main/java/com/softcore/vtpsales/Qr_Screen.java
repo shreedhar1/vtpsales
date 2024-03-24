@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.databinding.ActivityQrScreenBinding;
-import com.softcore.vtpsales.databinding.ActivityQrcodesBinding;
 
 public class Qr_Screen extends AppCompatActivity {
 
@@ -16,7 +15,7 @@ public class Qr_Screen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setContentView(R.layout.activity_qr_screen);
+
         binding=ActivityQrScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

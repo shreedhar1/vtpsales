@@ -5,24 +5,17 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softcore.vtpsales.AttendenceHomeActivity;
 import com.softcore.vtpsales.BirthdayAndAnniActivity;
 import com.softcore.vtpsales.LeadGenerationActivity;
 import com.softcore.vtpsales.MyTeamActivity;
-import com.softcore.vtpsales.QRCodesActivity;
 import com.softcore.vtpsales.Qr_Screen;
-import com.softcore.vtpsales.R;
 import com.softcore.vtpsales.ReportsActivity;
 import com.softcore.vtpsales.databinding.AdapterDashboardBinding;
-import com.softcore.vtpsales.ui.attendence.AttendanceFragment;
 
 import java.util.List;
 

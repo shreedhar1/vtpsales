@@ -139,6 +139,25 @@
                 android:layout_marginTop="8dp"
 
                 android:text="Please select a valid password"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/rememberCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text=" Remember me"
+                    app:buttonTint="@color/white"
+                    android:fontFamily="@font/poppins_medium"/>
+
+            </LinearLayout>
             <Button
                 android:id="@+id/btnLogin"
                 style="@style/ButtonStyle"

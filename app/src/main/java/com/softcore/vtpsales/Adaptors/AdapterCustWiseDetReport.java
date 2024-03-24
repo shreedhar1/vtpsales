@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.softcore.vtpsales.Model.CusReportWiseDetModel;
 import com.softcore.vtpsales.Model.CusReportWiseModel;
+import com.softcore.vtpsales.PdfViewerActivity;
 import com.softcore.vtpsales.R;
 import com.softcore.vtpsales.ReportsDetListActivity;
 
@@ -64,7 +65,24 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
          }
         holder.TxtAmount.setText("₹ "+model.getBalanceDue());
         holder.TxtDate.setText(model.getPostingDate());
-        holder.TxtDocno.setText(model.getDocNo());
+        if(model.getDocNo() != null){
+            holder.TxtDocno.setText(model.getDocNo());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(context, PdfViewerActivity.class);
+                    intent.putExtra("DocNo", model.getDocNo());
+                    intent.putExtra("CusName", model.getCustomerName());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
+                }
+            });
+        }
+
+
+
 
 
     }

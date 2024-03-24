@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.softcore.vtpsales"
-        minSdk 24
+        minSdk 28
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -54,4 +54,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:21.2.0"
 
     implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
+
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+
 }

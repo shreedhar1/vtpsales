@@ -12,6 +12,8 @@ import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
 import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.Model.MyTeamModel;
+import com.softcore.vtpsales.Model.SL_LoginRequest;
+import com.softcore.vtpsales.Model.SL_LoginResponse;
 import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Model.UserModel;
 
@@ -25,6 +27,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ApiSercvices {
+
+    @POST("Login")
+    Call<SL_LoginResponse> login(@Body SL_LoginRequest request);
 
     @GET("database-list")
     Call<List<Database>> getDatabases();
@@ -108,4 +113,15 @@ public interface ApiSercvices {
                                                           @Query("SlpName") String SlpName,
                                                           @Query("DB_NAME") String DB_NAME,
                                                           @Query("Flag") String Flag);
+
+
+
+    @GET("SCS_Collection_Person")
+    Call<List<SlpResponse>> getClpData();
+
+    @GET("SCS_Sales_Employee")
+    Call<List<SlpResponse>> getSEData();
+
+
+
 }

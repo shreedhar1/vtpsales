@@ -33,6 +33,7 @@ public class Network {
 
             retrofit=new Retrofit.Builder().baseUrl(AppConstant.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient).build();
+
         }
         apiSercvices=retrofit.create(ApiSercvices.class);
     }

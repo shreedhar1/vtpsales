@@ -34,17 +34,25 @@
                     android:id="@+id/tilLeadCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:hint="Lead Code">
+                    android:enabled="true"
+                    android:hint="Lead Code*">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLeadCode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:enabled="false" />
+                        android:enabled="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvLeadCodeError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please enter lead code"/>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilLeadName"
                     android:layout_width="match_parent"
@@ -57,46 +65,95 @@
                         android:layout_height="wrap_content"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilSalesEmployee"
+                <TextView
+                    android:id="@+id/tvLeadNameError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Sales Employee">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etSalesEmployee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text" />
-                </com.google.android.material.textfield.TextInputLayout>
-
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please enter lead name"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilCollectionPerson"
+                    android:id="@+id/autoLaySP"
+                    android:theme="@style/DrpStyle2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Collection Person">
+                    android:hint="Sales Employee"
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etCollectionPerson"
+
+                    >
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autoSalesPersonName"
+                        android:fontFamily="@font/poppins"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:layout_height="match_parent"
+                        android:lines="1"
+                        android:inputType="textNoSuggestions"
+                        />
+
                 </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/tvSalesPersonNameError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please select sales employee"
+                    android:layout_marginBottom="@dimen/_2sdp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/autoLayCP"
+                    android:theme="@style/DrpStyle2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Collection Person"
+                    >
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autotxtCP"
+                        android:fontFamily="@font/poppins"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:lines="1"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/tvCollectionPersonError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please select collection person"
+                    android:layout_marginBottom="@dimen/_2sdp" />
+
+
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilAddress"
+                    android:id="@+id/layAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Address">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etAddress"
+                        android:focusable="false"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPostalAddress" />
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvAddressError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please enter address"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilContactPerson"
                     android:layout_width="match_parent"
@@ -109,7 +166,15 @@
                         android:layout_height="wrap_content"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvContactPersonError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please enter contact person"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilMobileNo"
                     android:layout_width="match_parent"
@@ -122,7 +187,15 @@
                         android:layout_height="wrap_content"
                         android:inputType="phone" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvMobileNoError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please enter mobile number"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilBirthDate"
                     android:layout_width="match_parent"
@@ -137,7 +210,15 @@
                         android:focusable="false"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvBirthDateError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please select birth date"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilAnniversaryDate"
                     android:layout_width="match_parent"
@@ -152,7 +233,15 @@
                         android:focusable="false"
                          />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <TextView
+                    android:id="@+id/tvAnniversaryDateError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_red"
+                    android:visibility="gone"
+                    android:paddingLeft="8dp"
+                    android:text="Please select anniversary date"
+                    android:layout_marginBottom="@dimen/_2sdp" />
                 <Button
                     android:id="@+id/btnSubmit"
                     android:layout_width="match_parent"

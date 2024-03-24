@@ -1,19 +1,17 @@
 package com.softcore.vtpsales.Network;
 
-import static com.softcore.vtpsales.AppUtils.AppConstant.SLBase_Url;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class NetworkClient {
- //   private static final String BASE_URL = "http://103.96.42.106:7279/api/sap/";
+public class ApiClient {
+    private static final String BASE_URL = "https://103.96.42.106:50000/b1s/v1/";
 
-    private static Retrofit retrofit;
+    private static Retrofit retrofit = null;
 
-    public static Retrofit getRetrofitInstance() {
+    public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(SLBase_Url)
+                    .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

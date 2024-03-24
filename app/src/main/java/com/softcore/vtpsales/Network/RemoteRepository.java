@@ -12,6 +12,8 @@ import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
 import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.Model.MyTeamModel;
+import com.softcore.vtpsales.Model.SL_LoginRequest;
+import com.softcore.vtpsales.Model.SL_LoginResponse;
 import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Model.UserModel;
 
@@ -31,6 +33,7 @@ public class RemoteRepository {
         }
         return repository;
     }
+
 
     public void getlogindetails(String DbName,String username,String password,Callback<List<UserModel>> callback){
         Call<List<UserModel>> call= Network.getNetwork().getservices().getLoginDetails(DbName,username,password);
@@ -74,6 +77,14 @@ public class RemoteRepository {
     public void getSlpDetails(String DbName,String Flag,Callback<List<SlpResponse>> callback){
         Call<List<SlpResponse>> call= Network.getNetwork().getservices().getSlpData(DbName,Flag);
         System.out.println("dbName: "+DbName+"Flag: "+Flag);
+        call.enqueue(callback);
+    }
+    public void getClpDetails(Callback<List<SlpResponse>> callback){
+        Call<List<SlpResponse>> call= Network.getNetwork().getservices().getClpData();
+        call.enqueue(callback);
+    }
+    public void getSEDetails(Callback<List<SlpResponse>> callback){
+        Call<List<SlpResponse>> call= Network.getNetwork().getservices().getSEData();
         call.enqueue(callback);
     }
     public void getActCustomerdetails(String DbName,String Flag,Callback<List<CustomerModel>> callback){

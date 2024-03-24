@@ -14,10 +14,22 @@ package com.softcore.vtpsales.AppUtils;
 //
 //}
 
+import com.softcore.vtpsales.Model.SL_LoginRequest;
+
 public class AppConstant {
     public static final String BASE_URL = "http://103.96.42.106:7279/API/SAP/";
     public static final String LOGIN_URL = BASE_URL + "emp_login";
+
+    public static final String SLBase_Url = "https://103.96.42.106:50000/b1s/v1/";
+
+
+
     public enum status {SUCCESS,ERROR};
+
+    public static String CompanyDB = "TEST_ENV_20231124";
+    public static String Password = "Soft@123";
+    public static String UserName = "manager";
+
 
 
 
