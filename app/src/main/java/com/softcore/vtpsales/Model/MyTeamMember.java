@@ -12,6 +12,28 @@ public class MyTeamMember {
     @SerializedName("Role")
     private String role;
 
+    @SerializedName("email")
+    private String email;
+
+    @SerializedName("mobile")
+    private String mobile;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
     public String getExtEmpNo() {
         return extEmpNo;
     }

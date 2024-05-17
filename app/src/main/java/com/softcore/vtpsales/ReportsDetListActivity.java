@@ -2,22 +2,15 @@ package com.softcore.vtpsales;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
@@ -26,13 +19,11 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
 import com.softcore.vtpsales.Adaptors.AdapterCustWiseDetReport;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusReportWiseDetModel;
-import com.softcore.vtpsales.Model.MonthModel;
 import com.softcore.vtpsales.ViewModel.CusWiseDetReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityReportsDetListBinding;
 
@@ -41,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,10 +56,11 @@ public class ReportsDetListActivity extends AppCompatActivity {
     String TotalAmt;
     String TYPE;
     String CusName;
+    String SortBy;
 
     AdapterCustWiseDetReport adapter;
 
-
+    List<CusReportWiseDetModel> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,22 +89,27 @@ public class ReportsDetListActivity extends AppCompatActivity {
         binding.txtDates.setText(ViewFromDate+" to "+ViewToDate);
 
 //        binding.txtSlPName.setText(SlpName);
+        binding.txtTotalAmt.setText(TotalAmt);
 
-        binding.txtTotalAmt.setText("₹ "+TotalAmt);
+       // binding.txtTotalAmt.setText(String.format("%.2f", Double.parseDouble(TotalAmt)));
+
+
 
         binding.txtCustName.setText(CusName);
+        System.out.println("SplName From Reports det screen: "+SlpName);
 
         GetCusWiseReportList(PostFromDate,PostToDate,SlpName,Flag);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AdapterCustWiseDetReport();
         binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.setNestedScrollingEnabled(false);
 
         binding.btnSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<String> stringList = Arrays.asList("Bills", "Ledger Group", "Voucher Group","Stock Item","Stock Group","Stock Category","Cost Center");
-                showBottomSheet(stringList);
+             //   showBottomSheet(stringList);
 
             }
         });
@@ -132,8 +130,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-
-                    List<CusReportWiseDetModel> list = new ArrayList<>();
+                     list = new ArrayList<>();
                     for (CusReportWiseDetModel model : listCommanResorce.data) {
                          if (CusName.equalsIgnoreCase(model.getCustomerName())) {
                              list.add(model);
@@ -143,12 +140,17 @@ public class ReportsDetListActivity extends AppCompatActivity {
                              list.add(model);
                          }
                     }
-                    adapter.setData(list,getApplicationContext());
+                    Gson gson = new Gson();
+                    String json = gson.toJson(list);
+
+                    System.out.println("Json list barchart:"+json);
+
+                    UpdateList(list,"Gross");
 
 
 
                    // we Need to customise list properly like in Jan 23 and Amount
-                    CustomizeList(list);
+                    CustomizeList(list,"Gross");
                    // adapter.setData(listCommanResorce.data,getApplicationContext());
                 }
 
@@ -157,38 +159,306 @@ public class ReportsDetListActivity extends AppCompatActivity {
         });
 
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerAmt.setAdapter(adapter);
 
+        binding.spinnerAmt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                String selectedItem = parentView.getItemAtPosition(position).toString();
+
+                if (selectedItem.equals("Gross")) {
+                    SortBy = "Gross sales Amount";
+
+                    if(list != null){
+                        UpdateList(list,"Gross");
+                        CustomizeList(list,"Gross");
+                    }
+                }
+                else if (selectedItem.equals("Net")) {
+                    SortBy = "Net sales Amount";
+                    if(list != null){
+                        UpdateList(list,"Net");
+                        CustomizeList(list,"Net");
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing if nothing is selected
+            }
+        });
+
+
+        int arrayResource = -1;
+
+        if (TYPE.equals("Sales")) {
+            arrayResource = R.array.SalesOptions;
+        } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
+            arrayResource = R.array.PurchaseOptions;
+        } else if (TYPE.equals("Customer Outstanding")) {
+            arrayResource = R.array.CustomerOutstanding;
+        }
+
+        if (arrayResource != -1) {
+            ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(this,
+                    arrayResource, android.R.layout.simple_spinner_item);
+
+            sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.spinnerGroupby.setAdapter(sortAdapter);
+        }
+
+
+        binding.spinnerGroupby.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+                if(list != null){
+                    String selectedItem = parentView.getItemAtPosition(position).toString();
+
+                    if (selectedItem.equals("Gross")) {
+                        SortBy = "Gross sales Amount";
+
+                        if(list != null){
+                            UpdateList(list,"Gross");
+                            CustomizeList(list,"Gross");
+                        }
+                    }
+                    else if (selectedItem.equals("Net")) {
+                        SortBy = "Net sales Amount";
+                        if(list != null){
+                            UpdateList(list,"Net");
+                            CustomizeList(list,"Net");
+                        }
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing if nothing is selected
+            }
+        });
     }
 
-    private void CustomizeList(List<CusReportWiseDetModel> list) {
-        Map<String, Double> monthYearToBalanceMap = new HashMap<>();
+//    private void UpdateListContent(String selectedItem) {
+//
+//
+//        adapter.setData(list,getApplicationContext(),TYPE,selectedItem);
+//
+//        if(selectedItem.contains("Gross")){
+//            UpdateList(list,"Gross");
+//        }else {
+//            UpdateList(list,"Net");
+//        }
+//
+//    }
+
+    private void UpdateList(List<CusReportWiseDetModel> list, String value) {
+
+        String sortBy = "";
+        if(value.equals("Gross")) {
+            sortBy = value;
+        } else if(value.equals("Net")){
+            sortBy = value;
+        }
+
+
+        adapter.setData(list,getApplicationContext(),TYPE,sortBy);
+
+        double Tamt = 0;
+        double Crn = 0;
+        double CDAmt = 0;
+        for(int i = 0;i < list.size();i++){
+
+            if(value.equals("Gross")){
+
+                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+                    if(list.get(i).getGrossSalesAmt() != null){
+                        Tamt += Double.parseDouble(list.get(i).getGrossSalesAmt());
+                    }
+                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if(list.get(i).getGrossPurchaseAmt() != null){
+                        Tamt += Double.parseDouble(list.get(i).getGrossPurchaseAmt());
+                    }
+                }
+
+                if (TYPE.equals("Sales")) {
+                    if (list.get(i).getGrossAmtINV_CRN() != null) {
+                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_CRN());
+                    }
+                }
+//                else if (TYPE.equals("Customer Outstanding")) {
+//                    if (list.get(i).getGrossAmtINV_ARCRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_ARCRN());
+//                    }
+//                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if (list.get(i).getGrossAmtApCrn() != null) {
+                        Crn += Double.parseDouble(list.get(i).getGrossAmtApCrn());
+                    }
+                }
+
+
+                if (TYPE.equals("Sales")) {
+                    if (list.get(i).getGrossCrditAmt() != null) {
+                        CDAmt += Double.parseDouble(list.get(i).getGrossCrditAmt());
+                    }
+
+                }
+//                else if (TYPE.equals("Customer Outstanding")) {
+//                    if (list.get(i).getGrossCrdAmt() != null) {
+//                        CDAmt += Double.parseDouble(list.get(i).getGrossCrdAmt());
+//                    }
+//                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if (list.get(i).getGrossDebitAmt() != null) {
+                        CDAmt += Double.parseDouble(list.get(i).getGrossDebitAmt());
+                    }
+                }
+
+            }
+            else if(value.equals("Net")){
+
+                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+                    if(list.get(i).getNetSalesAmt() != null){
+                        Tamt += Double.parseDouble(list.get(i).getNetSalesAmt());
+                    }
+                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if(list.get(i).getNetPurchaseAmt() != null){
+                        Tamt += Double.parseDouble(list.get(i).getNetPurchaseAmt());
+                    }
+                }
+
+                if(TYPE.equals("Sales")){
+                    if(list.get(i).getNetAmtINV_CRN() != null) {
+                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_CRN());
+                    }
+                }
+//                else if(TYPE.equals("Customer Outstanding")) {
+//                    if (list.get(i).getNetAmtINV_ARCRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_ARCRN());
+//                    }
+//                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if(list.get(i).getNetAmtApCrn() != null){
+                        Crn += Double.parseDouble(list.get(i).getNetAmtApCrn());
+                    }
+                }
+
+
+
+
+
+
+                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+                    if(list.get(i).getNetCrdAmt() != null){
+                        CDAmt += Double.parseDouble(list.get(i).getNetCrdAmt());
+                    }
+                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    if(list.get(i).getNetDebitAmt() != null){
+                        CDAmt += Double.parseDouble(list.get(i).getNetDebitAmt());
+                        System.out.println("Type and Debit :" + TYPE+" "+String.valueOf(CDAmt));
+                    }
+                }
+
+            }
+
+            DecimalFormat df = new DecimalFormat("0.00");
+            String formattedTamt = df.format(Tamt);
+            String formattedCrn = df.format(Crn);
+            String formattedCDAmt = df.format(CDAmt);
+
+            binding.txtTotalAmt.setText("₹ "+formattedCrn);
+            binding.CrnAmt.setText("₹ "+formattedTamt);
+            binding.CDAmt.setText("₹ "+formattedCDAmt);
+
+            binding.CrnName.setText(TYPE);
+            binding.CDName.setText("Return / Credit Note");
+
+
+        }
+    }
+
+    private void CustomizeList(List<CusReportWiseDetModel> list, String value) {
+        Map<String, Double> monthYearToTotalBalanceMap = new HashMap<>();
+        Map<String, List<Double>> monthYearToBalanceListMap = new HashMap<>();
 
         // Iterate over the list and sum up the BalanceDue values for each month-year combination
         for (CusReportWiseDetModel model : list) {
-            String postingDate = model.getPostingDate();
-            double balanceDue = Double.parseDouble(model.getBalanceDue());
 
-            // Extract the month and year from the postingDate
-            String[] dateParts = postingDate.split("-");
-            if (dateParts.length >= 2) {
-                String monthYear = dateParts[0] + "-" + dateParts[1];
+            double balanceDue = 0;
+            if (value.equals("Gross")) {
+                if (TYPE.equals("Sales") || TYPE.equals("Customer Outstanding")) {
+                    if (model.getGrossAmtINV_CRN() != null) {
+                        balanceDue = Double.parseDouble(model.getGrossAmtINV_CRN());
+                    }
+                } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
+                    if (model.getGrossAmtApCrn() != null) {
+                        balanceDue = Double.parseDouble(model.getGrossAmtApCrn());
+                    }
+                }
+            } else if (value.equals("Net")) {
+                if (TYPE.equals("Sales") || TYPE.equals("Customer Outstanding")) {
+                    if (model.getNetAmtINV_CRN() != null) {
+                        balanceDue = Double.parseDouble(model.getNetAmtINV_CRN());
+                    }
+                } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
+                    if (model.getNetAmtApCrn() != null) {
+                        balanceDue = Double.parseDouble(model.getNetAmtApCrn());
+                    }
+                }
+            }
 
-                String formetedDate =  AppUtil.convertMonthYearFormat(monthYear);
+            if (balanceDue != 0) {
+                String postingDate = model.getPostingDate();
 
-                monthYearToBalanceMap.put(formetedDate, monthYearToBalanceMap.getOrDefault(monthYear, 0.0) + balanceDue);
+                // Extract the month and year from the postingDate
+                String[] dateParts = postingDate.split("-");
+                if (dateParts.length >= 2) {
+                    String monthYear = dateParts[0] + "-" + dateParts[1];
+
+                    String formatedDate = AppUtil.convertMonthYearFormat(monthYear);
+
+                    // Sum the BalanceDue values for the same month-year
+                    double currentBalance = monthYearToTotalBalanceMap.getOrDefault(formatedDate, 0.0);
+                    monthYearToTotalBalanceMap.put(formatedDate, currentBalance + balanceDue);
+
+                    // Add the BalanceDue value to the list for the same month-year
+                    List<Double> balanceList = monthYearToBalanceListMap.getOrDefault(formatedDate, new ArrayList<>());
+                    balanceList.add(balanceDue);
+                    monthYearToBalanceListMap.put(formatedDate, balanceList);
+                }
             }
         }
 
-        JSONArray jsonArray =  convertMapToJsonArray(monthYearToBalanceMap);
-        System.out.println("month And Amount result: "+jsonArray.toString());
+        // Convert the total balance map to a JSON array
+        JSONArray jsonArray = convertMapToJsonArray(monthYearToTotalBalanceMap);
+        System.out.println("month And Amount result: " + jsonArray.toString());
 
-
+        // Sort the JSON array
         JsonListSort(jsonArray.toString());
 
-//        ShowBar(monList);
+        // Print individual amounts for each month-year
+        for (Map.Entry<String, List<Double>> entry : monthYearToBalanceListMap.entrySet()) {
+            System.out.println("Month-Year: " + entry.getKey() + ", Balance Due: " + entry.getValue());
+        }
     }
 
+
     private void JsonListSort(String jsonString) {
+
+        System.out.println("JsonListSort"+jsonString);
 
         // Parse the JSON array into a list of objects
         List<JSONObject> dataList = new ArrayList<>();
@@ -223,11 +493,8 @@ public class ReportsDetListActivity extends AppCompatActivity {
             }
         });
 
-// Convert the sorted list back to a JSON array
-        JSONArray sortedJsonArray = new JSONArray(dataList);
 
-// Create a horizontal bar chart
-        //HorizontalBarChart barChart = findViewById(R.id.barchart);
+        JSONArray sortedJsonArray = new JSONArray(dataList);
 
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
@@ -246,11 +513,13 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
         BarDataSet dataSet = new BarDataSet(entries, "Balance Due");
         BarData barData = new BarData(dataSet);
+        binding.idBarChart.animateY(1000);
         binding.idBarChart.setData(barData);
         dataSet.setColor(Color.parseColor("#013F8F")); // Dark blue color
         XAxis xAxis = binding.idBarChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
         xAxis.setGranularity(1f);
+
         dataSet.setValueTextColor(Color.parseColor("#013F8F"));
 
         Legend legend = binding.idBarChart.getLegend();
@@ -275,68 +544,15 @@ public class ReportsDetListActivity extends AppCompatActivity {
         binding.idBarChart.getAxisLeft().setDrawGridLines(false);
         rightYAxis.setDrawGridLines(false);
         binding.idBarChart.getDescription().setEnabled(false);
-        binding.idBarChart.setTouchEnabled(true);
-        binding.idBarChart.setDragEnabled(true);
-        binding.idBarChart.setScaleEnabled(true);
-
+        binding.idBarChart.setTouchEnabled(false);
+        binding.idBarChart.setDragEnabled(false);
+        binding.idBarChart.setScaleEnabled(false);
+        binding.idBarChart.setPinchZoom(false); // Disable pinch zoom
         binding.idBarChart.invalidate(); // refresh
 
     }
 
-//    private void ShowBar(List<MonthModel> monList) {
-//        List<BarEntry> entries = new ArrayList<>();
-//        for (int i = 0; i < monList.size(); i++) {
-//            MonthModel monthModel = monList.get(i);
-//
-//            if (monthModel.getJanAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getJanAmt())));
-//            }
-//            if (monthModel.getFebAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getFebAmt())));
-//            }
-//            if (monthModel.getMarAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getMarAmt())));
-//            }
-//            if (monthModel.getAprAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getAprAmt())));
-//            }
-//            if (monthModel.getMayAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getMayAmt())));
-//            }
-//            if (monthModel.getJunAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getJunAmt())));
-//            }
-//            if (monthModel.getJulAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getJulAmt())));
-//            }
-//            if (monthModel.getAugAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getAugAmt())));
-//            }
-//            if (monthModel.getSepAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getSepAmt())));
-//            }
-//            if (monthModel.getOctAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getOctAmt())));
-//            }
-//            if (monthModel.getNovAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getNovAmt())));
-//            }
-//            if (monthModel.getDecAmt() != null) {
-//                entries.add(new BarEntry(i, Float.parseFloat(monthModel.getDecAmt())));
-//            }
-//        }
-//
-//        BarDataSet dataSet = new BarDataSet(entries, "Months");
-//        BarData barData = new BarData(dataSet);
-//        binding.idBarChart.setData(barData);
-//
-//        // Customize the appearance of the chart
-//        binding.idBarChart.getDescription().setEnabled(false);
-//        binding.idBarChart.getLegend().setEnabled(false);
-//        binding.idBarChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-//        binding.idBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(getMonthLabels()));
-//        binding.idBarChart.invalidate(); // Refresh the chart
-//    }
+
 
     private ArrayList<String> getMonthLabels() {
         ArrayList<String> labels = new ArrayList<>();
@@ -371,70 +587,53 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
         return jsonArray;
     }
-    private void showBottomSheet(List<String> stringList) {
-
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this); // Apply custom style
-
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
-        bottomSheetDialog.setContentView(bottomSheetView);
-
-        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); // Optional: Add divider
-
-        // Create a custom adapter for the RecyclerView
-        RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
-            @NonNull
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottomsheet_design, parent, false);
-                return new RecyclerView.ViewHolder(itemView) {};
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-                TextView textView = holder.itemView.findViewById(R.id.names);
-                textView.setText(stringList.get(position));
-                textView.setTextColor(Color.WHITE); // Set text color to white
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String selectedString = stringList.get(position);
-                        binding.txtselect.setText(selectedString);
-                        bottomSheetDialog.dismiss(); // Dismiss the bottom
-                    }
-                });
-
-            }
-
-            @Override
-            public int getItemCount() {
-                return stringList.size();
-            }
-        };
-
-        recyclerView.setAdapter(adapter);
-
-        bottomSheetDialog.show();
-    }
-
 //    private void showBottomSheet(List<String> stringList) {
-//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+//
+//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this); // Apply custom style
+//
 //        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
 //        bottomSheetDialog.setContentView(bottomSheetView);
 //
-//        ListView listView = bottomSheetView.findViewById(R.id.list_view);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, stringList);
-//        listView.setAdapter(adapter);
+//        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.recycler_view);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); // Optional: Add divider
 //
+//        // Create a custom adapter for the RecyclerView
+//        RecyclerView.Adapter adapter = new RecyclerView.Adapter() {
+//            @NonNull
+//            @Override
+//            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//                View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottomsheet_design, parent, false);
+//                return new RecyclerView.ViewHolder(itemView) {};
+//            }
 //
-//        listView.setOnItemClickListener((parent, view, position, id) -> {
-//            String selectedString = stringList.get(position);
-//            binding.txtselect.setText(selectedString);
-//            bottomSheetDialog.dismiss(); // Dismiss the bottom sheet after selecting an item
-//        });
+//            @Override
+//            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+//                TextView textView = holder.itemView.findViewById(R.id.names);
+//                textView.setText(stringList.get(position));
+//                textView.setTextColor(Color.WHITE); // Set text color to white
+//
+//                holder.itemView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        String selectedString = stringList.get(position);
+//                        binding.spinnerGroupby.setText(selectedString);
+//                        bottomSheetDialog.dismiss(); // Dismiss the bottom
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public int getItemCount() {
+//                return stringList.size();
+//            }
+//        };
+//
+//        recyclerView.setAdapter(adapter);
+//
 //        bottomSheetDialog.show();
 //    }
+
 
 }

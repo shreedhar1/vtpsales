@@ -6,13 +6,14 @@
     <color name="light_blue_900">#013F8F</color>
     <color name="light_blue_A200">#5A9DF4</color>
     <color name="light_blue_A400">#417BC6</color>
+    <color name="blue_10trans">#200363E1</color>
     <color name="black_overlay">#66000000</color>
     <color name="text_color">#FDFDFD</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#fff</color>
     <color name="color_green">#008E39</color>
     <color name="yellow">#FDD835</color>
-    <color name="color_red">#8E0008</color>
+    <color name="color_red">#FF000E</color>
     <color name="light_grey">#9C9C9C</color>
     <color name="medium_grey">#6C6C6C</color>
-
+    <color name="orange">#FB8C00</color>
 </resources>

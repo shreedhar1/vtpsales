@@ -39,7 +39,7 @@
                     android:theme="@style/DrpStyle2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Select Company"
+                    android:hint="Select Customer"
                     >
 
                     <AutoCompleteTextView
@@ -53,12 +53,68 @@
 
 
         </LinearLayout>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/txtCusAddress"
+            app:layout_constraintTop_toBottomOf="@id/layout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:fontFamily="@font/poppins"
+            android:text=""/>
+        <LinearLayout
+            android:id="@+id/lay2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:padding="@dimen/_4sdp"
+            android:weightSum="10"
+           >
 
+            <androidx.cardview.widget.CardView
+                android:layout_marginRight="@dimen/_3sdp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardBackgroundColor="#D8E1EE"
+                >
+                <FrameLayout
+                    android:id="@+id/camera_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                app:cardCornerRadius="@dimen/_10sdp"
+                >
+                <EditText
+                    android:id="@+id/ed_Remark"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:textSize="14sp"
+
+                    android:textColor="@color/black"
+                    android:gravity="top" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/layout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layout"
+            app:layout_constraintTop_toBottomOf="@id/lay2"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
@@ -83,6 +139,7 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
+            android:lines="2"
             android:fontFamily="@font/poppins"
             android:text=""/>
 

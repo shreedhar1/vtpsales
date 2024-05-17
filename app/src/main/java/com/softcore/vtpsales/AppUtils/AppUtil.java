@@ -3,9 +3,15 @@ package com.softcore.vtpsales.AppUtils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
+
+import com.softcore.vtpsales.R;
+import com.softcore.vtpsales.databinding.ActivityMain2Binding;
+import com.softcore.vtpsales.databinding.FragmentDashboardBinding;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -136,4 +142,32 @@ public class AppUtil {
         }
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
+    }
+
+
+    public static void setImage(ActivityMain2Binding binding, Context applicationContext) {
+        String DbName = AppUtil.getStringData(applicationContext,"DatabaseName","");
+
+        switch (DbName) {
+            case "ARRHUM_LIVE":
+                binding.laybar.ImgLogo.setImageResource(R.drawable.img_logo_arrhum);
+                break;
+            case "ENVIIRO_LIVE":
+                binding.laybar.ImgLogo.setImageResource(R.drawable.img_enviiro);
+                break;
+            case "VTP_LIVE":
+                binding.laybar.ImgLogo.setImageResource(R.drawable.logo);
+                break;
+            case "TEST_ENV_20231124":
+                binding.laybar.ImgLogo.setImageResource(R.drawable.applogowhite);
+                break;
+        }
+    }
 }

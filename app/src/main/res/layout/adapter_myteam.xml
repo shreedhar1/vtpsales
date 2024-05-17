@@ -1,43 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
 
-    android:layout_height="wrap_content">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="@dimen/_5sdp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginEnd="@dimen/_10sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    app:cardCornerRadius="@dimen/_5sdp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:paddingTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_7sdp"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/txt_EmpName"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Alon Mask"
             android:layout_weight="0.5"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/medium_grey"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="@dimen/_14ssp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:layout_marginRight="@dimen/_3sdp"/>
-        <TextView
-            android:id="@+id/txt_EmpRole"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="Project Manager"
-            android:textColor="@color/light_grey"
-            android:layout_weight="0.5"
-            android:fontFamily="@font/poppins"
-            android:textSize="@dimen/_12ssp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_3sdp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:gravity="center"
+            >
+            <ImageView
+                android:layout_width="@dimen/_16ssp"
+                android:layout_height="@dimen/_16ssp"
+                android:src="@drawable/img_job_role"
+                android:layout_marginLeft="@dimen/_10sdp"
+                />
+            <TextView
+                android:id="@+id/txt_EmpRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Project Manager"
+                android:textColor="@color/medium_grey"
+                android:fontFamily="@font/poppins"
+
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="@dimen/_16ssp"
+                android:layout_height="@dimen/_16ssp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:src="@drawable/img_mail" />
+
+            <TextView
+                android:id="@+id/txt_EmpEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:fontFamily="@font/poppins"
+                android:text="Test@gmail.com"
+                android:textColor="@color/medium_grey"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:gravity="center"
+            >
+            <ImageView
+                android:layout_width="@dimen/_16ssp"
+                android:layout_height="@dimen/_16ssp"
+                android:src="@drawable/img_phone"
+                android:layout_marginLeft="@dimen/_10sdp"
+                />
+            <TextView
+                android:id="@+id/txt_EmpMob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9876543210"
+                android:textColor="@color/medium_grey"
+                android:fontFamily="@font/poppins"
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                />
+        </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/card_ViewCheckInOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/border"
+                android:layout_margin="@dimen/_4sdp"
+                android:layout_gravity="center"
+                >
+
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:padding="@dimen/_5sdp"
+                    android:text="View Customer Visits"
+                    android:textColor="@color/light_blue_A400"
+                    android:textSize="@dimen/_10ssp" />
+            </LinearLayout>
+
 
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey"
-        android:layout_marginTop="@dimen/_5sdp"/>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -5,6 +5,7 @@ import java.util.List;
 public class LeadGenModel {
     private String CardCode;
     private String CardName;
+    private String Series;
     private String CardType;
     private int GroupCode;
     private String Address;
@@ -24,6 +25,14 @@ public class LeadGenModel {
     private String U_TransType;
     private List<BPAddress> BPAddresses;
     private List<ContactEmployee> ContactEmployees;
+
+    public String getSeries() {
+        return Series;
+    }
+
+    public void setSeries(String series) {
+        Series = series;
+    }
 
     public String getCardCode() {
         return CardCode;

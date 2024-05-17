@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -46,6 +47,7 @@ import android.Manifest;
 
 public class AttendenceActivity extends AppCompatActivity {
     String OPERATION;
+    String TYPE;
     ActivityAttendenceBinding binding;
     ClockRequest request;
     String remark;
@@ -55,11 +57,6 @@ public class AttendenceActivity extends AppCompatActivity {
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     FusedLocationProviderClient fusedLocationClient;
 
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-
-
-
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
     private static final int CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     private Handler handler;
@@ -72,7 +69,7 @@ public class AttendenceActivity extends AppCompatActivity {
 
 
         OPERATION = getIntent().getStringExtra("operation");
-
+        TYPE=getIntent().getStringExtra("type");
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -165,16 +162,21 @@ public class AttendenceActivity extends AppCompatActivity {
         String ClockOutTime = "0000";
         String ClockInTime = "0000";
         String ClockInRemark = "";
-
         String ClockOutRemark = "";
+        String LocationIn = "";
+        String LocationOut = "";
 
         if (OPERATION.equals("in")){
-             ClockOutTime = "0000";
+            ClockOutTime = "0000";
             ClockInTime = currentTime12;
+            LocationIn = CurrentLocation;
+            LocationOut = "";
             ClockInRemark = binding.edRemark.getText().toString();
         }else if(OPERATION.equals("out")){
             ClockInTime = "0000";
             ClockOutTime = currentTime12;
+            LocationIn = "";
+            LocationOut = CurrentLocation;
             ClockOutRemark = binding.edRemark.getText().toString();
         }
 
@@ -188,7 +190,9 @@ public class AttendenceActivity extends AppCompatActivity {
                 ClockInRemark,
                 ClockOutTime,
                 ClockOutRemark,
-                CurrentLocation
+                LocationIn,
+                LocationOut
+
         );
 
         Gson gson = new Gson();
@@ -207,6 +211,10 @@ public class AttendenceActivity extends AppCompatActivity {
 
                     Toast.makeText(AttendenceActivity.this, binding.textButton.getText().toString()+" Successfully", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: "+response.code());
+
+                    Intent intent = new Intent(AttendenceActivity.this, MainActivity2.class);
+                    startActivity(intent);
+                    finish();
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();

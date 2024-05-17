@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.AttendenceHomeActivity;
 import com.softcore.vtpsales.BirthdayAndAnniActivity;
 import com.softcore.vtpsales.LeadGenerationActivity;
+import com.softcore.vtpsales.MainActivity2;
 import com.softcore.vtpsales.MyTeamActivity;
 import com.softcore.vtpsales.Qr_Screen;
 import com.softcore.vtpsales.ReportsActivity;
@@ -45,31 +48,38 @@ public class AdapterDashboard extends RecyclerView.Adapter<AdapterDashboard.Hold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=null;
-                switch (position){
-                    case 0:
-                        intent=new Intent(holder.itemView.getContext(), AttendenceHomeActivity.class);
-                        break;
-                    case 1:
-                        intent=new Intent(holder.itemView.getContext(), BirthdayAndAnniActivity.class);
-                        break;
-                     case 2:
-                        intent=new Intent(holder.itemView.getContext(), Qr_Screen.class);
-                        break;
-                    case 3:
-                        intent=new Intent(holder.itemView.getContext(), LeadGenerationActivity.class);
-                        break;
-                    case 4:
-                          intent=new Intent(holder.itemView.getContext(), ReportsActivity.class);
-                        break;
-                    case 5:
-                        intent=new Intent(holder.itemView.getContext(), MyTeamActivity.class);
-                        break;
+                if((AppUtil.isNetworkAvailable(context.getApplicationContext()))){
+                    Intent intent=null;
+                    switch (position){
+                        case 0:
+                            intent=new Intent(holder.itemView.getContext(), AttendenceHomeActivity.class);
+                            break;
+                        case 1:
+                            intent=new Intent(holder.itemView.getContext(), BirthdayAndAnniActivity.class);
+                            break;
+                        case 2:
+                            intent=new Intent(holder.itemView.getContext(), Qr_Screen.class);
+                            break;
+                        case 3:
 
+                            intent=new Intent(holder.itemView.getContext(), LeadGenerationActivity.class);
+                            break;
+                        case 4:
+                            intent=new Intent(holder.itemView.getContext(), ReportsActivity.class);
+                            break;
+                        case 5:
+                            intent=new Intent(holder.itemView.getContext(), MyTeamActivity.class);
+                            break;
+
+                    }
+                    if (intent!=null){
+
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                }else{
+                    Toast.makeText(context, "No Internet Available", Toast.LENGTH_SHORT).show();
                 }
-                if (intent!=null){
-                    holder.itemView.getContext().startActivity(intent);
-                }
+
             }
         });
 

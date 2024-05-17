@@ -2,4 +2,8 @@
 <resources>
     <string name="splash_footer"><![CDATA[Developed by <b>Softcore Solutions Pvt. Ltd.</b>]]></string>
     <string name="text_splash_welcome">Welcome to\nSoftcore Solutions</string>
+    <string-array name="options">
+        <item>Net</item>
+        <item>Gross</item>
+    </string-array>
 </resources>

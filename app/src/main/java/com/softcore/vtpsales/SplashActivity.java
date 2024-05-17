@@ -16,6 +16,7 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 
+import com.readystatesoftware.chuck.ChuckInterceptor;
 import com.softcore.vtpsales.databinding.ActivitySplashBinding;
 
 /**
@@ -24,13 +25,14 @@ import com.softcore.vtpsales.databinding.ActivitySplashBinding;
  */
 public class SplashActivity extends AppCompatActivity {
  private ActivitySplashBinding binding;
-
+    public static ChuckInterceptor mChuckInterceptor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        getSupportActionBar().hide();
+        mChuckInterceptor = new ChuckInterceptor(SplashActivity.this);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

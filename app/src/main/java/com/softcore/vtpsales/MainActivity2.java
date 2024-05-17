@@ -15,6 +15,8 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.databinding.ActivityMain2Binding;
 
 public class MainActivity2 extends AppCompatActivity {
@@ -36,6 +38,10 @@ private ActivityMain2Binding binding;
             }
         });
 
+
+        AppUtil.setImage(binding,getApplicationContext());
+
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main2);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
@@ -44,16 +50,20 @@ private ActivityMain2Binding binding;
             public void onDestinationChanged(NavController controller, NavDestination destination, Bundle arguments) {
                 if (destination.getId() == R.id.navigation_dashboard) {
                     binding.laybar.appbarTextView.setText("Dashboard");
-                    binding.laybar.backId.setVisibility(View.INVISIBLE);
+                    binding.laybar.backId.setVisibility(View.GONE);
+                    binding.laybar.ImgLogo.setVisibility(View.VISIBLE);
                 } else if (destination.getId() == R.id.navigation_attendance) {
                     binding.laybar.appbarTextView.setText("Attendance");
                     binding.laybar.backId.setVisibility(View.VISIBLE);
+                    binding.laybar.ImgLogo.setVisibility(View.GONE);
                 } else if (destination.getId() == R.id.navigation_profile) {
                     binding.laybar.appbarTextView.setText("Profile");
                     binding.laybar.backId.setVisibility(View.VISIBLE);
+                    binding.laybar.ImgLogo.setVisibility(View.GONE);
                 } else if (destination.getId() == R.id.navigation_logout) {
                     binding.laybar.appbarTextView.setText("");
                     binding.laybar.backId.setVisibility(View.GONE);
+                    binding.laybar.ImgLogo.setVisibility(View.GONE);
                      }
 
                 else {
@@ -62,14 +72,14 @@ private ActivityMain2Binding binding;
 
             }
         });
-
-
+        
     }
+
+
     @Override
     public void onBackPressed() {
         if (backPressedTime + TIME_INTERVAL > System.currentTimeMillis()) {
             super.onBackPressed();
-
             return;
         } else {
             Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
@@ -77,4 +87,7 @@ private ActivityMain2Binding binding;
 
         backPressedTime = System.currentTimeMillis();
     }
+
+
+
 }

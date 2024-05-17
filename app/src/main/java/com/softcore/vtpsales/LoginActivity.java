@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.Database;
+import com.softcore.vtpsales.Model.SPModel;
 import com.softcore.vtpsales.Model.UserModel;
 import com.softcore.vtpsales.ViewModel.DatabaseListViewModel;
 import com.softcore.vtpsales.ViewModel.LoginViewModel;
+import com.softcore.vtpsales.ViewModel.SalesPersonsViewModel;
 import com.softcore.vtpsales.databinding.ActivityLoginBinding;
 
 import java.util.ArrayList;
@@ -32,8 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int TIME_INTERVAL = 2000; // Time between two back presses in milliseconds
     private long backPressedTime;
     String rememberme = "N";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +64,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
         }
-
         if(rememberme.equals("Y")){
             binding.rememberCheckBox.setChecked(true);
         }
+
+        setImage();
+
+
         GetDatabseList(rootView);
 
 
@@ -120,6 +123,24 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+    private void setImage() {
+        switch (selectedDatabaseName) {
+            case "ARRHUM_LIVE":
+                binding.imglogo.setImageResource(R.drawable.img_logo_arrhum);
+                break;
+            case "ENVIIRO_LIVE":
+                binding.imglogo.setImageResource(R.drawable.img_enviiro);
+                break;
+            case "VTP_LIVE":
+                binding.imglogo.setImageResource(R.drawable.logo);
+                break;
+            case "TEST_ENV_20231124":
+                binding.imglogo.setImageResource(R.drawable.applogowhite);
+                break;
+        }
+    }
+
     private void GetLoginDetails(String DbName,String username, String password) {
         System.out.println(DbName+" "+username+" "+password);
     // list_branch=new ArrayList<>();
@@ -133,14 +154,18 @@ public class LoginActivity extends AppCompatActivity {
                     String apiPassword = listCommanResorce.data.get(0).getUser_Password();
                     if (apiPassword.equals(password)) {
                         AppUtil.saveStringData(getApplicationContext(),"Rem",rememberme);
-
+                        String EmpId = listCommanResorce.data.get(0).getEmpID();
                         AppUtil.saveStringData(getApplicationContext(),"EmpCode",listCommanResorce.data.get(0).getEMP_Code());
                         AppUtil.saveStringData(getApplicationContext(),"EmpName",listCommanResorce.data.get(0).getFirstName()+" " +listCommanResorce.data.get(0).getLastName());
                         AppUtil.saveStringData(getApplicationContext(),"EmpEmail",listCommanResorce.data.get(0).getEmail());
                         AppUtil.saveStringData(getApplicationContext(),"EmpMob",listCommanResorce.data.get(0).getMobile());
                         AppUtil.saveStringData(getApplicationContext(),"EmpPass",listCommanResorce.data.get(0).getUser_Password());
+                        AppUtil.saveStringData(getApplicationContext(),"EmpID",EmpId);
 
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+                        getSplPersons(DbName,EmpId);
+
                         // Other actions after successful login
                         AppUtil.hideProgressDialog();
                         startActivity(new Intent(LoginActivity.this,MainActivity2.class));
@@ -162,8 +187,79 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+    private void getSplPersons(String DbName,String EmpId) {
+        System.out.println(DbName+" "+EmpId);
+        // list_branch=new ArrayList<>();
+        System.out.println("here");
 
-     void GetDatabseList(View rootView) {
+
+
+        SalesPersonsViewModel viewModel= new ViewModelProvider(this).get(SalesPersonsViewModel.class);
+        viewModel.getSalesPersonInfo(DbName,EmpId).observe(this, new Observer<CommanResorce<List<SPModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<SPModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+
+                    String AllSalesPerson = "";
+
+                    for(int i = 0;i<listCommanResorce.data.size();i++){
+
+                        if(AllSalesPerson.equals("")){
+                            AllSalesPerson = listCommanResorce.data.get(i).getSalesPrson();
+                        }else {
+                            AllSalesPerson = AllSalesPerson.trim()+","+listCommanResorce.data.get(i).getSalesPrson();
+                        }
+                    }
+
+                    if(AllSalesPerson == null){
+                        AppUtil.saveStringData(getApplicationContext(),"AllSalesPerson",EmpId);
+                    }else {
+                        AppUtil.saveStringData(getApplicationContext(),"AllSalesPerson",AllSalesPerson);
+                    }
+                    String SlpStored = AppUtil.getStringData(getApplicationContext(),"AllSalesPerson","");
+                    System.out.println("AllSalesPerson"+SlpStored);
+//                    String apiPassword = listCommanResorce.data.get(0).getUser_Password();
+//                    if (apiPassword.equals(password)) {
+//                        AppUtil.saveStringData(getApplicationContext(),"Rem",rememberme);
+//
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpCode",listCommanResorce.data.get(0).getEMP_Code());
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpName",listCommanResorce.data.get(0).getFirstName()+" " +listCommanResorce.data.get(0).getLastName());
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpEmail",listCommanResorce.data.get(0).getEmail());
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpMob",listCommanResorce.data.get(0).getMobile());
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpPass",listCommanResorce.data.get(0).getUser_Password());
+//                        AppUtil.saveStringData(getApplicationContext(),"EmpID",listCommanResorce.data.get(0).getEmpID());
+//
+//                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+//
+//
+//
+//                        // Other actions after successful login
+//                        AppUtil.hideProgressDialog();
+//                        startActivity(new Intent(LoginActivity.this,MainActivity2.class));
+//
+//                    } else {
+//                        AppUtil.showTost(getApplicationContext(), "Password incorrect. Please try again.");
+//                        System.out.println("Password incorrect");
+//                        AppUtil.hideProgressDialog();
+//                    }
+                } else {
+                    AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
+                    System.out.println("User not found");
+                    AppUtil.hideProgressDialog();
+                }
+
+            }
+        });
+
+
+
+    }
+
+
+
+    void GetDatabseList(View rootView) {
 
         AppUtil.showProgressDialog(rootView,"Loading Database");
         DatabaseListViewModel dbListViewModel= new ViewModelProvider(this).get(DatabaseListViewModel.class);
@@ -193,7 +289,7 @@ public class LoginActivity extends AppCompatActivity {
                              selectedDatabaseName = databaseNames.get(position);
                             // Store or use the selected database name as needed
                             AppUtil.saveStringData(getApplicationContext(),"DatabaseName",selectedDatabaseName);
-
+                            setImage();
                         }
 
                         @Override

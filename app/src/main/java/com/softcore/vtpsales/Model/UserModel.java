@@ -7,6 +7,7 @@ public class UserModel {
     private String EMP_Code;
     private String mobile;
     private String email;
+    private String empID;
 
 
     // Getters and setters
@@ -57,5 +58,13 @@ public class UserModel {
 
     public void setEMP_Code(String EMP_Code) {
         this.EMP_Code = EMP_Code;
+    }
+
+    public String getEmpID() {
+        return empID;
+    }
+
+    public void setEmpID(String empID) {
+        this.empID = empID;
     }
 }

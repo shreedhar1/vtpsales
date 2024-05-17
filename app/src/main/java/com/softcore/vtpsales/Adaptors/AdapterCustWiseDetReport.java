@@ -10,12 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softcore.vtpsales.ArInvoiceView;
 import com.softcore.vtpsales.Model.CusReportWiseDetModel;
-import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.PdfViewerActivity;
 import com.softcore.vtpsales.R;
-import com.softcore.vtpsales.ReportsDetListActivity;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +23,8 @@ import java.util.List;
 public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWiseDetReport.UserViewHolder> {
     private List<CusReportWiseDetModel> modelList;
     Context context;
+    String TYPE;
+    String SortBy;
 
 
     public AdapterCustWiseDetReport() {
@@ -30,9 +32,11 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
 
     }
 
-    public void setData(List<CusReportWiseDetModel> modelList, Context context) {
+    public void setData(List<CusReportWiseDetModel> modelList, Context context, String TYPE, String sortBy) {
         this.modelList = modelList;
         this.context = context;
+        this.TYPE = TYPE;
+        this.SortBy = sortBy;
         System.out.println("modelList  Length"+modelList.size());
         notifyDataSetChanged();
     }
@@ -63,16 +67,87 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
          else {
              holder.TxtCusName.setText(model.getCustomerName());
          }
-        holder.TxtAmount.setText("₹ "+model.getBalanceDue());
+
+
+//        double Tamt = 0;
+//        switch (SortBy) {
+//            case "Net Amount INV+CRN":
+//                if(TYPE.equals("Sales")){
+//                    Tamt += Double.parseDouble(model.getNetAmtINV_CRN());
+//                }
+////                else if(TYPE.equals("Customer Outstanding")){
+////                    Tamt += Double.parseDouble(model.getNetAmtINV_ARCRN());
+////                }
+//
+//                break;
+//            case "Gross Amount INV+CRN":
+//                if(TYPE.equals("Sales")){
+//                    Tamt += Double.parseDouble(model.getGrossAmtINV_CRN());
+//                }
+////                else if(TYPE.equals("Customer Outstanding")){
+////                    Tamt += Double.parseDouble(model.getGrossAmtINV_ARCRN());
+////                }
+//                break;
+//            case "Net sales Amount":
+//                System.out.println("Net Sales Amount: "+model.getNetSalesAmt());
+//                Tamt += Double.parseDouble(model.getNetSalesAmt());
+//                break;
+//            case "Gross sales Amount":
+//
+//                Tamt += Double.parseDouble(model.getGrossSalesAmt());
+//                break;
+//            case "Net Credit Amount":
+//                Tamt += Double.parseDouble(model.getNetCrdAmt());
+//                break;
+//            case "Gross Credit Amount":
+//                if(TYPE.equals("Sales")){
+//                    Tamt += Double.parseDouble(model.getGrossCrditAmt());
+//                }
+////                else if(TYPE.equals("Customer Outstanding")){
+////                    Tamt += Double.parseDouble(model.getGrossCrdAmt());
+////                }
+//                break;
+//        }
+        double Tamt = 0;
+        switch (SortBy) {
+            case "Net":
+                if(TYPE.equals("Sales")){
+                    Tamt += Double.parseDouble(model.getNetAmtINV_CRN());
+                }
+//                else if(TYPE.equals("Customer Outstanding")){
+//                    Tamt += Double.parseDouble(model.getNetAmtINV_ARCRN());
+//                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    Tamt += Double.parseDouble(model.getNetAmtApCrn());
+                }
+
+                break;
+            case "Gross":
+                if(TYPE.equals("Sales")){
+                    Tamt += Double.parseDouble(model.getGrossAmtINV_CRN());
+                }
+//                else if(TYPE.equals("Customer Outstanding")){
+//                    Tamt += Double.parseDouble(model.getGrossAmtINV_ARCRN());
+//                }
+                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+                    Tamt += Double.parseDouble(model.getGrossAmtApCrn());
+                }
+                break;
+        }
+        DecimalFormat df = new DecimalFormat("0.00");
+        String formattedTamt = df.format(Tamt);
+
+        holder.TxtAmount.setText("₹ "+formattedTamt);
         holder.TxtDate.setText(model.getPostingDate());
-        if(model.getDocNo() != null){
+        if(model.getDocNo() != null && model.getDocEntry() != null){
             holder.TxtDocno.setText(model.getDocNo());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
+                @Override 
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(context, PdfViewerActivity.class);
+                    Intent intent = new Intent(context, ArInvoiceView.class);
                     intent.putExtra("DocNo", model.getDocNo());
+                    intent.putExtra("DocEntry", model.getDocEntry());
                     intent.putExtra("CusName", model.getCustomerName());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);

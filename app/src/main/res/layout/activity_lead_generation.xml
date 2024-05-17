@@ -30,12 +30,13 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilLeadCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="true"
-                    android:hint="Lead Code*">
+                    android:enabled="false"
+                    android:hint="Lead Code">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLeadCode"

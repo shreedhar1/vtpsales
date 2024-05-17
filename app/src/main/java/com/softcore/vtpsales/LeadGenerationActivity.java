@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,16 +27,20 @@ import android.widget.Toast;
 
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
+import com.softcore.vtpsales.Model.GeneralModel;
 import com.softcore.vtpsales.Model.LeadGenModel;
-import com.softcore.vtpsales.Model.SL_LoginRequest;
-import com.softcore.vtpsales.Model.SL_LoginResponse;
+import com.softcore.vtpsales.Model.LeadSeriesModel;
 import com.softcore.vtpsales.Model.SlpResponse;
-import com.softcore.vtpsales.Network.ApiClient;
-import com.softcore.vtpsales.Network.ApiSercvices;
-import com.softcore.vtpsales.Network.NetworkClient;
+
+
+import com.softcore.vtpsales.Network.ServiceLayerApi;
 import com.softcore.vtpsales.ViewModel.ClpViewModel;
+import com.softcore.vtpsales.ViewModel.CountryListViewModel;
+import com.softcore.vtpsales.ViewModel.LeadSeriesViewModel;
 import com.softcore.vtpsales.ViewModel.SEViewModel;
 
+
+import com.softcore.vtpsales.ViewModel.StateListViewModel;
 import com.softcore.vtpsales.databinding.ActivityLeadGenerationBinding;
 
 import java.text.ParseException;
@@ -44,10 +50,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LeadGenerationActivity extends AppCompatActivity {
 
@@ -63,6 +65,19 @@ public class LeadGenerationActivity extends AppCompatActivity {
     List<LeadGenModel.BPAddress> AddressList ;
 
     LeadGenModel.ContactEmployee ContactModel;
+
+    SlpResponse selSalesEmpModel;
+
+    List<GeneralModel> StateList;
+    GeneralModel selStateModel;
+    String selStateCode;
+
+    List<GeneralModel> CountryList;
+    GeneralModel selCountryModel;
+    String selCountryCode;
+
+    private int loginAttempts = 0;
+    private static final int MAX_LOGIN_ATTEMPTS = 1;
 
     //LeadGenModel.BPAddress
 
@@ -98,24 +113,30 @@ public class LeadGenerationActivity extends AppCompatActivity {
             }
         });
 
+
         String dbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
 
+        getLeadSeries(dbName);
         getCPList();
         getSEList();
-        FetchSession();
+
 
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                loginAttempts = 0;
+
                 validateInput();
+
+
             }
         });
 
     }
 
-    private void validateInput() {
-        FetchSession();
 
+    private void validateInput() {
         boolean isValid = true;
 
         if (TextUtils.isEmpty(binding.etLeadCode.getText())) {
@@ -183,6 +204,9 @@ public class LeadGenerationActivity extends AppCompatActivity {
 
         if (isValid) {
             PostData();
+
+        }else {
+            Toast.makeText(this, "Fill All Mandatory Fields", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -209,9 +233,9 @@ public class LeadGenerationActivity extends AppCompatActivity {
         LeadGenModel leadGenModel = new LeadGenModel();
         leadGenModel.setCardCode(CardCode);
         leadGenModel.setCardName(CardName);
+        leadGenModel.setSeries("634");
         leadGenModel.setCardType("cLid");
         leadGenModel.setGroupCode(130);
-
         leadGenModel.setContactPerson(ContactPerson);
         leadGenModel.setCurrency("INR");
         leadGenModel.setValid("tNO");
@@ -221,75 +245,61 @@ public class LeadGenerationActivity extends AppCompatActivity {
         leadGenModel.setBPAddresses(AddressList);
         leadGenModel.setContactEmployees(contactEmpList);
 
-
         SaveLead(leadGenModel);
 
     }
 
     private void SaveLead(LeadGenModel leadGenModel) {
 
+        AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
-        FetchSession();
+        if (AppUtil.isNetworkAvailable(getApplicationContext())) {
+            ServiceLayerApi.doSapLogin(LeadGenerationActivity.this, new ServiceLayerApi.ApiCallback() {
+                @Override
+                public void onLoginSuccess() {
 
-    }
+                    ServiceLayerApi.doLeadCall(LeadGenerationActivity.this,leadGenModel, new ServiceLayerApi.ApiCallback() {
+                        @Override
+                        public void onLoginSuccess() {
+                            Toast.makeText(LeadGenerationActivity.this, "Lead Generated Successfully", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LeadGenerationActivity.this, MainActivity2.class);
+                            startActivity(intent);
+                            finish();
+                            AppUtil.hideProgressDialog();
+                        }
 
-    private void FetchSession() {
+                        @Override
+                        public void onLoginFailure() {
+                            AppUtil.hideProgressDialog();
+                        }
+                    });
 
-        ApiSercvices apiService = ApiClient.getClient().create(ApiSercvices.class);
-
-        SL_LoginRequest request = new SL_LoginRequest("TEST_ENV_20231124", "Soft@123", "manager");
-        Call<SL_LoginResponse> call = apiService.login(request);
-
-        call.enqueue(new Callback<SL_LoginResponse>() {
-            @Override
-            public void onResponse(Call<SL_LoginResponse> call, Response<SL_LoginResponse> response) {
-                if (response.isSuccessful()) {
-
-                    System.out.println("Hello Success full sesion login:"+response.body().getSessionId());
-
-                } else {
-                    // Handle error response
                 }
-            }
 
-            @Override
-            public void onFailure(Call<SL_LoginResponse> call, Throwable t) {
-                // Handle network errors
-            }
-        });
-
-
-//        ApiSercvices apiService = NetworkClient.getRetrofitInstance().create(ApiSercvices.class);
-
-//        SL_LoginRequest request = new SL_LoginRequest("TEST_ENV_20231124", "Soft@123", "manager");
-//        Call<SL_LoginResponse> call = apiService.login(request);
-//
-//        call.enqueue(new Callback<SL_LoginResponse>() {
-//            @Override
-//            public void onResponse(Call<SL_LoginResponse> call, Response<SL_LoginResponse> response) {
-//                if (response.isSuccessful()) {
-//                    SL_LoginResponse loginResponse = response.body();
-//                    if (loginResponse != null) {
-//                        String sessionId = loginResponse.getSessionId();
-//                        String version = loginResponse.getVersion();
-//                        int sessionTimeout = loginResponse.getSessionTimeout();
-//                        System.out.println("session ID"+sessionId);
-//                        // Use the session ID, version, and session timeout as needed
-//                    }
-//                    // Handle successful response
+                @Override
+                public void onLoginFailure() {
+//                Boolean  isRetryingLogin = false;
+//                loginAttempts++;
+//                if (loginAttempts <= MAX_LOGIN_ATTEMPTS) {
+//                    // Retry login
+//                    ServiceLayerApi.doSapLogin(LeadGenerationActivity.this, this);
 //                } else {
-//                    Toast.makeText(LeadGenerationActivity.this, response.message(), Toast.LENGTH_SHORT).show();
-//                    // Handle error response
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SL_LoginResponse> call, Throwable t) {
-//                // Handle network errors
-//                Toast.makeText(LeadGenerationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
+                    AppUtil.hideProgressDialog();
+                    Toast.makeText(LeadGenerationActivity.this, "Session Refreshing Failed", Toast.LENGTH_SHORT).show();
+                    //   }
+                }
+
+            });
+        } else {
+            Toast.makeText(this, "No Internet Available", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LeadGenerationActivity.this, MainActivity2.class);
+            startActivity(intent);
+            finish();
+        }
+
+
+
+
 
     }
 
@@ -433,6 +443,217 @@ public class LeadGenerationActivity extends AppCompatActivity {
             }
         });
     }
+    private void getLeadSeries(String dbName) {
+
+        LeadSeriesViewModel viewModel = new ViewModelProvider(this).get(LeadSeriesViewModel.class);
+        viewModel.getLeadSeries(dbName).observe(this, new Observer<CommanResorce<List<LeadSeriesModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<LeadSeriesModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    if(listCommanResorce.data.get(0).getNextNumber() != null){
+                        String leadcode = "L"+listCommanResorce.data.get(0).getNextNumber();
+                        binding.etLeadCode.setText(leadcode);
+                        System.out.println("Lead Next Number :"+listCommanResorce.data.get(0).getNextNumber());
+                    }
+ 
+                } else {
+                    // AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
+                    System.out.println("Customer Not found");
+                }
+
+
+            } 
+        });
+    }
+    private void getStatelist(View dialogView) {
+
+        StateListViewModel viewModel = new ViewModelProvider(this).get(StateListViewModel.class);
+        viewModel.getStateList().observe(this, new Observer<CommanResorce<List<GeneralModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<GeneralModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    getStateData(listCommanResorce.data,dialogView);
+
+
+                } else {
+                    // AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
+                    System.out.println("State Not found");
+                }
+
+
+            }
+        });
+    }
+    private void getCountrylist(View dialogView) {
+
+        CountryListViewModel viewModel = new ViewModelProvider(this).get(CountryListViewModel.class);
+        viewModel.getCountryList().observe(this, new Observer<CommanResorce<List<GeneralModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<GeneralModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    getCountryData(listCommanResorce.data,dialogView);
+
+
+                } else {
+                    // AppUtil.showTost(getApplicationContext(), "User not found. Please check your username.");
+                    System.out.println("Country Not found");
+                }
+
+
+            }
+        });
+    }
+
+    private void getStateData(List<GeneralModel> data, View dialogView) {
+        List<String> names = new ArrayList<>();
+        List<GeneralModel> genModel = new ArrayList<>();
+
+
+        for (GeneralModel model : data) {
+            names.add(model.getName());
+            genModel.add(model);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(LeadGenerationActivity.this,
+                R.layout.simple_spinner_design, names);
+
+//                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+
+        AutoCompleteTextView edSate = dialogView.findViewById(R.id.autotxtState);
+
+        edSate.setAdapter(adapter);
+
+        edSate.setDropDownHeight(400);
+        edSate.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edSate.setOnClickListener(new View.OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                               edSate.showDropDown();
+                                                           }
+                                                       }
+        );
+        edSate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String selectedName = adapter.getItem(position);
+                GeneralModel selectedModel = null;
+                for (GeneralModel model : data) {
+                    if (model.getName().equals(selectedName)) {
+                        selectedModel = model;
+                        break;
+                    }
+                }
+                if (selectedModel != null) {
+
+                    selStateCode = selectedModel.getCode();
+                    System.out.println("selStateCode : " + selStateCode);
+                    // GetData();
+                }
+                //selStateModel = names.get(position);
+//
+//                selStateCode = genModel.get(position).getCode(); aaa
+//
+//                System.out.println("selStateCode code: " + selStateCode);
+
+                // GetData();
+
+            }
+        });
+
+        edSate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s.toString());
+                System.out.println(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+    }
+    private void getCountryData(List<GeneralModel> data, View dialogView) {
+        List<String> names = new ArrayList<>();
+        List<GeneralModel> genModel = new ArrayList<>();
+
+
+        for (GeneralModel model : data) {
+            names.add(model.getName());
+            genModel.add(model);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(LeadGenerationActivity.this,
+                R.layout.simple_spinner_design, names);
+
+//                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+
+        AutoCompleteTextView edCountry = dialogView.findViewById(R.id.autotxtCountry);
+
+        edCountry.setAdapter(adapter);
+
+        edCountry.setDropDownHeight(400);
+        edCountry.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edCountry.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                          edCountry.showDropDown();
+                                      }
+                                  }
+        );
+        edCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String selectedName = adapter.getItem(position);
+                GeneralModel selectedModel = null;
+                for (GeneralModel model : data) {
+                    if (model.getName().equals(selectedName)) {
+                        selectedModel = model;
+                        break;
+                    }
+                }
+                if (selectedModel != null) {
+
+                    selCountryCode = selectedModel.getCode();
+                    System.out.println("selStateCode : " + selCountryCode);
+                    // GetData();
+                }
+
+            }
+        });
+
+        edCountry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s.toString());
+                System.out.println(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+    }
+
 
     private void getCollectionPerson(List<SlpResponse> data) {
         List<String> slpNames = new ArrayList<>();
@@ -505,12 +726,19 @@ public class LeadGenerationActivity extends AppCompatActivity {
         EditText edStreet = dialogView.findViewById(R.id.edStreet);
         EditText edBlock = dialogView.findViewById(R.id.edBlock);
         EditText edCity = dialogView.findViewById(R.id.edCity);
-        EditText edState = dialogView.findViewById(R.id.edState);
-        EditText edCountry = dialogView.findViewById(R.id.edCountry);
+//        EditText edState = dialogView.findViewById(R.id.edState);
+//        EditText edCountry = dialogView.findViewById(R.id.edCountry);
+
+        AutoCompleteTextView edState  = dialogView.findViewById(R.id.autotxtState);
+        AutoCompleteTextView edCountry  = dialogView.findViewById(R.id.autotxtCountry);
+
         EditText edZipcode = dialogView.findViewById(R.id.edZipcode);
 
         TextView submitButton = dialogView.findViewById(R.id.txtSubmit);
         TextView cancelButton = dialogView.findViewById(R.id.txtCancel);
+
+        getStatelist(dialogView);
+        getCountrylist(dialogView);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -522,55 +750,61 @@ public class LeadGenerationActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String AddressName = "";
-                String AddressType = "";
 
-                String combinedText = edStreet.getText().toString() + ", " +
-                        edBlock.getText().toString() + ", " +
-                        edCity.getText().toString() + ", " +
-                        edState.getText().toString() + ", " +
-                        edCountry.getText().toString() + "- " +
-                        edZipcode.getText().toString();
-                binding.etAddress.setText(combinedText);
+                if(edStreet == null || edBlock == null || edCity == null || edState == null || edCountry == null|| edZipcode == null){
 
-                for (int a = 0; a < 2; a++) {
-                    if (a % 2 == 0) {
-                        AddressName = "BILL TO ID";
-                        AddressType = "bo_BillTo";
+                    Toast.makeText(LeadGenerationActivity.this, "Fill all Fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }else{
+                    String AddressName = "";
+                    String AddressType = "";
 
-                    }
-                    else {
-                        AddressName = "SHIP TO ID";
-                        AddressType = "bo_ShipTo";
+                    String combinedText = edStreet.getText().toString() + ", " +
+                            edBlock.getText().toString() + ", " +
+                            edCity.getText().toString() + ", " +
+                            edState.getText().toString() + ", " +
+                            edCountry.getText().toString() + "- " +
+                            edZipcode.getText().toString();
+                    binding.etAddress.setText(combinedText);
 
-                    }
+                    for (int a = 0; a < 2; a++) {
+                        if (a % 2 == 0) {
+                            AddressName = "BILL TO ID";
+                            AddressType = "bo_BillTo";
 
-                    LeadGenModel.BPAddress bModel = new LeadGenModel.BPAddress();
-                    bModel.setAddressName(AddressName);
-                    bModel.setAddressType(AddressType);
-                    bModel.setStreet(edStreet.getText().toString().trim());
-                    bModel.setBlock(edBlock.getText().toString().trim());
-                    bModel.setCity(edCity.getText().toString().trim());
-                    bModel.setState(edState.getText().toString().trim());
-                    bModel.setCountry(edCountry.getText().toString().trim());
-                    bModel.setZipCode(edZipcode.getText().toString().trim());
-
-                    if(AddressList != null){
-                        for (int i = 0; i < AddressList.size(); i++) {
-                            LeadGenModel.BPAddress existingAddress = AddressList.get(i);
-                            if (existingAddress.getAddressName().equals(bModel.getAddressName())) {
-                                // Replace existing address with new one
-                                AddressList.set(i, bModel);
-                                break; // Exit loop since address is replaced
-                            }
                         }
-                        if (!AddressList.contains(bModel)) {
+                        else {
+                            AddressName = "SHIP TO ID";
+                            AddressType = "bo_ShipTo";
+
+                        }
+
+                        LeadGenModel.BPAddress bModel = new LeadGenModel.BPAddress();
+                        bModel.setAddressName(AddressName);
+                        bModel.setAddressType(AddressType);
+                        bModel.setStreet(edStreet.getText().toString().trim());
+                        bModel.setBlock(edBlock.getText().toString().trim());
+                        bModel.setCity(edCity.getText().toString().trim());
+                        bModel.setState(selStateCode);
+                        bModel.setCountry(selCountryCode);
+                        bModel.setZipCode(edZipcode.getText().toString().trim());
+
+                        if(AddressList != null){
+                            for (int i = 0; i < AddressList.size(); i++) {
+                                LeadGenModel.BPAddress existingAddress = AddressList.get(i);
+                                if (existingAddress.getAddressName().equals(bModel.getAddressName())) {
+                                    // Replace existing address with new one
+                                    AddressList.set(i, bModel);
+                                    break; // Exit loop since address is replaced
+                                }
+                            }
+                            if (!AddressList.contains(bModel)) {
+                                AddressList.add(bModel);
+                            }
+                        }else {
                             AddressList.add(bModel);
                         }
-                    }else {
-                        AddressList.add(bModel);
                     }
-                }
 
                     for (LeadGenModel.BPAddress address : AddressList) {
                         System.out.println("Address Name: " + address.getAddressName());
@@ -585,9 +819,17 @@ public class LeadGenerationActivity extends AppCompatActivity {
                         System.out.println("--------------------");
                     }
 
-                dialog.dismiss();
+
+                }
+
+
+                 dialog.dismiss();
             }
     });
+
+
+
+
 
         dialog.show();
     }
@@ -621,15 +863,20 @@ public class LeadGenerationActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
-                selectedSalesEmp_Name = slpNames.get(position);
-
-                    selectedSalesEmp_Code = selectedModelList.get(position).getSlpCode();
-
+                String selectedName = adapter.getItem(position);
+                SlpResponse selectedModel = null;
+                for (SlpResponse model : data) {
+                    if (model.getSlpName().equals(selectedName)) {
+                        selectedModel = model;
+                        break;
+                    }
+                }
+                if (selectedModel != null) {
+                    selectedSalesEmp_Name = selectedModel.getSlpName();
+                    selectedSalesEmp_Code = selectedModel.getSlpCode();
                     System.out.println("SalesEmp code: " + selectedSalesEmp_Code);
-
                     // GetData();
-
+                }
             }
         });
 

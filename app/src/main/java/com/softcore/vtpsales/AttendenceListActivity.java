@@ -1,13 +1,13 @@
 package com.softcore.vtpsales;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,19 +18,20 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.softcore.vtpsales.Adaptors.AdapterAttendance;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.AttendanceModel;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CustomerModel;
+import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.ViewModel.AttendanceListViewModel;
 import com.softcore.vtpsales.ViewModel.CustomerViewModel;
 import com.softcore.vtpsales.databinding.ActivityAttendenceListBinding;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,12 +49,19 @@ public class AttendenceListActivity extends AppCompatActivity {
     String selectedSlpName;
     String SlpName;
     CustomerModel selectedmodel;
+    List<AttendanceModel> attList;
+    List<AttendanceModel> filList;
+    String EmpName ;
+    Gson gson;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding=ActivityAttendenceListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        gson = new Gson();
+        EmpName= getIntent().getStringExtra("EmpName");
+       // Toast.makeText(this, "EmpName: "+EmpName, Toast.LENGTH_SHORT).show();
 
         binding.laybar.appbarTextView.setText("Attendance List");
 
@@ -62,6 +70,33 @@ public class AttendenceListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+        binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetData();
+            }
+        });
+
+        binding.laybar.shareId.setVisibility(View.GONE);
+        binding.laybar.print.setImageResource(R.drawable.baseline_map_24);
+        binding.laybar.print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//                String locationsJson = gson.toJson(filList);
+//                Log.d("Locations", locationsJson);
+//                System.out.println("attList"+filList.size());
+
+              // String EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
+                Intent intent = new Intent(getApplicationContext(), AllMapScreen.class);
+                intent.putExtra("title",EmpName+"'s Map Report");
+                intent.putExtra("daterange",FromDate+" to "+ToDate);
+                intent.putExtra("locationsList", (Serializable) filList);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -135,6 +170,66 @@ public class AttendenceListActivity extends AppCompatActivity {
         GetData();
     }
 
+//    public void fromDatepicker() {
+//        // Get current date
+//        Calendar calendar = Calendar.getInstance();
+//        int year = calendar.get(Calendar.YEAR);
+//        int month = calendar.get(Calendar.MONTH);
+//        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//
+//        if (!binding.edFromDate.getText().toString().isEmpty()) {
+//            try {
+//                // Parse the date from the EditText
+//
+//                Date fromDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//                        .parse(binding.edFromDate.getText().toString());
+//
+//                // Update the calendar to the parsed date
+//                calendar.setTime(fromDate);
+//                year = calendar.get(Calendar.YEAR);
+//                month = calendar.get(Calendar.MONTH);
+//                day = calendar.get(Calendar.DAY_OF_MONTH);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//
+//        // Create a new DatePickerDialog instance
+//        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+//                new DatePickerDialog.OnDateSetListener() {
+//                    @Override
+//                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//
+//                        Calendar calendar = Calendar.getInstance();
+//                        calendar.set(year, monthOfYear, dayOfMonth);
+//
+//
+//                        if (calendar.after(ToDate)) {
+//                            // Show an error message or handle the invalid selection
+//                            Toast.makeText(getApplicationContext(), "Invalid selection", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            // Create a SimpleDateFormat instance to format the date
+//                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//
+//                            // Format the selected date
+//                            FromDate = dateFormat.format(calendar.getTime());
+//                            binding.edFromDate.setText(FromDate);
+//                        }
+//
+//
+//
+//
+//                            GetData();
+//
+//                    }
+//                }, year, month, day);
+//
+//
+//        // Show the Date Picker dialog
+//        datePickerDialog.show();
+//    }
+
     public void fromDatepicker() {
         // Get current date
         Calendar calendar = Calendar.getInstance();
@@ -185,7 +280,7 @@ public class AttendenceListActivity extends AppCompatActivity {
 
 
 
-                            GetData();
+                        GetData();
 
                     }
                 }, year, month, day);
@@ -247,7 +342,7 @@ public class AttendenceListActivity extends AppCompatActivity {
     }
 
     private void GetData() {
-
+        filList = new ArrayList<>();
         System.out.println("FromDate:" + FromDate +"ToDate: "+ToDate);
 
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
@@ -275,6 +370,8 @@ public class AttendenceListActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    System.out.println("fromDate: "+fromDate);
+                    System.out.println("toDate: "+toDate);
                     for (AttendanceModel item : listCommanResorce.data) {
                         try {
                             if(item.getDate() != null){
@@ -283,10 +380,17 @@ public class AttendenceListActivity extends AppCompatActivity {
                                 if (itemDate != null){
                                     if (!itemDate.before(fromDate) && !itemDate.after(toDate)) {
 
-                                            filteredList.add(item);
+
+
+                                        filteredList.add(item);
+                                       // filList = filteredList;
+
 
                                     }
                                 }
+
+//                                System.out.println("Size filteredList"+filteredList.size());
+//                                System.out.println("Size filList"+filList.size());
 
                             }
 
@@ -295,32 +399,51 @@ public class AttendenceListActivity extends AppCompatActivity {
                         }
                     }
 
-                    List<AttendanceModel> attList = new ArrayList<>();
+                   //print filteredList
+
+                    String json = gson.toJson(filteredList);
+                    System.out.println("filteredList:"+json);
+
+                    attList = new ArrayList<>();
+
                     List<AttendanceModel> mainfilterList = new ArrayList<>();
-                    String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
+                    adapterAttendence.setData(mainfilterList,getApplicationContext(),EmpName);
+
+                    //  String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
 
                     for(int i = 0; i < filteredList.size();i++){
 
                         if(selectedmodel != null){
                             if(selectedmodel.getCardCode() != null){
                                 if(selectedmodel.getCardCode().equals(filteredList.get(i).getCustomerCode())){
-                                    if(EmpCode.equals(filteredList.get(i).getEmpCode())) {
+
+                                    if(EmpName.equals(filteredList.get(i).getEmpName())) {
                                         attList.add(filteredList.get(i));
                                     }
                                 }
                             }
                         }
 
-                        if(EmpCode.equals(filteredList.get(i).getEmpCode())) {
-                            mainfilterList.add(filteredList.get(i));
-                        }
 
+                        if(EmpName.equals(filteredList.get(i).getEmpName())) {
+                            mainfilterList.add(filteredList.get(i));
+
+                        }
                     }
 
                     if(selectedmodel != null){
-                        adapterAttendence.setData(attList);
+                        System.out.println("customer list");
+                        adapterAttendence.setData(attList,getApplicationContext(),EmpName);
+                        filList = attList;
+                        String json2 = gson.toJson(filList);
+                        System.out.println("customer + emp wise list:"+json2);
                     }else {
-                        adapterAttendence.setData(mainfilterList);
+                        System.out.println("no customer list");
+
+                        adapterAttendence.setData(mainfilterList, getApplicationContext(), EmpName);
+                        filList = mainfilterList;
+                        String json2 = gson.toJson(filList);
+                        System.out.println("mainfilterList:"+json2);
                     }
 
                     binding.txtNoData.setVisibility(View.GONE);
@@ -371,16 +494,26 @@ public class AttendenceListActivity extends AppCompatActivity {
                     binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            selectedSlpName = slpNames.get(position);
 
-                            if (!selectedSlpName.equals("SELECT CUSTOMER NAME")) {
-                                SlpName = selectedSlpName;
-                                selectedmodel = selectedModelList.get(position); // Adjust position by -1 to account for the "SELECT CUSTOMER NAME" item
-                                System.out.println("code: " + selectedmodel.getCardCode());
+                                String selectedName = adapter.getItem(position);
+                                CustomerModel selectedModel = null;
+                                for (CustomerModel model : listCommanResorce.data) {
+                                    if (model.getCardName().equals(selectedName)) {
+                                        selectedModel = model;
+                                        break;
+                                    }
+                                }
+                                if (selectedModel != null) {
+                                    selectedSlpName = selectedModel.getCardName();
+                                    SlpName = selectedSlpName;
+                                    selectedmodel = selectedModel;
+                                    System.out.println("SalesEmp code: " + selectedmodel.getCardCode());
+                                    // GetData();
+                                }
 
                                 GetData();
 
-                            }
+                         //   }
                         }
                     });
 

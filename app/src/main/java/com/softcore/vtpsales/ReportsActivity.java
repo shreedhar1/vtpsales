@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.BalanceDueResponse;
@@ -71,11 +72,11 @@ public class ReportsActivity extends AppCompatActivity {
 
         binding.imgReceipt.setImageResource(R.drawable.svg_receipt);
         binding.txtReceiptitle.setText("-");
-        binding.txtReceiptdesc.setText("Customer Outstanding");
+        binding.txtReceiptdesc.setText("Customer Outstanding (Gross)");
 
         binding.imgOutstandings.setImageResource(R.drawable.svg_outstanding);
         binding.txtOutstandingstitle.setText("-");
-        binding.txtOutstandingsdesc.setText("Vendor Outstaning");
+        binding.txtOutstandingsdesc.setText("Vendor Outstaning (Gross)");
 
         // Get the current date
         Calendar today = Calendar.getInstance();
@@ -86,11 +87,11 @@ public class ReportsActivity extends AppCompatActivity {
         if (today.get(Calendar.MONTH) < Calendar.APRIL ||
                 (today.get(Calendar.MONTH) == Calendar.APRIL && today.get(Calendar.DAY_OF_MONTH) < 2)) {
             // If the current month is before April, or it's April but before the 2nd (inclusive), consider the previous year
-        if( today.get(Calendar.MONTH) == Calendar.APRIL&& today.get(Calendar.DAY_OF_MONTH) < 2){
-            fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR));
-        }else {
-            fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR) - 1);
-        }
+            if( today.get(Calendar.MONTH) == Calendar.APRIL&& today.get(Calendar.DAY_OF_MONTH) < 2){
+                fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR));
+            }else {
+                fromCalendar.set(Calendar.YEAR, today.get(Calendar.YEAR) - 1);
+            }
 
         } else {
             // Otherwise, consider the current year
@@ -124,9 +125,14 @@ public class ReportsActivity extends AppCompatActivity {
 
         GetSlpList();
 
-        selectedSlpName = AppUtil.getStringData(getApplicationContext(), "SlpName", "");
+
+        selectedSlpName = AppUtil.getStringData(getApplicationContext(), "AllSalesPerson", "");
+//        selectedSlpName = "1,2,3,4,5,6,7,8,9,10,11,12,13, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50"; // Testing
         SlpName = selectedSlpName;
+        System.out.println("SlpName"+SlpName);
+
         GetData();
+
 
         binding.edFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,25 +151,41 @@ public class ReportsActivity extends AppCompatActivity {
         binding.laySales.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Sales","Sales_Customer_Wise_Report");
+                if(binding.txtSalestitle.getText().equals("-")){
+                    Toast.makeText(ReportsActivity.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }else {
+                    NextActivity("Sales","Sales_Customer_Wise_Report","Monthly_Sales_Report",binding.txtSalestitle.getText());
+                }
             }
         });
         binding.layPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Purchase","Purchase_Vendor_Wise_Report");
+                if(binding.txtPurchasetitle.getText().equals("-")){
+                    Toast.makeText(ReportsActivity.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }else {
+                    NextActivity("Purchase","Purchase_Vendor_Wise_Report","Monthly_Purchase_Report", binding.txtPurchasetitle.getText());
+                }
             }
         });
         binding.layReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Customer Outstanding","CustomerWise_Outstanding_Amount");
+                if(binding.txtReceiptitle.getText().equals("-")){
+                    Toast.makeText(ReportsActivity.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }else {
+                    NextActivity("Customer Outstanding","CustomerWise_Outstanding_Amount","Monthly_Customer_Outstanding_Amount", binding.txtReceiptitle.getText());
+                }
             }
         });
         binding.layOutstandings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NextActivity("Vendor Outstanding","CustomerWise_Vendor_Outstanding_Amount");
+                if(binding.txtOutstandingstitle.getText().equals("-")){
+                    Toast.makeText(ReportsActivity.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }else {
+                    NextActivity("Vendor Outstanding","CustomerWise_Vendor_Outstanding_Amount","Monthly_Vendor_Outstanding_Amount", binding.txtOutstandingstitle.getText());
+                }
             }
         });
 
@@ -171,8 +193,9 @@ public class ReportsActivity extends AppCompatActivity {
 
     }
 
-    private void NextActivity(String Type, String Flag) {
+    private void NextActivity(String Type, String Flag,String MFlag, CharSequence amount) {
 
+        System.out.println("SlpName send to ReportsListActivity: "+SlpName);
         Intent intent = new Intent(ReportsActivity.this, ReportsListActivity.class);
         intent.putExtra("TYPE", Type);
         intent.putExtra("FromDatePost",FromDatePost);
@@ -181,10 +204,10 @@ public class ReportsActivity extends AppCompatActivity {
         intent.putExtra("ViewFromDate",ViewFromDate);
         intent.putExtra("SlpName",SlpName);
         intent.putExtra("Flag",Flag);
-        intent.putExtra("Amount",binding.txtSalestitle.getText().toString().trim());
+        intent.putExtra("MFlag",MFlag);
+        intent.putExtra("Amount",amount);
         startActivity(intent);
     }
-
 
     void GetSlpList() {
 
@@ -219,6 +242,7 @@ public class ReportsActivity extends AppCompatActivity {
 
                             if (!selectedSlpName.equals("SELECT NAME")) {
                                 SlpName = selectedSlpName;
+                                System.out.println("From Date :"+FromDatePost+"To Date:"+ToDatePost);
                                 GetData();
                             }
                         }
@@ -239,6 +263,7 @@ public class ReportsActivity extends AppCompatActivity {
     }
 
     private void GetData() {
+        System.out.println("From Date :"+FromDatePost+"To Date:"+ToDatePost);
 
         GetSalesBalceDue();
         GetPurchaseBalceDue();
@@ -284,7 +309,7 @@ public class ReportsActivity extends AppCompatActivity {
 
                         // Format the selected date
                         ViewFromDate = dateFormat.format(calendar.getTime());
-                      binding.edFromDate.setText(ViewFromDate);
+                        binding.edFromDate.setText(ViewFromDate);
 
 
                         SimpleDateFormat dateFormatPost = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
@@ -370,11 +395,13 @@ public class ReportsActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    if(listCommanResorce.data.get(0).getBalanceDue() != null){
-                        String BalanceDue = listCommanResorce.data.get(0).getBalanceDue();
-                        System.out.println("Sales BalanceDue : "+BalanceDue);
+                    if(listCommanResorce.data.get(0).getGrossAmtArCrn() != null){
+                        String BalanceDue = listCommanResorce.data.get(0).getGrossAmtArCrn();
+                        System.out.println("Sales Amount Gross : "+listCommanResorce.data.get(0).getGrossAmtArCrn());
 
-                        binding.txtSalestitle.setText("₹ "+BalanceDue);
+
+
+                        binding.txtSalestitle.setText("₹ "+String.format("%.2f", Double.valueOf(listCommanResorce.data.get(0).getGrossAmtArCrn())));
 
                         //SalesBldue = BalanceDue;
 
@@ -405,20 +432,20 @@ public class ReportsActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    if(listCommanResorce.data.get(0).getBalanceDue() != null){
-                        String BalanceDue = listCommanResorce.data.get(0).getBalanceDue();
+                    if(listCommanResorce.data.get(0).getGrossAmtApCrn() != null){
+                        String BalanceDue = listCommanResorce.data.get(0).getGrossAmtApCrn();
                         System.out.println("Puchase BalanceDue : "+BalanceDue);
 
-                        binding.txtPurchasetitle.setText("₹ "+BalanceDue);
+                        binding.txtPurchasetitle.setText("₹ "+String.format("%.2f", Double.valueOf(BalanceDue)));
                     }else {
                         binding.txtPurchasetitle.setText("-");
                     }
 
 
                 }
-                    else {
-                        binding.txtPurchasetitle.setText("-");
-                    }
+                else {
+                    binding.txtPurchasetitle.setText("-");
+                }
 
 
 //                AppUtil.hideProgressDialog();
@@ -440,11 +467,11 @@ public class ReportsActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    if(listCommanResorce.data.get(0).getBalanceDue() != null){
-                        String BalanceDue = listCommanResorce.data.get(0).getBalanceDue();
-                        System.out.println("Receipt BalanceDue : "+"₹ "+BalanceDue);
+                    if(listCommanResorce.data.get(0).getGrossAmtArCrn() != null){
+                        String BalanceDue = listCommanResorce.data.get(0).getGrossAmtArCrn();
+                        System.out.println("Customer Outstanding BalanceDue : "+"₹ "+BalanceDue);
 
-                        binding.txtReceiptitle.setText("₹ "+BalanceDue);
+                        binding.txtReceiptitle.setText("₹ "+String.format("%.2f", Double.valueOf(BalanceDue)));
                     }else {
                         binding.txtReceiptitle.setText("-");
                     }
@@ -459,8 +486,6 @@ public class ReportsActivity extends AppCompatActivity {
 //                AppUtil.hideProgressDialog();
             }
         });
-
-
     }
     private void GetOutstandingBalceDue() {
 
@@ -475,11 +500,11 @@ public class ReportsActivity extends AppCompatActivity {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
-                    if(listCommanResorce.data.get(0).getBalanceDue() != null){
-                        String BalanceDue = listCommanResorce.data.get(0).getBalanceDue();
-                        System.out.println("Receipt BalanceDue : "+BalanceDue);
+                    if(listCommanResorce.data.get(0).getGrossAmtApCrn() != null){
+                        String BalanceDue = listCommanResorce.data.get(0).getGrossAmtApCrn();
+                        System.out.println("Vender Outstaning BalanceDue : "+BalanceDue);
 
-                        binding.txtOutstandingstitle.setText("₹ "+BalanceDue);
+                        binding.txtOutstandingstitle.setText("₹ "+String.format("%.2f", Double.valueOf(BalanceDue)));
                     }else {
                         binding.txtOutstandingstitle.setText("-");
                     }
@@ -497,6 +522,7 @@ public class ReportsActivity extends AppCompatActivity {
 
 
     }
+
 
 
 }

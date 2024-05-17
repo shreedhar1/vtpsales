@@ -1,8 +1,11 @@
 package com.softcore.vtpsales.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class AttendanceModel {
+public class AttendanceModel implements Parcelable {
 
     @SerializedName("Employee_Code")
     private String empCode;
@@ -16,8 +19,37 @@ public class AttendanceModel {
     private String checkIn;
     @SerializedName("Check out")
     private String checkOut;
-    @SerializedName("Location")
-    private String Location;
+    @SerializedName("LocationIn")
+    private String LocationIn;
+    @SerializedName("LocationOut")
+    private String LocationOut;
+
+    public AttendanceModel() {
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+    }
+
+    protected AttendanceModel(Parcel in) {
+        empCode = in.readString();
+        empName = in.readString();
+        CustomerCode = in.readString();
+        date = in.readString();
+        checkIn = in.readString();
+        checkOut = in.readString();
+        LocationIn = in.readString();
+        LocationOut = in.readString();
+    }
+
+    public static final Creator<AttendanceModel> CREATOR = new Creator<AttendanceModel>() {
+        @Override
+        public AttendanceModel createFromParcel(Parcel in) {
+            return new AttendanceModel(in);
+        }
+
+        @Override
+        public AttendanceModel[] newArray(int size) {
+            return new AttendanceModel[size];
+        }
+    };
 
     public String getEmpCode() {
         return empCode;
@@ -67,11 +99,36 @@ public class AttendanceModel {
         this.checkOut = checkOut;
     }
 
-    public String getLocation() {
-        return Location;
+    public String getLocationIn() {
+        return LocationIn;
     }
 
-    public void setLocation(String location) {
-        Location = location;
+    public void setLocationIn(String locationIn) {
+        LocationIn = locationIn;
+    }
+
+    public String getLocationOut() {
+        return LocationOut;
+    }
+
+    public void setLocationOut(String locationOut) {
+        LocationOut = locationOut;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(empCode);
+        dest.writeString(empName);
+        dest.writeString(CustomerCode);
+        dest.writeString(date);
+        dest.writeString(checkIn);
+        dest.writeString(checkOut);
+        dest.writeString(LocationIn);
+        dest.writeString(LocationOut);
     }
 }

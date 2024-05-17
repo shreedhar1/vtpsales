@@ -23,10 +23,11 @@ public class AppConstant {
     public static final String SLBase_Url = "https://103.96.42.106:50000/b1s/v1/";
 
 
+   // public enum STATUS {ERROR, SUCCESS}
 
     public enum status {SUCCESS,ERROR};
 
-    public static String CompanyDB = "TEST_ENV_20231124";
+    public static String CompanyDB = "ENVIIRO_LIVE";
     public static String Password = "Soft@123";
     public static String UserName = "manager";
 

@@ -33,21 +33,63 @@
                 android:background="@color/light_blue_900"
                 android:src="@drawable/baseline_arrow_back_ios_24"
                 app:tint="@color/white" />
+
             <TextView
                 android:id="@+id/appbar_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Toolbar"
-                android:padding="@dimen/_10sdp"
-                android:layout_toEndOf="@id/back_id"
-                android:layout_toStartOf="@id/share_id"
-                android:gravity="start"
-                android:fontFamily="@font/poppins"
+                android:layout_alignParentStart="true"
                 android:layout_gravity="center_vertical"
-                android:layout_centerInParent="true"
+                android:layout_toStartOf="@id/share_id"
+                android:layout_toEndOf="@id/back_id"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
+                android:text="Toolbar"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_14sdp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+
+
+            <LinearLayout
+                android:id="@+id/laytitle2"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:layout_toStartOf="@id/share_id"
+                android:layout_toEndOf="@id/back_id"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                >
+                <TextView
+                    android:id="@+id/txt_title2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="start"
+                    android:layout_weight="1"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txt_desc2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="start"
+                    android:layout_weight="1"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
             <ImageButton
                 android:visibility="visible"
                 android:id="@+id/share_id"

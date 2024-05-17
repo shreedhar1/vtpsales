@@ -3,6 +3,7 @@ package com.softcore.vtpsales;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +42,7 @@ import com.softcore.vtpsales.Model.ClockRequest;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusClockRequest;
 import com.softcore.vtpsales.Model.CustomerModel;
+import com.softcore.vtpsales.Model.GeneralModel;
 import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Network.RemoteRepository;
 import com.softcore.vtpsales.ViewModel.CustomerViewModel;
@@ -83,7 +86,9 @@ public class CustAttendenceActivity extends AppCompatActivity {
     String selectedSlpName;
     CusClockRequest request;
     String status;
-
+    private static final int CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private CameraPreview cameraPreview;
+    private FrameLayout cameraContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +96,20 @@ public class CustAttendenceActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         TYPE = getIntent().getStringExtra("type");
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request both permissions together
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                    CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            showCameraPreview();
+            getCurrentLocation();
+            // Both permissions are already granted
+            //    Toast.makeText(this, "Camera and location permissions granted", Toast.LENGTH_SHORT).show();
+        }
+
+       // fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         System.out.println("TYPE:" + TYPE);
 
@@ -110,12 +128,21 @@ public class CustAttendenceActivity extends AppCompatActivity {
         if (OPERATION.equals("in")) {
             status = "Clock In";
             binding.textButton.setText("CHECK IN");
+
+
+
         } else if (OPERATION.equals("out")) {
             status = "Clock Out";
             binding.textButton.setText("CHECK OUT");
 
-        }
+//            ClockInTime = "0000";
+//            ClockOutTime = currentTime12;
+//            LocationIn = "";
+//            LocationOut = CurrentLocation;
+//            ClockOutRemark = binding.edRemark.getText().toString();
 
+        }
+        binding.edRemark.setHint("Remark for "+status);
         binding.ClockInOutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +152,6 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     Clock_In_Out(v, OPERATION);
                 }else {
                     Toast.makeText(CustAttendenceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
-
                 }
 
 
@@ -143,6 +169,12 @@ public class CustAttendenceActivity extends AppCompatActivity {
 
         getCustomerList();
         getCurrentLocation();
+    }
+
+    private void showCameraPreview() {
+        cameraContainer = findViewById(R.id.camera_preview);
+        cameraPreview = new CameraPreview(this);
+        cameraContainer.addView(cameraPreview);
     }
 
     private void Clock_In_Out(View v, String OPERATION) {
@@ -165,15 +197,24 @@ public class CustAttendenceActivity extends AppCompatActivity {
         String ClockOutTime = "0000";
         String ClockInTime = "0000";
         String ClockInRemark = "";
-
         String ClockOutRemark = "";
+        String LocationIn = "";
+        String LocationOut = "";
 
         if (OPERATION.equals("in")) {
             ClockOutTime = "0000";
             ClockInTime = currentTime12;
+
+            LocationIn = CurrentLocation;
+            LocationOut = "";
+            ClockOutRemark = "";
+            ClockInRemark = binding.edRemark.getText().toString();
         } else if (OPERATION.equals("out")) {
             ClockOutTime = currentTime12;
             ClockInTime = "0000";
+            LocationIn = "";
+            LocationOut = CurrentLocation;
+            ClockOutRemark = binding.edRemark.getText().toString();
         }
 
 
@@ -182,10 +223,11 @@ public class CustAttendenceActivity extends AppCompatActivity {
                 EmpCode,
                 EmpName,
                 ClockInTime,
-                "",
+                ClockInRemark,
                 ClockOutTime,
                 ClockOutRemark,
-                CurrentLocation,
+                LocationIn,
+                LocationOut,
                 selectedmodel.getCardCode()
         );
 
@@ -205,6 +247,9 @@ public class CustAttendenceActivity extends AppCompatActivity {
 
                     Toast.makeText(CustAttendenceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: " + response.code());
+                    Intent intent = new Intent(CustAttendenceActivity.this, MainActivity2.class);
+                    startActivity(intent);
+                    finish();
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();
@@ -262,13 +307,45 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            selectedSlpName = slpNames.get(position);
+//                            selectedSlpName = slpNames.get(position);
+//
+//                                SlpName = selectedSlpName;
+//                                selectedmodel = selectedModelList.get(position); // Adjust position by -1 to account for the "SELECT CUSTOMER NAME" item
+//                                System.out.println("code: " + selectedmodel.getCardCode());
 
-                            if (!selectedSlpName.equals("SELECT CUSTOMER NAME")) {
-                                SlpName = selectedSlpName;
-                                selectedmodel = selectedModelList.get(position); // Adjust position by -1 to account for the "SELECT CUSTOMER NAME" item
-                                System.out.println("code: " + selectedmodel.getCardCode());
+                            String selectedName = adapter.getItem(position);
+                            CustomerModel selectedModel = null;
+                            for (CustomerModel model : listCommanResorce.data) {
+                                if (model.getCardName().equals(selectedName)) {
+                                    selectedModel = model;
+                                    break;
+                                }
                             }
+                            if (selectedModel != null) {
+                                selectedmodel = selectedModel;
+//                                selStateCode = selectedModel.getCode();
+                                selectedSlpName = selectedmodel.getCardName();
+                                SlpName = selectedSlpName;
+                                System.out.println("card Name: " + selectedmodel.getCardName());
+                                System.out.println("card code : " + selectedmodel.getCardCode());
+                                // GetData();
+                            }
+
+                                String add = selectedmodel.getAddress();
+                                String street = selectedmodel.getStreet();
+                                String block = selectedmodel.getBlock();
+                                String city = selectedmodel.getCity();
+                                String state = selectedmodel.getShipToState();
+                                String country = selectedmodel.getShipToCountry();
+                                String zip = selectedmodel.getZipCode();
+
+                                String cus_address = add +", "+street +", "+block +", "+city +", "+
+                                        state +", "+country +"- "+zip;
+
+                                binding.txtCusAddress.setVisibility(View.VISIBLE);
+                                binding.txtCusAddress.setText(cus_address);
+
+
                         }
                     });
 
@@ -324,7 +401,6 @@ public class CustAttendenceActivity extends AppCompatActivity {
         binding.txtTime.setText(currentTime);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -332,57 +408,67 @@ public class CustAttendenceActivity extends AppCompatActivity {
     }
 
     private void getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         } else {
-            getLoct();
+            getLastLocation();
         }
     }
 
+    private void getLastLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            // Do something with latitude and longitude
+                            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                            try {
+                                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                                if (addresses != null && addresses.size() > 0) {
+                                    Address address = addresses.get(0);
+                                    String addressString = address.getAddressLine(0); // Get the first line of the address
+                                    // Toast.makeText(getApplicationContext(), "Address: " + addressString, Toast.LENGTH_SHORT).show();
+                                    CurrentLocation = addressString;
+                                    binding.txtAddress.setText(addressString);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-
-
-    @SuppressLint("MissingPermission")
-    private void getLoct() {
-        fusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                Location location = task.getResult();
-                if (location != null) {
-                    try {
-                        Geocoder geocoder = new Geocoder(CustAttendenceActivity.this, Locale.getDefault());
-                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-                        Address address = addresses.get(0);
-                        String addressString = address.getAddressLine(0); // Get the first line of the address
-                        // Toast.makeText(getApplicationContext(), "Address: " + addressString, Toast.LENGTH_SHORT).show();
-                        CurrentLocation = addressString;
-                        binding.txtAddress.setText(addressString);
-
-
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        } else {
+                            Toast.makeText(CustAttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                        }
                     }
-
-                }
-            }
-        });
-
-
+                });
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLoct();
+        if (requestCode == CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                // Both permissions granted
+                showCameraPreview();
+                getCurrentLocation();
+
+                //      Toast.makeText(this, "Camera and location permissions granted", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                // One or both permissions denied
+                Toast.makeText(this, "Camera or location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 
 

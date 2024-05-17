@@ -86,30 +86,40 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/autoLayCP"
+                        android:theme="@style/DrpStyle2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint=" State ">
+                        android:hint="State"
+                        >
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edState"
+                        <AutoCompleteTextView
+                            android:id="@+id/autotxtState"
+                            android:fontFamily="@font/poppins"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
+                            android:layout_height="match_parent"
+                            android:lines="1"
+                            />
+
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilLead"
+                        android:id="@+id/autoLayCountry"
+                        android:theme="@style/DrpStyle2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint=" Country ">
+                        android:hint="Country"
+                        >
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edCountry"
+                        <AutoCompleteTextView
+                            android:id="@+id/autotxtCountry"
+                            android:fontFamily="@font/poppins"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="match_parent"
+                            android:lines="1"
+                            />
 
+                    </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

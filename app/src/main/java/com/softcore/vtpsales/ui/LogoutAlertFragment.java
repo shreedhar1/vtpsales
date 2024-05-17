@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.softcore.vtpsales.AppUtils.AppUtil;
+import com.softcore.vtpsales.LeadGenerationActivity;
 import com.softcore.vtpsales.LoginActivity;
+import com.softcore.vtpsales.Network.ServiceLayerApi;
 import com.softcore.vtpsales.R;
 
 public class LogoutAlertFragment extends Fragment {
@@ -36,9 +40,24 @@ public class LogoutAlertFragment extends Fragment {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        AppUtil.showProgressDialog(getView(),"Loading");
                         Intent intent = new Intent(getContext(), LoginActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+                        startActivity(intent);
+                        getActivity().finish();
+                        ServiceLayerApi.doSapLogout(getActivity(), new ServiceLayerApi.ApiCallback() {
+                            @Override
+                            public void onLoginSuccess() {
+
+                            }
+
+                            @Override
+                            public void onLoginFailure() {
+                           //     Toast.makeText(getContext(), "Logout Failed!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        AppUtil.hideProgressDialog();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -8,10 +8,11 @@ public class ClockRequest {
     private String Check_In_Remark;
     private String Check_out_Time;
     private String Check_out_Remark;
+    private String Check_in_Location;
     private String Check_out_Location;
     private String Customer_Code;
 
-    public ClockRequest(String date, String employee_Code, String employee_Name, String check_In_Time, String check_In_Remark, String check_out_Time, String check_out_Remark, String check_out_Location ) {
+    public ClockRequest(String date, String employee_Code, String employee_Name, String check_In_Time, String check_In_Remark, String check_out_Time, String check_out_Remark,String check_in_Location ,String check_out_Location ) {
         Date = date;
         Employee_Code = employee_Code;
         Employee_Name = employee_Name;
@@ -19,6 +20,7 @@ public class ClockRequest {
         Check_In_Remark = check_In_Remark;
         Check_out_Time = check_out_Time;
         Check_out_Remark = check_out_Remark;
+        Check_in_Location = check_in_Location;
         Check_out_Location = check_out_Location;
 
     }

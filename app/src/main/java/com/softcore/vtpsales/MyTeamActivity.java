@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -75,7 +76,6 @@ public class MyTeamActivity extends AppCompatActivity {
         String DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
 
-
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
 //        MyTeamViewModel myTeamViewModel= new ViewModelProvider(this).get(MyTeamViewModel.class);
@@ -115,7 +115,7 @@ public class MyTeamActivity extends AppCompatActivity {
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
 
-                    adapterMyTeam.setData(listCommanResorce.data);
+                    adapterMyTeam.setData(listCommanResorce.data,MyTeamActivity.this);
                 }
 
                 AppUtil.hideProgressDialog();

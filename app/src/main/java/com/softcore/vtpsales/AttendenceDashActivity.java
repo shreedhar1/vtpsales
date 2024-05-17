@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.databinding.ActivityAttendenceDashBinding;
 
 public class AttendenceDashActivity extends AppCompatActivity {
@@ -46,10 +47,13 @@ public class AttendenceDashActivity extends AppCompatActivity {
                 if (TYPE.equals("emp")) {
                     Intent intent = new Intent(AttendenceDashActivity.this, AttendenceActivity.class);
                     intent.putExtra("operation", "in");
+                    intent.putExtra("type",TYPE);
+
                     startActivity(intent);
                 }else if (TYPE.equals("cust")) {
                     Intent intent = new Intent(AttendenceDashActivity.this, CustAttendenceActivity.class);
                     intent.putExtra("operation", "in");
+                    intent.putExtra("type",TYPE);
                     startActivity(intent);
                 }
             }
@@ -71,7 +75,9 @@ public class AttendenceDashActivity extends AppCompatActivity {
         binding.cardListView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
                 Intent intent = new Intent(AttendenceDashActivity.this, AttendenceListActivity.class);
+                intent.putExtra("EmpName",EmpName);
                 intent.putExtra("type",TYPE);
                 startActivity(intent);
             }

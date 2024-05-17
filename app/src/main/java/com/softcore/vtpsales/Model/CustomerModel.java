@@ -1,5 +1,7 @@
 package com.softcore.vtpsales.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CustomerModel {
     private String CardCode;
     private String CardName;
@@ -9,7 +11,9 @@ public class CustomerModel {
     private String Block;
     private String City;
     private String ZipCode;
+    @SerializedName("ShipTo State")
     private String ShipToState;
+    @SerializedName("ShipTo Country")
     private String ShipToCountry;
 
     // Getters and setters

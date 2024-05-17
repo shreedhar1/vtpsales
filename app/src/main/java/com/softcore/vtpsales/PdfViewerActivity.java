@@ -43,7 +43,7 @@ public class PdfViewerActivity extends AppCompatActivity {
 
     String pdfUrl = "https://www.tutorialspoint.com/java/java_tutorial.pdf";
 
-    String DocNo = "";
+    String DocEntry = "";
     String CusName = "";
 
     @Override
@@ -53,7 +53,7 @@ public class PdfViewerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        DocNo = getIntent().getStringExtra("DocNo");
+        DocEntry = getIntent().getStringExtra("DocEntry");
         CusName = getIntent().getStringExtra("CusName");
         String DbKey = "";
         String DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
@@ -73,7 +73,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                 break;
         }
 
-        pdfUrl = "http://103.96.42.106:7279/api/sap/"+DbKey+"_Live_OpenARInvoice?DocEntry="+DocNo+"&ObjectId=13";
+        pdfUrl = "http://103.96.42.106:7279/api/sap/"+DbKey+"_Live_OpenARInvoice?DocEntry="+DocEntry+"&ObjectId=13";
 
         btnNext = findViewById(R.id.btnNext);
         btnPrevious = findViewById(R.id.btnPrevious);
@@ -142,7 +142,7 @@ public class PdfViewerActivity extends AppCompatActivity {
     }
 
     private void sharePdf() {
-        File pdfFile = new File(getCacheDir(), "temp.pdf");
+        File pdfFile = new File(getCacheDir(), "Tax invoice.pdf");
         Uri pdfUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", pdfFile);
 
         Intent intent = new Intent(Intent.ACTION_SEND);

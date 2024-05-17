@@ -18,8 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 
+import com.smarteist.autoimageslider.SliderView;
 import com.softcore.vtpsales.Adaptors.AdapterBirth;
 import com.softcore.vtpsales.Adaptors.ImageSliderAdapter;
+import com.softcore.vtpsales.Adaptors.SliderAdapter;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.BirthdayModel;
 import com.softcore.vtpsales.Model.CommanResorce;
@@ -117,30 +119,56 @@ public class BirthdayAndAnniActivity extends AppCompatActivity {
                     }
 
                     if(filList.isEmpty()){
-                        binding.viewPager.setVisibility(View.GONE);
+                        binding.slider.setVisibility(View.GONE);
                     }else {
-                        binding.viewPager.setVisibility(View.VISIBLE);
+                        binding.slider.setVisibility(View.VISIBLE);
                     }
 
                 }
 
-                ImageSliderAdapter adapter = new ImageSliderAdapter(getApplicationContext(), filList,false);
-                binding.viewPager.setAdapter(adapter);
-                final Handler handler = new Handler();
-                final Runnable update = new Runnable() {
-                    public void run() {
-                        int currentPage = binding.viewPager.getCurrentItem();
-                        int nextPage = currentPage + 1;
-                        if (nextPage >= adapter.getCount()) {
-                            nextPage = 0;
-                        }
-                        binding.viewPager.setCurrentItem(nextPage, true);
-                        handler.postDelayed(this, 8000); // Repeat every 3 seconds
-                    }
-                };
 
-                // Start auto-slide
-                handler.postDelayed(update, 3000); // Delayed start after 3 seconds
+
+                    SliderAdapter adapter = new SliderAdapter(getApplicationContext(), filList,false);
+
+                    // below method is used to set auto cycle direction in left to
+                    // right direction you can change according to requirement.
+                    binding.slider.setAutoCycleDirection(SliderView.LAYOUT_DIRECTION_LTR);
+
+                    // below method is used to
+                    // setadapter to sliderview.
+                    binding.slider.setSliderAdapter(adapter);
+
+                    // below method is use to set
+                    // scroll time in seconds.
+                    binding.slider.setScrollTimeInSec(5);
+
+                    // to set it scrollable automatically
+                    // we use below method.
+                    binding.slider.setAutoCycle(true);
+
+                    // to start autocycle below method is used.
+                    binding.slider.startAutoCycle();
+
+
+
+
+//                ImageSliderAdapter adapter = new ImageSliderAdapter(getApplicationContext(), filList,false);
+//                binding.viewPager.setAdapter(adapter);
+//                final Handler handler = new Handler();
+//                final Runnable update = new Runnable() {
+//                    public void run() {
+//                        int currentPage = binding.viewPager.getCurrentItem();
+//                        int nextPage = currentPage + 1;
+//                        if (nextPage >= adapter.getCount()) {
+//                            nextPage = 0;
+//                        }
+//                        binding.viewPager.setCurrentItem(nextPage, true);
+//                        handler.postDelayed(this, 8000); // Repeat every 3 seconds
+//                    }
+//                };
+//
+//                // Start auto-slide
+//                handler.postDelayed(update, 3000); // Delayed start after 3 seconds
 
                 }else{
                   //  binding.cardlayBirthday.setVisibility(View.GONE);

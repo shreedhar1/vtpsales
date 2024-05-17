@@ -5,6 +5,7 @@ import static com.softcore.vtpsales.AppUtils.AppUtil.isToday;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.smarteist.autoimageslider.SliderView;
 import com.softcore.vtpsales.Adaptors.ImageSliderAdapter;
+import com.softcore.vtpsales.Adaptors.SliderAdapter;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.BirthdayModel;
 import com.softcore.vtpsales.Model.CommanResorce;
@@ -74,9 +77,13 @@ private FragmentDashboardBinding binding;
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
         System.out.println("Database Name: "+DbName);
         BirthdayListViewModel birthdayListViewModel = new ViewModelProvider(this).get(BirthdayListViewModel.class);
-        birthdayListViewModel.getBirthdayListinfo(DbName,"Birthday_Anniversary").observe(getActivity(), new Observer<CommanResorce<List<BirthdayModel>>>() {
+        birthdayListViewModel.getBirthdayListinfo(DbName,"Birthday_Anniversary").observe(getViewLifecycleOwner(), new Observer<CommanResorce<List<BirthdayModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<BirthdayModel>> listCommanResorce) {
+                // Check if the fragment's view is still attached
+                if (getView() == null) {
+                    return;
+                }
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
@@ -93,23 +100,64 @@ private FragmentDashboardBinding binding;
                     }
 
                     if(!filteredList.isEmpty()){
-                        ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), filteredList,true);
-                        binding.viewPager.setAdapter(adapter);
-                        final Handler handler = new Handler();
-                        final Runnable update = new Runnable() {
-                            public void run() {
-                                int currentPage = binding.viewPager.getCurrentItem();
-                                int nextPage = currentPage + 1;
-                                if (nextPage >= adapter.getCount()) {
-                                    nextPage = 0;
-                                }
-                                binding.viewPager.setCurrentItem(nextPage, true);
-                                handler.postDelayed(this, 8000); // Repeat every 3 seconds
-                            }
-                        };
 
-                        // Start auto-slide
-                        handler.postDelayed(update, 3000); // Delayed start after 3 seconds
+                     //   ArrayList<BirthdayModel> sliderDataArrayList = new ArrayList<>();
+
+                        // initializing the slider view.
+                      //  SliderView sliderView = findViewById(R.id.slider);
+
+                        // adding the urls inside array list
+//                        sliderDataArrayList.add(new SliderData(url1));
+//                        sliderDataArrayList.add(new SliderData(url2));
+//                        sliderDataArrayList.add(new SliderData(url3));
+
+                        // passing this array list inside our adapter class.
+                        SliderAdapter adapter = new SliderAdapter(getContext(), filteredList,true);
+
+                        // below method is used to set auto cycle direction in left to
+                        // right direction you can change according to requirement.
+                        binding.slider.setAutoCycleDirection(SliderView.LAYOUT_DIRECTION_LTR);
+
+                        // below method is used to
+                        // setadapter to sliderview.
+                        binding.slider.setSliderAdapter(adapter);
+
+                        // below method is use to set
+                        // scroll time in seconds.
+                        binding.slider.setScrollTimeInSec(5);
+
+                        // to set it scrollable automatically
+                        // we use below method.
+                        binding.slider.setAutoCycle(true);
+
+                        // to start autocycle below method is used.
+                        binding.slider.startAutoCycle();
+
+
+//                        ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), filteredList,true);
+//                        if (binding.viewPager != null) {
+//                            binding.viewPager.setAdapter(adapter);
+//                            final Handler handler = new Handler();
+//                            final Runnable update = new Runnable() {
+//                                public void run() {
+//                                    int currentPage = binding.viewPager.getCurrentItem();
+//                                    int nextPage = currentPage + 1;
+//                                    if (nextPage >= adapter.getCount()) {
+//                                        nextPage = 0;
+//                                    }
+//                                    binding.viewPager.setCurrentItem(nextPage, true);
+//                                    handler.postDelayed(this, 8000); // Repeat every 3 seconds
+//                                }
+//                            };
+//
+//                            // Start auto-slide
+//                            handler.postDelayed(update, 3000); // Delayed start after 3 seconds
+//                        } else {
+//                            Log.e("getData", "ViewPager is null");
+//                        }
+
+
+
 
                     }
 
@@ -118,8 +166,15 @@ private FragmentDashboardBinding binding;
                 AppUtil.hideProgressDialog();
             }
         });
+
+
     }
-@Override
+
+
+   // }
+
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
