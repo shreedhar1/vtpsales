@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.attendence.AttendanceFragment" >
+    tools:context=".ui.Attendance.AttendanceFragment" >
 
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardDailyAttendence"
+        android:id="@+id/cardDailyAttendance"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -34,7 +34,7 @@
                 android:layout_weight="0.9"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"
-                android:text="Daily Attendence"
+                android:text="Daily Attendance"
                 android:textSize="@dimen/_14sdp"/>
             <ImageView
                 android:layout_width="0dp"
@@ -46,8 +46,8 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardCustomerAttendence"
-        app:layout_constraintTop_toBottomOf="@id/cardDailyAttendence"
+        android:id="@+id/cardCustomerAttendance"
+        app:layout_constraintTop_toBottomOf="@id/cardDailyAttendance"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="@dimen/_20sdp"

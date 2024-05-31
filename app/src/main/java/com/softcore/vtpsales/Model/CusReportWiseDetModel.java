@@ -18,6 +18,8 @@ public class CusReportWiseDetModel {
     private String customer_Name;
     @SerializedName("Doc_No")
     private String docNo;
+    @SerializedName("VTPDocNo")
+    private String VTPdocNo;
     @SerializedName("DocEntry")
     private String DocEntry;
     @SerializedName("Posting Date")
@@ -257,5 +259,13 @@ public class CusReportWiseDetModel {
 
     public void setVendor_Code(String vendor_Code) {
         this.vendor_Code = vendor_Code;
+    }
+
+    public String getVTPdocNo() {
+        return VTPdocNo;
+    }
+
+    public void setVTPdocNo(String VTPdocNo) {
+        this.VTPdocNo = VTPdocNo;
     }
 }

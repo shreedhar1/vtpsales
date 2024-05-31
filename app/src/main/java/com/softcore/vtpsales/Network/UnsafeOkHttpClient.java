@@ -2,6 +2,7 @@ package com.softcore.vtpsales.Network;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Toast;
 
 
 import com.softcore.vtpsales.SplashActivity;
@@ -21,8 +22,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 
-import okhttp3.Headers;
-import okhttp3.Interceptor;
+//import okhttp3.Headers;
+//import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -58,7 +59,7 @@ public class UnsafeOkHttpClient {
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
-            builder.addInterceptor(SplashActivity.mChuckInterceptor);
+            //builder.addInterceptor(SplashActivity.mChuckInterceptor);
             builder.cookieJar(new JavaNetCookieJar(cookieHandler));
 
             builder.hostnameVerifier(new HostnameVerifier() {

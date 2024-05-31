@@ -1,10 +1,6 @@
 package com.softcore.vtpsales;
 
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +9,10 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int TIME_INTERVAL = 2000; // Time between two back presses in milliseconds
     private long backPressedTime;
     String rememberme = "N";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,12 +156,29 @@ public class LoginActivity extends AppCompatActivity {
                     if (apiPassword.equals(password)) {
                         AppUtil.saveStringData(getApplicationContext(),"Rem",rememberme);
                         String EmpId = listCommanResorce.data.get(0).getEmpID();
+                        String EmpType = listCommanResorce.data.get(0).getType();
+                        String CompnyName = listCommanResorce.data.get(0).getCompnyName();
+                        String CompnyAddr = listCommanResorce.data.get(0).getCompnyAddr();
+                        String Building = listCommanResorce.data.get(0).getBuilding();
+                        String IntrntAdrs = listCommanResorce.data.get(0).getIntrntAdrs();
+                        String Phone1 = listCommanResorce.data.get(0).getPhone1();
+                        String E_Mail = listCommanResorce.data.get(0).getE_Mail();
+                        AppUtil.saveStringData(getApplicationContext(),"EmpTypePName",listCommanResorce.data.get(0).getSales_Employee());
                         AppUtil.saveStringData(getApplicationContext(),"EmpCode",listCommanResorce.data.get(0).getEMP_Code());
                         AppUtil.saveStringData(getApplicationContext(),"EmpName",listCommanResorce.data.get(0).getFirstName()+" " +listCommanResorce.data.get(0).getLastName());
                         AppUtil.saveStringData(getApplicationContext(),"EmpEmail",listCommanResorce.data.get(0).getEmail());
                         AppUtil.saveStringData(getApplicationContext(),"EmpMob",listCommanResorce.data.get(0).getMobile());
                         AppUtil.saveStringData(getApplicationContext(),"EmpPass",listCommanResorce.data.get(0).getUser_Password());
                         AppUtil.saveStringData(getApplicationContext(),"EmpID",EmpId);
+                        AppUtil.saveStringData(getApplicationContext(),"EmpType",EmpType);
+
+
+                        AppUtil.saveStringData(getApplicationContext(),"ComName",CompnyName);
+                        AppUtil.saveStringData(getApplicationContext(),"ComAddr",CompnyAddr);
+                        AppUtil.saveStringData(getApplicationContext(),"ComBuilding",Building);
+                        AppUtil.saveStringData(getApplicationContext(),"ComWebsite",IntrntAdrs);
+                        AppUtil.saveStringData(getApplicationContext(),"ComPhone1",Phone1);
+                        AppUtil.saveStringData(getApplicationContext(),"ComE_Mail",E_Mail);
 
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
 

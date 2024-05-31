@@ -1,4 +1,4 @@
-package com.softcore.vtpsales.ui.attendence;
+package com.softcore.vtpsales.ui.Attendance;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

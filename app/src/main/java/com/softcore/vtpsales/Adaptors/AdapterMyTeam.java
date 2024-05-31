@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.softcore.vtpsales.AttendenceListActivity;
+import com.softcore.vtpsales.AttendanceListActivity;
 import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.MyTeamActivity;
 import com.softcore.vtpsales.R;
@@ -54,7 +54,7 @@ public class AdapterMyTeam extends RecyclerView.Adapter<AdapterMyTeam.UserViewHo
             public void onClick(View v) {
                 //  String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
 
-                Intent intent = new Intent(activity, AttendenceListActivity.class);
+                Intent intent = new Intent(activity, AttendanceListActivity.class);
                 intent.putExtra("EmpName",user.getName());
                 intent.putExtra("type","cust");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

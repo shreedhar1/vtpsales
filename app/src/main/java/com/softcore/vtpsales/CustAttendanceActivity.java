@@ -1,15 +1,11 @@
 package com.softcore.vtpsales;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,14 +13,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -33,32 +27,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.softcore.vtpsales.AppUtils.AppUtil;
-import com.softcore.vtpsales.Model.ClockRequest;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusClockRequest;
 import com.softcore.vtpsales.Model.CustomerModel;
-import com.softcore.vtpsales.Model.GeneralModel;
-import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.Network.RemoteRepository;
 import com.softcore.vtpsales.ViewModel.CustomerViewModel;
-import com.softcore.vtpsales.ViewModel.SlpViewModel;
-import com.softcore.vtpsales.databinding.ActivityCustAttendenceBinding;
+import com.softcore.vtpsales.databinding.ActivityCustAttendanceBinding;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,9 +49,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CustAttendenceActivity extends AppCompatActivity {
+public class CustAttendanceActivity extends AppCompatActivity {
     String OPERATION;
-    ActivityCustAttendenceBinding binding;
+    ActivityCustAttendanceBinding binding;
     String TYPE;
     private Handler handler;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -92,7 +71,7 @@ public class CustAttendenceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCustAttendenceBinding.inflate(getLayoutInflater());
+        binding = ActivityCustAttendanceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         TYPE = getIntent().getStringExtra("type");
 
@@ -147,11 +126,11 @@ public class CustAttendenceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(CurrentLocation.equals("")){
-                    Toast.makeText(CustAttendenceActivity.this, "location not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustAttendanceActivity.this, "location not available", Toast.LENGTH_SHORT).show();
                 }else if(selectedmodel != null){
                     Clock_In_Out(v, OPERATION);
                 }else {
-                    Toast.makeText(CustAttendenceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustAttendanceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -245,9 +224,9 @@ public class CustAttendenceActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     AppUtil.hideProgressDialog();
 
-                    Toast.makeText(CustAttendenceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustAttendanceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: " + response.code());
-                    Intent intent = new Intent(CustAttendenceActivity.this, MainActivity2.class);
+                    Intent intent = new Intent(CustAttendanceActivity.this, MainActivity2.class);
                     startActivity(intent);
                     finish();
                     // Handle success
@@ -262,7 +241,7 @@ public class CustAttendenceActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(CustAttendenceActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustAttendanceActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 AppUtil.hideProgressDialog();
             }
         });
@@ -284,12 +263,51 @@ public class CustAttendenceActivity extends AppCompatActivity {
                     List<CustomerModel> selectedModelList = new ArrayList<>();
 
 
+                    String EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
+                    String EmpTypePName = AppUtil.getStringData(getApplicationContext(),"EmpTypePName","");
+
                     for (CustomerModel database : listCommanResorce.data) {
-                        slpNames.add(database.getCardName());
-                        selectedModelList.add(database);
+
+//                       if(EmpType.equals("SalesPerson")){
+//                           if(EmpName.equals(database.getSalesPerson())){
+//                               slpNames.add(database.getCardName());
+//                               selectedModelList.add(database);
+//                           }
+//                        }else if(EmpType.equals("CollectionPerson")){
+//                           if(EmpName.equals(database.getSalesPerson())){
+//                               slpNames.add(database.getCardName());
+//                               selectedModelList.add(database);
+//                           }
+//                       }else if(EmpType.equals("Both")){
+//                           if(EmpName.equals(database.getSalesPerson())){
+//                               slpNames.add(database.getCardName());
+//                               selectedModelList.add(database);
+//                           }
+//                       }
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                if (EmpTypePName.equals(database.getSalesPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                            case "Collection Person":
+                                if (EmpTypePName.equals(database.getCollectionPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                            case "Both":
+                                if (EmpTypePName.equals(database.getSalesPerson()) && EmpTypePName.equals(database.getCollectionPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                        }
+
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(CustAttendenceActivity.this,
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(CustAttendanceActivity.this,
                             R.layout.simple_spinner_design, slpNames);
 
 //                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -446,7 +464,7 @@ public class CustAttendenceActivity extends AppCompatActivity {
                             }
 
                         } else {
-                            Toast.makeText(CustAttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CustAttendanceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

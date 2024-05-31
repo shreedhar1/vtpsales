@@ -15,6 +15,24 @@ public class CustomerModel {
     private String ShipToState;
     @SerializedName("ShipTo Country")
     private String ShipToCountry;
+    private String SalesPerson;
+    private String CollectionPerson;
+
+    public String getSalesPerson() {
+        return SalesPerson;
+    }
+
+    public void setSalesPerson(String salesPerson) {
+        SalesPerson = salesPerson;
+    }
+
+    public String getCollectionPerson() {
+        return CollectionPerson;
+    }
+
+    public void setCollectionPerson(String collectionPerson) {
+        CollectionPerson = collectionPerson;
+    }
 
     // Getters and setters
     public String getCardCode() {

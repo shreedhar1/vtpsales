@@ -16,7 +16,7 @@ import com.softcore.vtpsales.Model.MyTeamMember;
 import com.softcore.vtpsales.ViewModel.ARInvoiceViewModel;
 import com.softcore.vtpsales.ViewModel.MyTeamViewModel;
 import com.softcore.vtpsales.databinding.ActivityArInvoiceViewBinding;
-import com.softcore.vtpsales.databinding.ActivityAttendenceBinding;
+import com.softcore.vtpsales.databinding.ActivityAttendanceBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ public class ArInvoiceView extends AppCompatActivity {
     ActivityArInvoiceViewBinding binding;
 
     String DocNo = "";
+    String VTPDocNo = "";
     String DocEntry = "";
     String CusName = "";
     @Override
@@ -36,7 +37,7 @@ public class ArInvoiceView extends AppCompatActivity {
         binding = ActivityArInvoiceViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.laybar.appbarTextView.setText("Invoice");
+
 
         binding.laybar.backId.setVisibility(View.VISIBLE);
         binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
@@ -47,8 +48,11 @@ public class ArInvoiceView extends AppCompatActivity {
         });
 
         DocNo = getIntent().getStringExtra("DocNo");
+        VTPDocNo = getIntent().getStringExtra("VTPDocNo");
         DocEntry = getIntent().getStringExtra("DocEntry");
         CusName = getIntent().getStringExtra("CusName");
+
+
 
 
         GetInvoice();
@@ -88,7 +92,7 @@ public class ArInvoiceView extends AppCompatActivity {
                         binding.textNetAmount2.setText("₹ "+String.format("%.2f",list.get(0).getNetAmount()));
                         binding.textPostingDate.setText(AppUtil.convertDateFormat(String.valueOf(list.get(0).getPostingDate())));
                         binding.textDueDate.setText(AppUtil.convertDateFormat(String.valueOf(list.get(0).getDueDate())));
-                        binding.textDocNum.setText("Document No.: "+String.valueOf(list.get(0).getDocNum()));
+                     //   binding.textDocNum.setText("Document No.: "+String.valueOf(list.get(0).getDocNum()));
                         if(list.get(0).getCustomerRefNo() != null){
                             binding.textCustomerRefNo.setText("Customer Ref No.: "+list.get(0).getCustomerRefNo());
                         }
@@ -105,9 +109,9 @@ public class ArInvoiceView extends AppCompatActivity {
                         binding.textLrno.setText("Lr No.: "+list.get(0).getLrNo());
                         binding.textTransportVechicle.setText("Transport Vehicle No.: "+list.get(0).getVehicleNo());
                         binding.textDueDate2.setText("Due Date: "+AppUtil.convertDateFormat(String.valueOf(list.get(0).getDueDate())));
-                        binding.textDocNum.setText("Doc No.: "+String.valueOf(list.get(0).getDocNum()));
+                        binding.textDocNum.setText("VTP Doc No.: "+VTPDocNo);
+                        binding.laybar.appbarTextView.setText("Invoice Doc No.: "+VTPDocNo.toString());
                         binding.textItemDescription.setText(String.valueOf(list.get(0).getItemDescription()));
-                        binding.laybar.appbarTextView.setText("Invoice Doc No.: "+String.valueOf(list.get(0).getDocNum()));
 
                         if(list.get(0).getStatus().equals("unpaid")){
                             binding.cardStatusCard.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.orange));

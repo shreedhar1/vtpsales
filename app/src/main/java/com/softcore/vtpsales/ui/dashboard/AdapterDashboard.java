@@ -11,13 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softcore.vtpsales.AppUtils.AppUtil;
-import com.softcore.vtpsales.AttendenceHomeActivity;
+import com.softcore.vtpsales.AttendanceHomeActivity;
 import com.softcore.vtpsales.BirthdayAndAnniActivity;
 import com.softcore.vtpsales.LeadGenerationActivity;
-import com.softcore.vtpsales.MainActivity2;
 import com.softcore.vtpsales.MyTeamActivity;
 import com.softcore.vtpsales.Qr_Screen;
-import com.softcore.vtpsales.ReportsActivity;
+import com.softcore.vtpsales.ReportsActivity2;
 import com.softcore.vtpsales.databinding.AdapterDashboardBinding;
 
 import java.util.List;
@@ -52,7 +51,7 @@ public class AdapterDashboard extends RecyclerView.Adapter<AdapterDashboard.Hold
                     Intent intent=null;
                     switch (position){
                         case 0:
-                            intent=new Intent(holder.itemView.getContext(), AttendenceHomeActivity.class);
+                            intent=new Intent(holder.itemView.getContext(), AttendanceHomeActivity.class);
                             break;
                         case 1:
                             intent=new Intent(holder.itemView.getContext(), BirthdayAndAnniActivity.class);
@@ -65,7 +64,7 @@ public class AdapterDashboard extends RecyclerView.Adapter<AdapterDashboard.Hold
                             intent=new Intent(holder.itemView.getContext(), LeadGenerationActivity.class);
                             break;
                         case 4:
-                            intent=new Intent(holder.itemView.getContext(), ReportsActivity.class);
+                            intent=new Intent(holder.itemView.getContext(), ReportsActivity2.class);
                             break;
                         case 5:
                             intent=new Intent(holder.itemView.getContext(), MyTeamActivity.class);

@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.maps.android.SphericalUtil;
 import com.softcore.vtpsales.Model.AttendanceModel;
 import com.softcore.vtpsales.databinding.ActivityGoogleMapBinding;
 
@@ -110,16 +111,28 @@ public class AllMapScreen extends AppCompatActivity implements OnMapReadyCallbac
 
                                 // Update UI on the main thread
                                 runOnUiThread(() -> {
-                                    // Add markers for in location and out location
-                                    gMap.addMarker(new MarkerOptions().position(inLatLng).title("In Location"));
-                                    gMap.addMarker(new MarkerOptions().position(outLatLng).title("Out Location"));
 
-                                    // Draw a line between in location and out location
+                                    double distance = SphericalUtil.computeDistanceBetween(inLatLng, outLatLng) / 1000; // distance in kilometers
+
+                                    // Add markers for in location and out location
+                                    gMap.addMarker(new MarkerOptions().position(inLatLng).title("In Location "+String.format("%.2f", distance) + " km"));
+                                    gMap.addMarker(new MarkerOptions().position(outLatLng).title("Out Location "+String.format("%.2f", distance) + " km"
+                                    ));
+
                                     PolylineOptions polylineOptions = new PolylineOptions()
                                             .add(inLatLng, outLatLng)
+                                            .clickable(true)
                                             .width(5) // width of the line
-                                            .color(Color.RED); // color of the line
+                                            .color(Color.RED);// color of the line
                                     gMap.addPolyline(polylineOptions);
+
+//                                    gMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+//
+//                                        @Override
+//                                        public void onPolylineClick(Polyline polyline) {
+//                                            Toast.makeText(AllMapScreen.this, "Distance: " + String.format("%.2f", distance) + " km", Toast.LENGTH_LONG).show();
+//                                        }
+//                                    });
 
                                     // Move camera to show all markers
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();

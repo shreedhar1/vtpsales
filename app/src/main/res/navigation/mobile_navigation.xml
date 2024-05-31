@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_attendance"
-        android:name="com.softcore.vtpsales.ui.attendence.AttendanceFragment"
+        android:name="com.softcore.vtpsales.ui.Attendance.AttendanceFragment"
         android:label="@string/title_attendance"
         android:layout_gravity="center"
         tools:layout="@layout/fragment_attendance" />

@@ -1,4 +1,4 @@
-package com.softcore.vtpsales.ui.attendence;
+package com.softcore.vtpsales.ui.Attendance;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.softcore.vtpsales.AttendenceDashActivity;
-import com.softcore.vtpsales.databinding.ActivityAttendenceHomeBinding;
+import com.softcore.vtpsales.AttendanceDashActivity;
+import com.softcore.vtpsales.databinding.ActivityAttendanceHomeBinding;
 import com.softcore.vtpsales.databinding.FragmentAttendanceBinding;
 
 public class AttendanceFragment extends Fragment {
@@ -32,19 +32,19 @@ private FragmentAttendanceBinding binding;
 //        final TextView textView = binding.textHome;
  //       attendanceViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-                binding.cardDailyAttendence.setOnClickListener(new View.OnClickListener() {
+                binding.cardDailyAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent=new Intent(getContext(), AttendenceDashActivity.class);
+                Intent intent=new Intent(getContext(), AttendanceDashActivity.class);
                 intent.putExtra("type","emp");
                 startActivity(intent);
             }
         });
-        binding.cardCustomerAttendence.setOnClickListener(new View.OnClickListener() {
+        binding.cardCustomerAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getContext(), AttendenceDashActivity.class);
+                Intent intent=new Intent(getContext(), AttendanceDashActivity.class);
                 intent.putExtra("type","cust");
                 startActivity(intent);
             }

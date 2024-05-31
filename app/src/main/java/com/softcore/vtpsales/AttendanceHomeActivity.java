@@ -1,25 +1,22 @@
 package com.softcore.vtpsales;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.softcore.vtpsales.databinding.ActivityAttendenceHomeBinding;
+import com.softcore.vtpsales.databinding.ActivityAttendanceHomeBinding;
 
-public class AttendenceHomeActivity extends AppCompatActivity {
-    ActivityAttendenceHomeBinding binding;
+public class AttendanceHomeActivity extends AppCompatActivity {
+    ActivityAttendanceHomeBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityAttendenceHomeBinding.inflate(getLayoutInflater());
+        binding=ActivityAttendanceHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.laybar.appbarTextView.setText("Attendance");
@@ -33,19 +30,19 @@ public class AttendenceHomeActivity extends AppCompatActivity {
         });
 
 
-        binding.cardDailyAttendence.setOnClickListener(new View.OnClickListener() {
+        binding.cardDailyAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent=new Intent(AttendenceHomeActivity.this, AttendenceDashActivity.class);
+                Intent intent=new Intent(AttendanceHomeActivity.this, AttendanceDashActivity.class);
                 intent.putExtra("type","emp");
                 startActivity(intent);
             }
         });
-        binding.cardCustomerAttendence.setOnClickListener(new View.OnClickListener() {
+        binding.cardCustomerAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(AttendenceHomeActivity.this, AttendenceDashActivity.class);
+                Intent intent=new Intent(AttendanceHomeActivity.this, AttendanceDashActivity.class);
                 intent.putExtra("type","cust");
                 startActivity(intent);
             }

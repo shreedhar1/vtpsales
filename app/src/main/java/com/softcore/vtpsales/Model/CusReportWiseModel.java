@@ -1,17 +1,23 @@
 package com.softcore.vtpsales.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class CusReportWiseModel {
+public class CusReportWiseModel implements Parcelable {
 
-    @SerializedName("Sales Employee")
-    private String salesEmployee;
+    @SerializedName("SalesPerson")
+    private String salesPerson;
+    @SerializedName("CollectionPerson")
+    private String collectionPerson;
     @SerializedName("Customer Code")
     private String customerCode;
     @SerializedName("Customer Name")
     private String customerName;
-    @SerializedName("Sales_Employee")
-    private String sales_Employee;
+
     @SerializedName("Customer_Code")
     private String customer_Code;
     @SerializedName("Customer_Name")
@@ -66,6 +72,97 @@ public class CusReportWiseModel {
     private String GrossDebitAmt;
 
 
+    protected CusReportWiseModel(Parcel in) {
+        salesPerson = in.readString();
+        collectionPerson = in.readString();
+        customerCode = in.readString();
+        customerName = in.readString();
+        customer_Code = in.readString();
+        customer_Name = in.readString();
+        balanceDue = in.readString();
+        count = in.readString();
+        vendor_Name = in.readString();
+        vendor_Code = in.readString();
+        Month = in.readString();
+        NetAmtINV_CRN = in.readString();
+        GrossAmtINV_CRN = in.readString();
+        NetSalesAmt = in.readString();
+        GrossSalesAmt = in.readString();
+        NetCrdAmt = in.readString();
+        GrossCrditAmt = in.readString();
+        NetAmtINV_ARCRN = in.readString();
+        GrossAmtINV_ARCRN = in.readString();
+        GrossCrdAmt = in.readString();
+        NetAmtApCrn = in.readString();
+        GrossAmtApCrn = in.readString();
+        NetPurchaseAmt = in.readString();
+        GrossPurchaseAmt = in.readString();
+        NetDebitAmt = in.readString();
+        GrossDebitAmt = in.readString();
+    }
+
+    public static final Creator<CusReportWiseModel> CREATOR = new Creator<CusReportWiseModel>() {
+        @Override
+        public CusReportWiseModel createFromParcel(Parcel in) {
+            return new CusReportWiseModel(in);
+        }
+
+        @Override
+        public CusReportWiseModel[] newArray(int size) {
+            return new CusReportWiseModel[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(salesPerson);
+        dest.writeString(collectionPerson);
+        dest.writeString(customerCode);
+        dest.writeString(customerName);
+        dest.writeString(customer_Code);
+        dest.writeString(customer_Name);
+        dest.writeString(balanceDue);
+        dest.writeString(count);
+        dest.writeString(vendor_Name);
+        dest.writeString(vendor_Code);
+        dest.writeString(Month);
+        dest.writeString(NetAmtINV_CRN);
+        dest.writeString(GrossAmtINV_CRN);
+        dest.writeString(NetSalesAmt);
+        dest.writeString(GrossSalesAmt);
+        dest.writeString(NetCrdAmt);
+        dest.writeString(GrossCrditAmt);
+        dest.writeString(NetAmtINV_ARCRN);
+        dest.writeString(GrossAmtINV_ARCRN);
+        dest.writeString(GrossCrdAmt);
+        dest.writeString(NetAmtApCrn);
+        dest.writeString(GrossAmtApCrn);
+        dest.writeString(NetPurchaseAmt);
+        dest.writeString(GrossPurchaseAmt);
+        dest.writeString(NetDebitAmt);
+        dest.writeString(GrossDebitAmt);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public String getSalesPerson() {
+        return salesPerson;
+    }
+
+    public void setSalesPerson(String salesPerson) {
+        this.salesPerson = salesPerson;
+    }
+
+    public String getCollectionPerson() {
+        return collectionPerson;
+    }
+
+    public void setCollectionPerson(String collectionPerson) {
+        this.collectionPerson = collectionPerson;
+    }
 
     public String getNetAmtApCrn() {
         return NetAmtApCrn;
@@ -147,13 +244,7 @@ public class CusReportWiseModel {
         GrossAmtINV_ARCRN = grossAmtINV_ARCRN;
     }
 
-    public String getSalesEmployee() {
-        return salesEmployee;
-    }
 
-    public void setSalesEmployee(String salesEmployee) {
-        this.salesEmployee = salesEmployee;
-    }
 
     public String getCustomerCode() {
         return customerCode;
@@ -169,14 +260,6 @@ public class CusReportWiseModel {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
-    }
-
-    public String getSales_Employee() {
-        return sales_Employee;
-    }
-
-    public void setSales_Employee(String sales_Employee) {
-        this.sales_Employee = sales_Employee;
     }
 
     public String getCustomer_Code() {

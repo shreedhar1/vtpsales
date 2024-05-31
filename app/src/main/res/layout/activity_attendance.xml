@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F9FF"
-    tools:context=".AttendenceActivity">
+    tools:context=".AttendanceActivity">
 
     <include
         android:id="@+id/laybar"

@@ -18,9 +18,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.softcore.vtpsales.R;
-import com.softcore.vtpsales.databinding.ActivityCustAttendenceBinding;
+import com.google.maps.android.SphericalUtil;
 import com.softcore.vtpsales.databinding.ActivityGoogleMapBinding;
 
 import java.io.IOException;
@@ -65,11 +65,14 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
+
+
+
+
     public void onMapReady(@NonNull GoogleMap googleMap) {
         gMap = googleMap;
         markLocations();
     }
-
     private void markLocations() {
         if (InLocation == null || OutLocation == null) {
             Toast.makeText(this, "Locations not provided", Toast.LENGTH_SHORT).show();
@@ -88,21 +91,37 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback {
                 LatLng inLatLng = new LatLng(inLocationAddress.getLatitude(), inLocationAddress.getLongitude());
                 LatLng outLatLng = new LatLng(outLocationAddress.getLatitude(), outLocationAddress.getLongitude());
 
+
                 // Add markers for in location and out location
-                gMap.addMarker(new MarkerOptions().position(inLatLng).title("In Location"));
-                gMap.addMarker(new MarkerOptions().position(outLatLng).title("Out Location"));
+                gMap.addMarker(new MarkerOptions().position(inLatLng).title("In Location "));
+                gMap.addMarker(new MarkerOptions().position(outLatLng).title("Out Location "));
 
                 // Draw a line between in location and out location
                 PolylineOptions polylineOptions = new PolylineOptions()
                         .add(inLatLng, outLatLng)
+                        .clickable(true)
                         .width(5) // width of the line
-                        .color(Color.RED); // color of the line
+                        .color(Color.RED);// color of the line
                 gMap.addPolyline(polylineOptions);
+
+                double distance = SphericalUtil.computeDistanceBetween(inLatLng, outLatLng) / 1000; // distance in kilometers
+                gMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener() {
+
+                    @Override
+                    public void onPolylineClick(Polyline polyline) {
+                        Toast.makeText(MapScreen.this, "Distance: " + String.format("%.2f", distance) + " km", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                // Calculate the midpoint
+                LatLng midLatLng = SphericalUtil.interpolate(inLatLng, outLatLng, 0.5);
+
 
                 // Move camera to show all markers
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 builder.include(inLatLng);
                 builder.include(outLatLng);
+                builder.include(midLatLng);
                 LatLngBounds bounds = builder.build();
                 int padding = 100; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
@@ -115,5 +134,56 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback {
             Toast.makeText(this, "Error finding location", Toast.LENGTH_SHORT).show();
         }
     }
+
+//    private void markLocations() {
+//        if (InLocation == null || OutLocation == null) {
+//            Toast.makeText(this, "Locations not provided", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        Geocoder geocoder = new Geocoder(this);
+//        try {
+//            List<Address> inLocationAddresses = geocoder.getFromLocationName(InLocation, 1);
+//            List<Address> outLocationAddresses = geocoder.getFromLocationName(OutLocation, 1);
+//
+//            if (!inLocationAddresses.isEmpty() && !outLocationAddresses.isEmpty()) {
+//                Address inLocationAddress = inLocationAddresses.get(0);
+//                Address outLocationAddress = outLocationAddresses.get(0);
+//
+//                LatLng inLatLng = new LatLng(inLocationAddress.getLatitude(), inLocationAddress.getLongitude());
+//                LatLng outLatLng = new LatLng(outLocationAddress.getLatitude(), outLocationAddress.getLongitude());
+//
+//                double distance = SphericalUtil.computeDistanceBetween(inLatLng, outLatLng) / 1000; // distance in kilometers
+//
+//                // Display the distance in a toast
+//                Toast.makeText(this, "Distance: " + String.format("%.2f", distance) + " km", Toast.LENGTH_LONG).show();
+//
+//                // Add markers for in location and out location
+//                gMap.addMarker(new MarkerOptions().position(inLatLng).title("In Location"));
+//                gMap.addMarker(new MarkerOptions().position(outLatLng).title("Out Location"));
+//
+//                // Draw a line between in location and out location
+//                PolylineOptions polylineOptions = new PolylineOptions()
+//                        .add(inLatLng, outLatLng)
+//                        .width(5) // width of the line
+//                        .color(Color.RED); // color of the line
+//                gMap.addPolyline(polylineOptions);
+//
+//                // Move camera to show all markers
+//                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//                builder.include(inLatLng);
+//                builder.include(outLatLng);
+//                LatLngBounds bounds = builder.build();
+//                int padding = 100; // offset from edges of the map in pixels
+//                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+//                gMap.moveCamera(cu);
+//            } else {
+//                Toast.makeText(this, "Location not found", Toast.LENGTH_SHORT).show();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(this, "Error finding location", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
 }

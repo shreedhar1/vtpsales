@@ -37,6 +37,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".generalPdfViewerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".Qr_Screen"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -48,12 +52,17 @@
             android:name=".ReportsListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ReportsDetListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ReportsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReportsActivity2"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -69,23 +78,23 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AttendenceListActivity"
+            android:name=".AttendanceListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CustAttendenceActivity"
+            android:name=".CustAttendanceActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AttendenceActivity"
+            android:name=".AttendanceActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AttendenceDashActivity"
+            android:name=".AttendanceDashActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AttendenceHomeActivity"
+            android:name=".AttendanceHomeActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
@@ -135,6 +144,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
+
         </provider>
 
     </application>

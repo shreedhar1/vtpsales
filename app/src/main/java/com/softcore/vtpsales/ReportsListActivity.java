@@ -1,16 +1,16 @@
 package com.softcore.vtpsales;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
@@ -29,10 +29,7 @@ import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityReportsListBinding;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -50,7 +47,8 @@ public class ReportsListActivity extends AppCompatActivity {
     String MFlag;
     String TotalAmt;
     String SortBy = "Gross";
-
+    String EmpType;
+    String EmpTypePName;
     AdapterCustWiseReport CusAdapter;
 
     List<CusReportWiseModel> Mainlist ;
@@ -65,12 +63,18 @@ public class ReportsListActivity extends AppCompatActivity {
         ViewToDate=getIntent().getStringExtra("ViewToDate");
         PostFromDate=getIntent().getStringExtra("FromDatePost");
         PostToDate=getIntent().getStringExtra("ToDatePost");
-        SlpName=getIntent().getStringExtra("SlpName");
+       // SlpName=getIntent().getStringExtra("SlpName");
+        SlpName="";
+
         Flag=getIntent().getStringExtra("Flag");
         MFlag=getIntent().getStringExtra("MFlag");
         TotalAmt=getIntent().getStringExtra("Amount");
         TYPE=getIntent().getStringExtra("TYPE");
         binding.laybar.appbarTextView.setText(TYPE);
+
+
+        EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
+        EmpTypePName = AppUtil.getStringData(getApplicationContext(),"EmpTypePName","");
 
         binding.laybar.backId.setVisibility(View.VISIBLE);
         binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +83,18 @@ public class ReportsListActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
+        binding.laybar.print.setVisibility(View.GONE);
+        binding.laybar.shareId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), generalPdfViewerActivity.class);
+                intent.putExtra("ReportTYPE", String.valueOf(TYPE));
+                intent.putExtra("SortBy", String.valueOf(SortBy));
+                intent.putExtra("ReportList", (Serializable) Mainlist);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
         binding.txtDates.setText(ViewFromDate+" to "+ViewToDate);
 
         binding.txtTotalAmt.setText(TotalAmt);
@@ -89,6 +104,7 @@ public class ReportsListActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         CusAdapter = new AdapterCustWiseReport();
         binding.recyclerView.setAdapter(CusAdapter);
+
 
     }
     private void GetBarChart(String fromDate, String toDate, String slpName, String mFlag) {
@@ -240,7 +256,37 @@ public class ReportsListActivity extends AppCompatActivity {
             public void onChanged(CommanResorce<List<CusReportWiseModel>> listCommanResorce) {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
-                    Mainlist = listCommanResorce.data;
+
+                    List<CusReportWiseModel> list = new ArrayList<>() ;
+
+                    list = listCommanResorce.data;
+
+
+                    List<CusReportWiseModel>  filterList ;
+                    filterList = new ArrayList<>();
+
+                    for(int i = 0;i < list.size();i++){
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                if (EmpTypePName.equals(list.get(i).getSalesPerson())) {
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                            case "Collection Person":
+                                if (EmpTypePName.equals(list.get(i).getCollectionPerson())) {
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                            case "Both":
+                                if (EmpTypePName.equals(list.get(i).getSalesPerson()) && EmpTypePName.equals(list.get(i).getCollectionPerson())) {
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                        }
+
+                    }
+
+                    Mainlist = filterList;
 
                     UpdateList("Gross");
 
@@ -544,6 +590,195 @@ public class ReportsListActivity extends AppCompatActivity {
         }
         return monthName;
     }
+
+//    private void createPDF() {
+//        // Create a new document
+//        PdfDocument document = new PdfDocument();
+//
+//        // Create a page description
+//        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+//
+//        // Start a page
+//        PdfDocument.Page page = document.startPage(pageInfo);
+//
+//        // Check if the page is null
+//        if (page == null) {
+//            Log.e("MainActivity", "Page is null");
+//            return;
+//        }
+//
+//        Canvas canvas = page.getCanvas();
+//        Paint paint = new Paint();
+//        paint.setColor(Color.BLACK);
+//        paint.setTextSize(16);
+//
+//        // Write text on the PDF
+//
+//        // Random data generation
+//        Random random = new Random();
+//        String companyAddress = "Company Address: " + (random.nextInt(999) + 1) + " Random St, City, Country";
+//        String contact = "Contact: +1 " + (random.nextInt(900000000) + 100000000);
+//        String email = "Email: contact" + (random.nextInt(9999)) + "@company.com";
+//
+//        // Draw the company information
+//        canvas.drawText(companyAddress, 80, 50, paint);
+//        canvas.drawText(contact, 80, 70, paint);
+//        canvas.drawText(email, 80, 90, paint);
+//
+//        // Draw item list header
+//        canvas.drawText("Item Name", 80, 130, paint);
+//        canvas.drawText("Amount", 400, 130, paint);
+//
+//        // Generate and draw random items
+//        int totalAmt = 0;
+//        int startY = 160;
+//        for (int i = 1; i <= 10; i++) {
+//            String itemName = "Item " + i;
+//            int amount = random.nextInt(500) + 1;
+//            totalAmt += amount;
+//            canvas.drawText(itemName, 80, startY, paint);
+//            canvas.drawText("$" + amount, 400, startY, paint);
+//            startY += 30;
+//        }
+//
+//        // Draw total amount
+//        paint.setFakeBoldText(true);
+//        canvas.drawText("Total Amount", 80, startY + 30, paint);
+//        canvas.drawText("$" + totalAmt, 400, startY + 30, paint);
+//
+//        // Finish the page
+//        document.finishPage(page);
+//
+//        // Write the document content
+//        File directory = getCacheDir();
+//        File file = new File(directory, "sample.pdf");
+//
+//        try {
+//            document.writeTo(new FileOutputStream(file));
+//            Log.d("MainActivity", "PDF created at: " + file.getAbsolutePath());
+//        } catch (IOException e) {
+//            Log.e("MainActivity", "Error writing PDF: " + e.toString());
+//        } finally {
+//            // Close the document
+//            document.close();
+//        }
+//
+//        // View the PDF
+//        Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
+//        Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+//        viewIntent.setDataAndType(uri, "application/pdf");
+//        viewIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//        // Share the PDF
+//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//        shareIntent.setType("application/pdf");
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//        // Create chooser intent
+//        Intent chooserIntent = Intent.createChooser(shareIntent, "Share PDF");
+//        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { viewIntent });
+//
+//        // Start the chooser intent
+//        startActivity(chooserIntent);
+//    }
+//
+//    private void createPDF2() {
+//        // Create a new document
+//        PdfDocument document = new PdfDocument();
+//
+//        // Create a page description
+//        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+//
+//        // Start a page
+//        PdfDocument.Page page = document.startPage(pageInfo);
+//
+//        // Check if the page is null
+//        if (page == null) {
+//            Log.e("MainActivity", "Page is null");
+//            return;
+//        }
+//
+//        Canvas canvas = page.getCanvas();
+//        Paint paint = new Paint();
+//        paint.setColor(Color.BLACK);
+//        paint.setTextSize(16);
+//
+//        // Write text on the PDF
+//        Random random = new Random();
+//        String companyAddress = "Company Address: " + (random.nextInt(999) + 1) + " Random St, City, Country";
+//        String contact = "Contact: +1 " + (random.nextInt(900000000) + 100000000);
+//        String email = "Email: contact" + (random.nextInt(9999)) + "@company.com";
+//
+//        // Draw the company information
+//        canvas.drawText(companyAddress, 80, 50, paint);
+//        canvas.drawText(contact, 80, 70, paint);
+//        canvas.drawText(email, 80, 90, paint);
+//
+//        // Draw item list header
+//        canvas.drawText("Item Name", 80, 130, paint);
+//        canvas.drawText("Amount", 400, 130, paint);
+//
+//        // Generate and draw random items
+//        int totalAmt = 0;
+//        int startY = 160;
+//        for (int i = 1; i <= 10; i++) {
+//            String itemName = "Item " + i;
+//            int amount = random.nextInt(500) + 1;
+//            totalAmt += amount;
+//            canvas.drawText(itemName, 80, startY, paint);
+//            canvas.drawText("$" + amount, 400, startY, paint);
+//            startY += 30;
+//        }
+//
+//        // Draw total amount
+//        paint.setFakeBoldText(true);
+//        canvas.drawText("Total Amount", 80, startY + 30, paint);
+//        canvas.drawText("$" + totalAmt, 400, startY + 30, paint);
+//
+//        // Finish the page
+//        document.finishPage(page);
+//
+//        // Write the document content to a temporary file
+////        File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+////
+//        File file = new File(getCacheDir(), "sample.pdf");
+//
+//        try {
+//            document.writeTo(new FileOutputStream(file));
+//            Log.d("MainActivity", "PDF created at: " + file.getAbsolutePath());
+//            viewPDF(file);
+//            sharePDF(file);
+//        } catch (IOException e) {
+//            Log.e("MainActivity", "Error writing PDF: " + e.toString());
+//        } finally {
+//            // Close the document
+//            document.close();
+//        }
+//    }
+//
+//    private void viewPDF(File file) {
+//        Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
+//
+//        //Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setDataAndType(uri, "application/pdf");
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        try {
+//            startActivity(intent);
+//        } catch (ActivityNotFoundException e) {
+//            Toast.makeText(this, "No application available to view PDF", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    private void sharePDF(File file) {
+//        Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
+//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//        shareIntent.setType("application/pdf");
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        startActivity(Intent.createChooser(shareIntent, "Share PDF using"));
+//    }
 
 
 }

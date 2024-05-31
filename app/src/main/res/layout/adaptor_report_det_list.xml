@@ -54,7 +54,30 @@
 
             />
     </LinearLayout>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VTP Doc No : "
+            android:textSize="@dimen/_12sdp"
+            android:gravity="end"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/txt_VTPDocno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doc No. 7834"
+            android:textSize="@dimen/_12sdp"
+            android:gravity="end"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/medium_grey"
+            />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

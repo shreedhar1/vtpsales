@@ -1,6 +1,5 @@
 package com.softcore.vtpsales;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -14,11 +13,8 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.JsonReader;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -29,7 +25,7 @@ import com.google.gson.Gson;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.ClockRequest;
 import com.softcore.vtpsales.Network.RemoteRepository;
-import com.softcore.vtpsales.databinding.ActivityAttendenceBinding;
+import com.softcore.vtpsales.databinding.ActivityAttendanceBinding;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -45,10 +41,10 @@ import retrofit2.Response;
 import android.Manifest;
 
 
-public class AttendenceActivity extends AppCompatActivity {
+public class AttendanceActivity extends AppCompatActivity {
     String OPERATION;
     String TYPE;
-    ActivityAttendenceBinding binding;
+    ActivityAttendanceBinding binding;
     ClockRequest request;
     String remark;
     String CurrentLocation = "";
@@ -64,7 +60,7 @@ public class AttendenceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityAttendenceBinding.inflate(getLayoutInflater());
+        binding = ActivityAttendanceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 
@@ -124,7 +120,7 @@ public class AttendenceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(CurrentLocation.equals("")){
-                    Toast.makeText(AttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendanceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
                 }else{
                     Clock_In_Out(v, OPERATION);
                 }
@@ -209,10 +205,10 @@ public class AttendenceActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     AppUtil.hideProgressDialog();
 
-                    Toast.makeText(AttendenceActivity.this, binding.textButton.getText().toString()+" Successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendanceActivity.this, binding.textButton.getText().toString()+" Successfully", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: "+response.code());
 
-                    Intent intent = new Intent(AttendenceActivity.this, MainActivity2.class);
+                    Intent intent = new Intent(AttendanceActivity.this, MainActivity2.class);
                     startActivity(intent);
                     finish();
                     // Handle success
@@ -227,7 +223,7 @@ public class AttendenceActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(AttendenceActivity.this, "Error: "+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AttendanceActivity.this, "Error: "+t.getMessage(), Toast.LENGTH_SHORT).show();
                 AppUtil.hideProgressDialog();
             }
         });
@@ -304,7 +300,7 @@ public class AttendenceActivity extends AppCompatActivity {
                             }
 
                         } else {
-                            Toast.makeText(AttendenceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AttendanceActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

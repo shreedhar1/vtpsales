@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center_vertical"
-                android:layout_toStartOf="@id/share_id"
+                android:layout_toStartOf="@id/laybar3"
                 android:layout_toEndOf="@id/back_id"
                 android:fontFamily="@font/poppins"
                 android:gravity="center"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical"
-                android:layout_toStartOf="@id/share_id"
+                android:layout_toStartOf="@id/laybar3"
                 android:layout_toEndOf="@id/back_id"
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/_2sdp"
@@ -90,28 +90,35 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
-            <ImageButton
-                android:visibility="visible"
-                android:id="@+id/share_id"
+            <LinearLayout
+                android:id="@+id/laybar3"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center"
-                android:layout_toLeftOf="@id/print"
-                android:background="@color/light_blue_900"
-                android:src="@drawable/baseline_share_24"
-                app:tint="@color/white" />
-            <ImageButton
-                android:visibility="visible"
-                android:id="@+id/print"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_alignParentEnd="true"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center"
-                android:background="@color/light_blue_900"
-                android:src="@drawable/baseline_print_24"
-                app:tint="@color/white" />
+                >
+                <ImageButton
+                    android:visibility="visible"
+                    android:id="@+id/share_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/light_blue_900"
+                    android:src="@drawable/baseline_share_24"
+                    app:tint="@color/white" />
+                <ImageButton
+                    android:visibility="visible"
+                    android:id="@+id/print"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/light_blue_900"
+                    android:src="@drawable/baseline_print_24"
+                    app:tint="@color/white" />
+            </LinearLayout>
+
 
 
         </RelativeLayout>

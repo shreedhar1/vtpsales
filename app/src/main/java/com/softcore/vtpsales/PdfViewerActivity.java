@@ -3,19 +3,27 @@ package com.softcore.vtpsales;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.print.PrintManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.github.barteksc.pdfviewer.BuildConfig;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.softcore.vtpsales.Adaptors.PdfPrintDocumentAdapter;
@@ -30,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Random;
 
 public class PdfViewerActivity extends AppCompatActivity {
 
@@ -200,7 +209,6 @@ public class PdfViewerActivity extends AppCompatActivity {
         pdfRenderer.close();
         parcelFileDescriptor.close();
     }
-
 
 
 

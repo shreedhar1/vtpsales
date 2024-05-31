@@ -1,22 +1,13 @@
 package com.softcore.vtpsales;
 
-import android.annotation.SuppressLint;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 
-import com.readystatesoftware.chuck.ChuckInterceptor;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.softcore.vtpsales.databinding.ActivitySplashBinding;
 
 /**
@@ -25,14 +16,14 @@ import com.softcore.vtpsales.databinding.ActivitySplashBinding;
  */
 public class SplashActivity extends AppCompatActivity {
  private ActivitySplashBinding binding;
-    public static ChuckInterceptor mChuckInterceptor;
+   // public static ChuckInterceptor mChuckInterceptor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 //        getSupportActionBar().hide();
-        mChuckInterceptor = new ChuckInterceptor(SplashActivity.this);
+       // mChuckInterceptor = new ChuckInterceptor(SplashActivity.this);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

@@ -44,7 +44,7 @@ public class AdapterAttendance extends RecyclerView.Adapter<AdapterAttendance.Us
     @NonNull
     @Override
     public AdapterAttendance.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_attendence_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_attendance_list, parent, false);
         return new AdapterAttendance.UserViewHolder(view);
     }
 

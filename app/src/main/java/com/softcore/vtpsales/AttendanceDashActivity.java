@@ -1,26 +1,25 @@
 package com.softcore.vtpsales;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.softcore.vtpsales.AppUtils.AppUtil;
-import com.softcore.vtpsales.databinding.ActivityAttendenceDashBinding;
+import com.softcore.vtpsales.databinding.ActivityAttendanceDashBinding;
 
-public class AttendenceDashActivity extends AppCompatActivity {
+public class AttendanceDashActivity extends AppCompatActivity {
 
-    ActivityAttendenceDashBinding binding;
+    ActivityAttendanceDashBinding binding;
     String TYPE;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_attendence_dash);
-        binding=ActivityAttendenceDashBinding.inflate(getLayoutInflater());
+//        setContentView(R.layout.activity_Attendance_dash);
+        binding=ActivityAttendanceDashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         TYPE=getIntent().getStringExtra("type");
 
@@ -45,13 +44,13 @@ public class AttendenceDashActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (TYPE.equals("emp")) {
-                    Intent intent = new Intent(AttendenceDashActivity.this, AttendenceActivity.class);
+                    Intent intent = new Intent(AttendanceDashActivity.this, AttendanceActivity.class);
                     intent.putExtra("operation", "in");
                     intent.putExtra("type",TYPE);
 
                     startActivity(intent);
                 }else if (TYPE.equals("cust")) {
-                    Intent intent = new Intent(AttendenceDashActivity.this, CustAttendenceActivity.class);
+                    Intent intent = new Intent(AttendanceDashActivity.this, CustAttendanceActivity.class);
                     intent.putExtra("operation", "in");
                     intent.putExtra("type",TYPE);
                     startActivity(intent);
@@ -62,11 +61,11 @@ public class AttendenceDashActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(TYPE.equals("emp")) {
-                    Intent intent = new Intent(AttendenceDashActivity.this, AttendenceActivity.class);
+                    Intent intent = new Intent(AttendanceDashActivity.this, AttendanceActivity.class);
                     intent.putExtra("operation", "out");
                     startActivity(intent);
                 }else if(TYPE.equals("cust")) {
-                    Intent intent = new Intent(AttendenceDashActivity.this, CustAttendenceActivity.class);
+                    Intent intent = new Intent(AttendanceDashActivity.this, CustAttendanceActivity.class);
                     intent.putExtra("operation", "out");
                     startActivity(intent);
                 }
@@ -76,7 +75,7 @@ public class AttendenceDashActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
-                Intent intent = new Intent(AttendenceDashActivity.this, AttendenceListActivity.class);
+                Intent intent = new Intent(AttendanceDashActivity.this, AttendanceListActivity.class);
                 intent.putExtra("EmpName",EmpName);
                 intent.putExtra("type",TYPE);
                 startActivity(intent);

@@ -6,7 +6,7 @@
     android:fillViewport="false"
     android:fitsSystemWindows="true"
     android:layout_height="match_parent"
-    tools:context=".AttendenceListActivity">
+    tools:context=".AttendanceListActivity">
 
     <include
         android:id="@+id/laybar"

@@ -139,14 +139,16 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
 
         holder.TxtAmount.setText("₹ "+formattedTamt);
         holder.TxtDate.setText(model.getPostingDate());
+        holder.TxtVTPDocno.setText(model.getVTPdocNo());
         if(model.getDocNo() != null && model.getDocEntry() != null){
-            holder.TxtDocno.setText(model.getDocNo());
+         //   holder.TxtDocno.setText(model.getDocNo());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override 
                 public void onClick(View v) {
 
                     Intent intent = new Intent(context, ArInvoiceView.class);
                     intent.putExtra("DocNo", model.getDocNo());
+                    intent.putExtra("VTPDocNo", model.getVTPdocNo());
                     intent.putExtra("DocEntry", model.getDocEntry());
                     intent.putExtra("CusName", model.getCustomerName());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -172,7 +174,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
         private TextView TxtAmount;
         private TextView TxtDate;
         private TextView TxtDocno;
-
+        private TextView TxtVTPDocno;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -180,6 +182,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
             TxtAmount = itemView.findViewById(R.id.txt_cusAmt);
             TxtDate  = itemView.findViewById(R.id.txt_date);
             TxtDocno  = itemView.findViewById(R.id.txt_Docno);
+            TxtVTPDocno  = itemView.findViewById(R.id.txt_VTPDocno);
         }
     }
 }

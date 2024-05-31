@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/laybar"
-        layout="@layout/app_bar_main"
+        layout="@layout/pdf_app_bar"
         app:layout_constraintTop_toTopOf="parent"/>
     
     <LinearLayout

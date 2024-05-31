@@ -1,11 +1,5 @@
 package com.softcore.vtpsales;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,16 +12,21 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.google.gson.Gson;
 import com.softcore.vtpsales.Adaptors.AdapterAttendance;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.AttendanceModel;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CustomerModel;
-import com.softcore.vtpsales.Model.SlpResponse;
 import com.softcore.vtpsales.ViewModel.AttendanceListViewModel;
 import com.softcore.vtpsales.ViewModel.CustomerViewModel;
-import com.softcore.vtpsales.databinding.ActivityAttendenceListBinding;
+import com.softcore.vtpsales.databinding.ActivityAttendanceListBinding;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -38,9 +37,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AttendenceListActivity extends AppCompatActivity {
-    AdapterAttendance adapterAttendence;
-    ActivityAttendenceListBinding binding;
+public class AttendanceListActivity extends AppCompatActivity {
+    AdapterAttendance adapterAttendance;
+    ActivityAttendanceListBinding binding;
     String DbName;
     String Flag;
     String FromDate;
@@ -57,7 +56,7 @@ public class AttendenceListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityAttendenceListBinding.inflate(getLayoutInflater());
+        binding=ActivityAttendanceListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         gson = new Gson();
         EmpName= getIntent().getStringExtra("EmpName");
@@ -141,12 +140,12 @@ public class AttendenceListActivity extends AppCompatActivity {
             getCustomerList();
         }
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
-        adapterAttendence = new AdapterAttendance();
-        binding.recyclerView.setAdapter(adapterAttendence);
+        adapterAttendance = new AdapterAttendance();
+        binding.recyclerView.setAdapter(adapterAttendance);
 
 //        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        adapterAttendence = new AdapterAttendance();
-//        binding.recyclerView.setAdapter(adapterAttendence);
+//        adapterAttendance = new AdapterAttendance();
+//        binding.recyclerView.setAdapter(adapterAttendance);
 
         DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
@@ -158,7 +157,7 @@ public class AttendenceListActivity extends AppCompatActivity {
 //
 //                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 //
-//                    adapterAttendence.setData(listCommanResorce.data);
+//                    adapterAttendance.setData(listCommanResorce.data);
 //
 //                    binding.txtNoData.setVisibility(View.GONE);
 //                }else{
@@ -407,7 +406,7 @@ public class AttendenceListActivity extends AppCompatActivity {
                     attList = new ArrayList<>();
 
                     List<AttendanceModel> mainfilterList = new ArrayList<>();
-                    adapterAttendence.setData(mainfilterList,getApplicationContext(),EmpName);
+                    adapterAttendance.setData(mainfilterList,getApplicationContext(),EmpName);
 
                     //  String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
 
@@ -433,14 +432,14 @@ public class AttendenceListActivity extends AppCompatActivity {
 
                     if(selectedmodel != null){
                         System.out.println("customer list");
-                        adapterAttendence.setData(attList,getApplicationContext(),EmpName);
+                        adapterAttendance.setData(attList,getApplicationContext(),EmpName);
                         filList = attList;
                         String json2 = gson.toJson(filList);
                         System.out.println("customer + emp wise list:"+json2);
                     }else {
                         System.out.println("no customer list");
 
-                        adapterAttendence.setData(mainfilterList, getApplicationContext(), EmpName);
+                        adapterAttendance.setData(mainfilterList, getApplicationContext(), EmpName);
                         filList = mainfilterList;
                         String json2 = gson.toJson(filList);
                         System.out.println("mainfilterList:"+json2);
@@ -471,12 +470,37 @@ public class AttendenceListActivity extends AppCompatActivity {
                     List<CustomerModel> selectedModelList = new ArrayList<>();
 
 
+                    String EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
+                    String EmpTypePName = AppUtil.getStringData(getApplicationContext(),"EmpTypePName","");
+
                     for (CustomerModel database : listCommanResorce.data) {
-                        slpNames.add(database.getCardName());
-                        selectedModelList.add(database);
+
+
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                if (EmpTypePName.equals(database.getSalesPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                            case "Collection Person":
+                                if (EmpTypePName.equals(database.getCollectionPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                            case "Both":
+                                if (EmpTypePName.equals(database.getSalesPerson()) && EmpTypePName.equals(database.getCollectionPerson())) {
+                                    slpNames.add(database.getCardName());
+                                    selectedModelList.add(database);
+                                }
+                                break;
+                        }
+
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(AttendenceListActivity.this,
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(AttendanceListActivity.this,
                             R.layout.simple_spinner_design, slpNames);
 
 //                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
