@@ -1,16 +1,12 @@
 package com.softcore.vtpsales;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
@@ -18,17 +14,29 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.softcore.vtpsales.AppUtils.AppUtil;
+import com.softcore.vtpsales.Model.AttendanceModel;
 import com.softcore.vtpsales.Model.ClockRequest;
+import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Network.RemoteRepository;
+import com.softcore.vtpsales.ViewModel.AttendanceListViewModel;
 import com.softcore.vtpsales.databinding.ActivityAttendanceBinding;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +45,6 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import android.Manifest;
 
 
 public class AttendanceActivity extends AppCompatActivity {
@@ -49,9 +55,12 @@ public class AttendanceActivity extends AppCompatActivity {
     String remark;
     String CurrentLocation = "";
     String status;
+    String EmpName ;
     private FrameLayout cameraContainer;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     FusedLocationProviderClient fusedLocationClient;
+
+    List<AttendanceModel> attList;
 
     private static final int CAMERA_AND_LOCATION_PERMISSION_REQUEST_CODE = 100;
 
@@ -129,7 +138,7 @@ public class AttendanceActivity extends AppCompatActivity {
             }
         });
 
-
+        GetData();
     }
 
     private void showCameraPreview() {
@@ -208,9 +217,17 @@ public class AttendanceActivity extends AppCompatActivity {
                     Toast.makeText(AttendanceActivity.this, binding.textButton.getText().toString()+" Successfully", Toast.LENGTH_SHORT).show();
                     System.out.println("Response Code: "+response.code());
 
-                    Intent intent = new Intent(AttendanceActivity.this, MainActivity2.class);
+//                    Intent intent = new Intent(AttendanceActivity.this, MainActivity2.class);
+//                    startActivity(intent);
+//                    finish();
+
+
+                    Intent intent = new Intent(AttendanceActivity.this, AttendanceListActivity.class);
+                    intent.putExtra("EmpName",  EmpName);
+                    intent.putExtra("type","emp");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    finish();
+
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();
@@ -325,4 +342,130 @@ public class AttendanceActivity extends AppCompatActivity {
         }
     }
 
+
+    private void GetData() {
+//        filList = new ArrayList<>();
+//        System.out.println("FromDate:" + FromDate +"ToDate: "+ToDate);
+
+//        AppUtil.showProgressDialog(binding.getRoot(),"Loading");
+
+
+
+        String Flag = "Clock_IN_Out";
+        String   DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
+
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        calendar.set(year, month, day);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        String formattedDate = dateFormat.format(calendar.getTime());
+
+        // Print the formatted date
+//        System.out.println(formattedDate); // Output: 2024-05-07 (example)
+        System.out.println("FromDateFromDate "+formattedDate);
+
+        AttendanceListViewModel attendanceListViewModel = new ViewModelProvider(this).get(AttendanceListViewModel.class);
+        attendanceListViewModel.getAttendanceListinfo(DbName,Flag).observe(this, new Observer<CommanResorce<List<AttendanceModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<AttendanceModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    List<AttendanceModel> filteredList = new ArrayList<>();
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                    Date fromDate = null;
+                    Date toDate = null;
+
+                    try {
+                        fromDate = formatter.parse(formattedDate);
+                        toDate = formatter.parse(formattedDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("fromDate: "+fromDate);
+                    System.out.println("toDate: "+toDate);
+                    for (AttendanceModel item : listCommanResorce.data) {
+                        try {
+                            if(item.getDate() != null){
+                                Date itemDate = formatter.parse(item.getDate().substring(0, 19));
+
+                                if (itemDate != null){
+                                    if (!itemDate.before(fromDate) && !itemDate.after(toDate)) {
+
+                                        filteredList.add(item);
+                                        // filList = filteredList;
+
+                                    }
+                                }
+
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Gson gson;
+                    gson = new Gson();
+                    String json = gson.toJson(filteredList);
+                    System.out.println("filteredList:"+json);
+
+                    attList = new ArrayList<>();
+
+                    List<AttendanceModel> mainfilterList = new ArrayList<>();
+
+                    for(int i = 0; i < filteredList.size();i++){
+                        EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
+                        if(EmpName.equals(filteredList.get(i).getEmpName())) {
+                            mainfilterList.add(filteredList.get(i));
+                        }
+                    }
+                        System.out.println("no customer list");
+                        String json2 = gson.toJson(mainfilterList);
+                        System.out.println("mainfilterList:"+json2);
+
+
+                        if(OPERATION.equals("in")){
+                            if(mainfilterList.size() == 0){
+                            binding.ClockInOutCard.setVisibility(View.VISIBLE);
+                                binding.txtNote.setVisibility(View.GONE);
+
+                        }else {
+                            binding.ClockInOutCard.setVisibility(View.GONE);
+                            binding.txtNote.setVisibility(View.VISIBLE);
+                            binding.txtNote.setText("Clocked in at "+ AppUtil.convertTo12HourFormat(mainfilterList.get(0).getCheckIn()) );
+                        }
+                        }
+                        else if(OPERATION.equals("out")){
+
+                            if(mainfilterList.size() == 0){
+                                binding.ClockInOutCard.setVisibility(View.GONE);
+                                binding.txtNote.setVisibility(View.VISIBLE);
+                                binding.txtNote.setText("Clock in first, then clock out.");
+                            }else {
+                                if(mainfilterList.get(0).getCheckOut().equals("0000")){
+                                    binding.ClockInOutCard.setVisibility(View.VISIBLE);
+                                    binding.txtNote.setVisibility(View.GONE);
+                                }else {
+                                    binding.ClockInOutCard.setVisibility(View.GONE);
+                                    binding.txtNote.setVisibility(View.VISIBLE);
+                                    binding.txtNote.setText("Clocked out at "+ AppUtil.convertTo12HourFormat(mainfilterList.get(0).getCheckOut()) );
+                                }
+                            }
+                        }
+               }
+
+            }
+        });
+
+
+    }
 }

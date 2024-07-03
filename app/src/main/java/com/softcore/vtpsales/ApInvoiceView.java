@@ -12,13 +12,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.ARInvoiceModel;
 import com.softcore.vtpsales.Model.CommanResorce;
-import com.softcore.vtpsales.ViewModel.ARInvoiceViewModel;
+import com.softcore.vtpsales.ViewModel.APInvoiceViewModel;
 import com.softcore.vtpsales.databinding.ActivityArInvoiceViewBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArInvoiceView extends AppCompatActivity {
+public class ApInvoiceView extends AppCompatActivity {
 
     ActivityArInvoiceViewBinding binding;
 
@@ -63,8 +63,8 @@ public class ArInvoiceView extends AppCompatActivity {
 
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
-        ARInvoiceViewModel viewModel= new ViewModelProvider(this).get(ARInvoiceViewModel.class);
-        viewModel.getArInvoiceData(DbName).observe(this, new Observer<CommanResorce<List<ARInvoiceModel>>>() {
+        APInvoiceViewModel viewModel= new ViewModelProvider(this).get(APInvoiceViewModel.class);
+        viewModel.getApInvoiceData(DbName).observe(this, new Observer<CommanResorce<List<ARInvoiceModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<ARInvoiceModel>> listCommanResorce) {
 
@@ -97,14 +97,28 @@ public class ArInvoiceView extends AppCompatActivity {
                             binding.textCustomerRefNo.setText("Customer Ref No.: ");
                         }
                         binding.textTaxDate.setText("Document Date: "+AppUtil.convertDateFormat(String.valueOf(list.get(0).getTaxDate())));
-                        binding.textHSN.setText("HSN/SAC: "+String.valueOf(list.get(0).getHsnSac()));
+                        String hsnSac = "-";
+                     if(list.get(0).getHsnSac() != null ){
+                         hsnSac = list.get(0).getHsnSac();
+                     }
+
+                        binding.textHSN.setText("HSN/SAC: "+hsnSac.replace("..",""));
+
                         binding.textCGSTAmount.setText("₹ "+String.format("%.2f",list.get(0).getCgstAmount()));
                         binding.textSGSTAmount.setText("₹ "+String.format("%.2f",list.get(0).getSgstAmount()));
                         binding.textStatus.setText(String.valueOf(list.get(0).getStatus()));
                         binding.textQuantity.setText("Quantity: "+String.valueOf(list.get(0).getQuantity()));
                         binding.textRate.setText("Rate: "+String.valueOf(list.get(0).getRate()));
-                        binding.textLrno.setText("Lr No.: "+list.get(0).getLrNo());
-                        binding.textTransportVechicle.setText("Transport Vehicle No.: "+list.get(0).getVehicleNo());
+                        String lrNo = "-";
+                        if(list.get(0).getLrNo() != null){
+                             lrNo = list.get(0).getLrNo();
+                        }
+                        binding.textLrno.setText("Lr No.: "+lrNo);
+                        String TV = "-";
+                        if(list.get(0).getVehicleNo()  !=  null){
+                            TV = list.get(0).getVehicleNo();
+                        }
+                        binding.textTransportVechicle.setText("Transport Vehicle No.: "+TV);
                         binding.textDueDate2.setText("Due Date: "+AppUtil.convertDateFormat(String.valueOf(list.get(0).getDueDate())));
                         binding.textDocNum.setText("VTP Doc No.: "+VTPDocNo);
                         binding.laybar.appbarTextView.setText("Invoice Doc No.: "+VTPDocNo.toString());
@@ -125,7 +139,7 @@ public class ArInvoiceView extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), PdfViewerActivity.class);
                                 intent.putExtra("DocEntry", String.valueOf(list.get(0).getDocEntry()));
                                 intent.putExtra("CusName", String.valueOf(list.get(0).getCardName()));
-                                intent.putExtra("Ref_Document", "ArInvoice");
+                                intent.putExtra("Ref_Document", "ApInvoice");
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }

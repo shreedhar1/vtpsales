@@ -13,6 +13,7 @@ import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
 import com.softcore.vtpsales.Model.GeneralModel;
+import com.softcore.vtpsales.Model.InOutPayModel;
 import com.softcore.vtpsales.Model.LeadGenModel;
 import com.softcore.vtpsales.Model.LeadSeriesModel;
 import com.softcore.vtpsales.Model.MyTeamMember;
@@ -138,9 +139,24 @@ public interface ApiSercvices {
                                                           @Query("DB_NAME") String DB_NAME,
                                                           @Query("Flag") String Flag);
 
+    @GET("SCS_Incoming_Outgoing_Payment_Report")
+    Call<List<InOutPayModel>> getInOutWiseDetails(@Query("FromDate") String FromDate,
+                                               @Query("ToDate") String ToDate,
+                                               @Query("SlpName") String SlpName,
+                                               @Query("DB_NAME") String DB_NAME,
+                                               @Query("Flag") String Flag);
 
     @GET("SCS_AR_Invoice")
     Call<List<ARInvoiceModel>> getArInvoiceDetails (@Query("DB_NAME") String DB_NAME);
+
+    @GET("SCS_AR_Credit_Note")
+    Call<List<ARInvoiceModel>> getArCreditNoteDetails (@Query("DB_NAME") String DB_NAME);
+
+    @GET("SCS_AP_Invoice")
+    Call<List<ARInvoiceModel>> getApInvoiceDetails (@Query("DB_NAME") String DB_NAME);
+
+    @GET("SCS_AP_Credit_Note")
+    Call<List<ARInvoiceModel>> getApCreditNoteDetails (@Query("DB_NAME") String DB_NAME);
 
 
     @GET("SCS_Collection_Person")

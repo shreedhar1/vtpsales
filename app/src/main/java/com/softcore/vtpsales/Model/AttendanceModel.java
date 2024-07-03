@@ -23,6 +23,10 @@ public class AttendanceModel implements Parcelable {
     private String LocationIn;
     @SerializedName("LocationOut")
     private String LocationOut;
+    @SerializedName("CheckIn Remark")
+    private String RemarkIn;
+    @SerializedName("CheckOut Remark")
+    private String RemarkOut;
 
     public AttendanceModel() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -37,6 +41,8 @@ public class AttendanceModel implements Parcelable {
         checkOut = in.readString();
         LocationIn = in.readString();
         LocationOut = in.readString();
+        RemarkIn = in.readString();
+        RemarkOut = in.readString();
     }
 
     public static final Creator<AttendanceModel> CREATOR = new Creator<AttendanceModel>() {
@@ -50,6 +56,22 @@ public class AttendanceModel implements Parcelable {
             return new AttendanceModel[size];
         }
     };
+
+    public String getRemarkIn() {
+        return RemarkIn;
+    }
+
+    public void setRemarkIn(String remarkIn) {
+        RemarkIn = remarkIn;
+    }
+
+    public String getRemarkOut() {
+        return RemarkOut;
+    }
+
+    public void setRemarkOut(String remarkOut) {
+        RemarkOut = remarkOut;
+    }
 
     public String getEmpCode() {
         return empCode;

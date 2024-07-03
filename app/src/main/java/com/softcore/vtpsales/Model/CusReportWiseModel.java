@@ -9,6 +9,20 @@ import com.google.gson.annotations.SerializedName;
 
 public class CusReportWiseModel implements Parcelable {
 
+    @SerializedName("DocEntry")
+    private String DocEntry;
+    @SerializedName("DocNum")
+    private String DocNum;
+    @SerializedName("VTP_Doc_No")
+    private String VTP_Doc_No;
+    @SerializedName("Posting Date")
+    private String PostingDate;
+    @SerializedName("Ref_Document")
+    private String Ref_Document;
+
+
+
+
     @SerializedName("SalesPerson")
     private String salesPerson;
     @SerializedName("CollectionPerson")
@@ -30,6 +44,10 @@ public class CusReportWiseModel implements Parcelable {
     private String vendor_Name;
     @SerializedName("Vendor_Code")
     private String vendor_Code;
+    @SerializedName("Vendor Name")
+    private String vendorName;
+    @SerializedName("Vendor Code")
+    private String vendorCode;
 
     @SerializedName("Month")
     private String Month;
@@ -71,8 +89,15 @@ public class CusReportWiseModel implements Parcelable {
     @SerializedName("Gross Debit Amount")
     private String GrossDebitAmt;
 
+    @SerializedName("Gross Amount")
+    private String GrossAmt;
+    @SerializedName("Net Amount")
+    private String NetAmt;
 
-    protected CusReportWiseModel(Parcel in) {
+    public CusReportWiseModel() {
+
+    }
+    public CusReportWiseModel(Parcel in) {
         salesPerson = in.readString();
         collectionPerson = in.readString();
         customerCode = in.readString();
@@ -164,6 +189,62 @@ public class CusReportWiseModel implements Parcelable {
         this.collectionPerson = collectionPerson;
     }
 
+    public String getDocEntry() {
+        return DocEntry;
+    }
+
+    public void setDocEntry(String docEntry) {
+        DocEntry = docEntry;
+    }
+
+    public String getDocNum() {
+        return DocNum;
+    }
+
+    public void setDocNum(String docNum) {
+        DocNum = docNum;
+    }
+
+    public String getRef_Document() {
+        return Ref_Document;
+    }
+
+    public void setRef_Document(String ref_Document) {
+        Ref_Document = ref_Document;
+    }
+
+    public String getVTP_Doc_No() {
+        return VTP_Doc_No;
+    }
+
+    public void setVTP_Doc_No(String VTP_Doc_No) {
+        this.VTP_Doc_No = VTP_Doc_No;
+    }
+
+    public String getPostingDate() {
+        return PostingDate;
+    }
+
+    public void setPostingDate(String postingDate) {
+        PostingDate = postingDate;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getVendorCode() {
+        return vendorCode;
+    }
+
+    public void setVendorCode(String vendorCode) {
+        this.vendorCode = vendorCode;
+    }
+
     public String getNetAmtApCrn() {
         return NetAmtApCrn;
     }
@@ -174,6 +255,23 @@ public class CusReportWiseModel implements Parcelable {
 
     public String getGrossAmtApCrn() {
         return GrossAmtApCrn;
+    }
+
+    public String getGrossAmt() {
+        return GrossAmt;
+    }
+
+    public void setGrossAmt(String grossAmt) {
+        GrossAmt = grossAmt;
+    }
+
+
+    public String getNetAmt() {
+        return NetAmt;
+    }
+
+    public void setNetAmt(String netAmt) {
+        NetAmt = netAmt;
     }
 
     public void setGrossAmtApCrn(String grossAmtApCrn) {

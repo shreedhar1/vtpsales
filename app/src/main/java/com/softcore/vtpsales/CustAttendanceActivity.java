@@ -30,14 +30,17 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.softcore.vtpsales.AppUtils.AppUtil;
+import com.softcore.vtpsales.Model.AttendanceModel;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusClockRequest;
 import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Network.RemoteRepository;
+import com.softcore.vtpsales.ViewModel.AttendanceListViewModel;
 import com.softcore.vtpsales.ViewModel.CustomerViewModel;
 import com.softcore.vtpsales.databinding.ActivityCustAttendanceBinding;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,17 +54,21 @@ import retrofit2.Response;
 
 public class CustAttendanceActivity extends AppCompatActivity {
     String OPERATION;
+//    AdapterAttendance adapterAttendance;
     ActivityCustAttendanceBinding binding;
     String TYPE;
     private Handler handler;
     final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     FusedLocationProviderClient fusedLocationClient;
 
-
+    Gson gson;
     String CurrentLocation = "";
-
-    String SlpName;
     CustomerModel selectedmodel;
+    List<CustomerModel> selectedModelList = new ArrayList<>();
+    List<AttendanceModel> attList = new ArrayList<>();
+    List<AttendanceModel> filList = new ArrayList<>();
+    String EmpName ;
+    String SlpName;
     String selectedSlpName;
     CusClockRequest request;
     String status;
@@ -71,6 +78,9 @@ public class CustAttendanceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EmpName = AppUtil.getStringData(getApplicationContext(),"EmpName","");
+
+        gson = new Gson();
         binding = ActivityCustAttendanceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         TYPE = getIntent().getStringExtra("type");
@@ -133,7 +143,6 @@ public class CustAttendanceActivity extends AppCompatActivity {
                     Toast.makeText(CustAttendanceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
                 }
 
-
             }
         });
 
@@ -148,6 +157,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
 
         getCustomerList();
         getCurrentLocation();
+
     }
 
     private void showCameraPreview() {
@@ -179,6 +189,11 @@ public class CustAttendanceActivity extends AppCompatActivity {
         String ClockOutRemark = "";
         String LocationIn = "";
         String LocationOut = "";
+        String CardCode = "";
+        if(selectedmodel != null){
+
+            CardCode = selectedmodel.getCardCode();
+        }
 
         if (OPERATION.equals("in")) {
             ClockOutTime = "0000";
@@ -188,6 +203,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
             LocationOut = "";
             ClockOutRemark = "";
             ClockInRemark = binding.edRemark.getText().toString();
+
         } else if (OPERATION.equals("out")) {
             ClockOutTime = currentTime12;
             ClockInTime = "0000";
@@ -195,6 +211,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
             LocationOut = CurrentLocation;
             ClockOutRemark = binding.edRemark.getText().toString();
         }
+
 
 
         request = new CusClockRequest(
@@ -207,7 +224,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
                 ClockOutRemark,
                 LocationIn,
                 LocationOut,
-                selectedmodel.getCardCode()
+                CardCode
         );
 
         Gson gson = new Gson();
@@ -224,11 +241,19 @@ public class CustAttendanceActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     AppUtil.hideProgressDialog();
 
-                    Toast.makeText(CustAttendanceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
-                    System.out.println("Response Code: " + response.code());
-                    Intent intent = new Intent(CustAttendanceActivity.this, MainActivity2.class);
+//                    Toast.makeText(CustAttendanceActivity.this,  binding.textButton.getText().toString()+" Success", Toast.LENGTH_SHORT).show();
+//                    System.out.println("Response Code: " + response.code());
+//                    Intent intent = new Intent(CustAttendanceActivity.this, MainActivity2.class);
+//                    startActivity(intent);
+//                    finish();
+
+
+                    Intent intent = new Intent(CustAttendanceActivity.this, AttendanceListActivity.class);
+
+                    intent.putExtra("EmpName",  EmpName);
+                    intent.putExtra("type","cust");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                    finish();
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();
@@ -260,7 +285,8 @@ public class CustAttendanceActivity extends AppCompatActivity {
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
                     List<String> slpNames = new ArrayList<>();
-                    List<CustomerModel> selectedModelList = new ArrayList<>();
+
+                  selectedModelList = new ArrayList<>();
 
 
                     String EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
@@ -268,22 +294,8 @@ public class CustAttendanceActivity extends AppCompatActivity {
 
                     for (CustomerModel database : listCommanResorce.data) {
 
-//                       if(EmpType.equals("SalesPerson")){
-//                           if(EmpName.equals(database.getSalesPerson())){
-//                               slpNames.add(database.getCardName());
-//                               selectedModelList.add(database);
-//                           }
-//                        }else if(EmpType.equals("CollectionPerson")){
-//                           if(EmpName.equals(database.getSalesPerson())){
-//                               slpNames.add(database.getCardName());
-//                               selectedModelList.add(database);
-//                           }
-//                       }else if(EmpType.equals("Both")){
-//                           if(EmpName.equals(database.getSalesPerson())){
-//                               slpNames.add(database.getCardName());
-//                               selectedModelList.add(database);
-//                           }
-//                       }
+
+
                         switch (EmpType) {
                             case "Sales Employee":
                                 if (EmpTypePName.equals(database.getSalesPerson())) {
@@ -297,15 +309,20 @@ public class CustAttendanceActivity extends AppCompatActivity {
                                     selectedModelList.add(database);
                                 }
                                 break;
-                            case "Both":
-                                if (EmpTypePName.equals(database.getSalesPerson()) && EmpTypePName.equals(database.getCollectionPerson())) {
+                            case "Both (SE+CP)":
+                                if (EmpTypePName.equals(database.getSalesPerson()) || EmpTypePName.equals(database.getCollectionPerson())) {
                                     slpNames.add(database.getCardName());
                                     selectedModelList.add(database);
                                 }
                                 break;
                         }
 
+
+
                     }
+
+                    GetData();
+
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(CustAttendanceActivity.this,
                             R.layout.simple_spinner_design, slpNames);
@@ -322,6 +339,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
                                                                         }
                                                                     }
                     );
+
                     binding.autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -490,6 +508,269 @@ public class CustAttendanceActivity extends AppCompatActivity {
     }
 
 
+    private void GetData() {
 
+        String Flag = "Clock_IN_Out_Customer";
+        String   DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
+
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        calendar.set(year, month, day);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        String formattedDate = dateFormat.format(calendar.getTime());
+
+        // Print the formatted date
+//        System.out.println(formattedDate); // Output: 2024-05-07 (example)
+        System.out.println("FromDateFromDate "+formattedDate);
+
+
+       // filList = new ArrayList<>();
+       // System.out.println("FromDate:" + FromDate +"ToDate: "+ToDate);
+
+        AppUtil.showProgressDialog(binding.getRoot(),"Loading");
+
+
+        AttendanceListViewModel attendanceListViewModel = new ViewModelProvider(this).get(AttendanceListViewModel.class);
+        attendanceListViewModel.getAttendanceListinfo(DbName,Flag).observe(this, new Observer<CommanResorce<List<AttendanceModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<AttendanceModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    List<AttendanceModel> filteredList = new ArrayList<>();
+
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                    Date fromDate = null;
+                    Date toDate = null;
+
+
+
+                    try {
+                        fromDate = formatter.parse(formattedDate);
+                        toDate = formatter.parse(formattedDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("fromDate: "+fromDate);
+                    System.out.println("toDate: "+toDate);
+                    for (AttendanceModel item : listCommanResorce.data) {
+                        try {
+                            if(item.getDate() != null){
+                                Date itemDate = formatter.parse(item.getDate().substring(0, 19));
+
+                                if (itemDate != null){
+                                    if (!itemDate.before(fromDate) && !itemDate.after(toDate)) {
+
+                                        filteredList.add(item);
+                                        // filList = filteredList;
+
+                                    }
+                                }
+
+//                                System.out.println("Size filteredList"+filteredList.size());
+//                                System.out.println("Size filList"+filList.size());
+
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    //print filteredList
+
+                    String json = gson.toJson(filteredList);
+                    System.out.println("filteredList: "+json);
+
+                    attList = new ArrayList<>();
+
+                    List<AttendanceModel> mainfilterList = new ArrayList<>();
+//                    adapterAttendance.setData(mainfilterList,getApplicationContext(),EmpName);
+
+                    //  String EmpCode = AppUtil.getStringData(getApplicationContext(),"EmpCode","");
+
+                    for(int i = 0; i < filteredList.size();i++){
+
+                        // check if already selected ?
+                        if(selectedmodel != null){
+                            if(selectedmodel.getCardCode() != null){
+                                if(selectedmodel.getCardCode().equals(filteredList.get(i).getCustomerCode())){
+
+                                    if(EmpName.equals(filteredList.get(i).getEmpName())) {
+                                        attList.add(filteredList.get(i));
+                                    }
+                                }
+                            }
+                        }
+
+
+                        if(EmpName.equals(filteredList.get(i).getEmpName())) {
+
+
+                                mainfilterList.add(filteredList.get(i));
+
+
+
+                        }
+
+
+                    }
+
+                    if(selectedmodel != null){
+                        System.out.println("customer list");
+                      //  adapterAttendance.setData(attList,getApplicationContext(),EmpName);
+                        filList = attList;
+                        String json2 = gson.toJson(filList);
+                        System.out.println("customer + emp wise list:"+json2);
+
+
+                    }
+                    else {
+                        System.out.println("no customer list");
+
+                  //      adapterAttendance.setData(mainfilterList, getApplicationContext(), EmpName);
+
+                        filList = new ArrayList<>();
+                        for(int a = 0;a<mainfilterList.size();a++){
+
+                            if(mainfilterList.get(a).getCheckOut().equals("0000")){
+
+                                filList.add(mainfilterList.get(a));
+
+                            }
+                        }
+
+                        String json2 = gson.toJson(filList);
+                        System.out.println("mainfilterList: "+json2);
+
+                        if(filList.size() != 0){
+
+                            if (OPERATION.equals("in")) {
+                                if(!filList.get(0).getCheckIn().equals("0000")){
+                                    if(!filList.get(0).getCustomerCode().equals("")) //with customer
+                                    {
+                                        if(selectedModelList!= null){
+                                            System.out.println("selectedModelList count"+selectedModelList.size());
+                                        }
+                                        for(int i = 0;i<selectedModelList.size();i++){
+                                            if(filList.get(0).getCustomerCode().equals(selectedModelList.get(i).getCardCode())){
+                                                selectedmodel = selectedModelList.get(i);
+                                                selectedSlpName = selectedmodel.getCardName();
+                                                SlpName = selectedSlpName;
+                                                binding.layoutCustomerList.setVisibility(View.GONE);
+                                                binding.CustomerName.setVisibility(View.VISIBLE);
+                                                binding.CustomerName.setText(SlpName);
+
+                                                String add = selectedmodel.getAddress();
+                                                String street = selectedmodel.getStreet();
+                                                String block = selectedmodel.getBlock();
+                                                String city = selectedmodel.getCity();
+                                                String state = selectedmodel.getShipToState();
+                                                String country = selectedmodel.getShipToCountry();
+                                                String zip = selectedmodel.getZipCode();
+
+                                                String cus_address = add +", "+street +", "+block +", "+city +", "+
+                                                        state +", "+country +"- "+zip;
+
+                                                binding.txtCusAddress.setVisibility(View.VISIBLE);
+                                                binding.txtCusAddress.setText(cus_address);
+
+                                                System.out.println("selected CustomerName :"+selectedSlpName);
+//                                        binding.edRemark.setText(filList.get(0).getRemarkIn());
+
+
+//                                        if(!selectedSlpName.equals("")){
+//
+//                                        }
+                                            }
+                                        }
+                                    }
+
+                                    binding.ClockInOutCard.setVisibility(View.GONE);
+                                    binding.txtNote.setVisibility(View.VISIBLE);
+                                    binding.txtNote.setText("Clocked in at "+ AppUtil.convertTo12HourFormat(filList.get(0).getCheckIn()) );
+                                    binding.edRemark.setText(filList.get(0).getRemarkIn());
+                                }
+                            }
+                            else if(OPERATION.equals("out")){
+                                if(filList.get(0).getCheckOut().equals("0000")){
+                                    if(!filList.get(0).getCustomerCode().equals(""))
+                                    {
+                                        if(selectedModelList!= null){
+                                            System.out.println("selectedModelList count"+selectedModelList.size());
+                                        }
+                                        for(int i = 0;i<selectedModelList.size();i++){
+                                            if(filList.get(0).getCustomerCode().equals(selectedModelList.get(i).getCardCode())){
+                                                selectedmodel = selectedModelList.get(i);
+                                                selectedSlpName = selectedmodel.getCardName();
+                                                SlpName = selectedSlpName;
+                                                binding.layoutCustomerList.setVisibility(View.GONE);
+                                                binding.CustomerName.setVisibility(View.VISIBLE);
+                                                binding.CustomerName.setText(SlpName);
+
+                                                String add = selectedmodel.getAddress();
+                                                String street = selectedmodel.getStreet();
+                                                String block = selectedmodel.getBlock();
+                                                String city = selectedmodel.getCity();
+                                                String state = selectedmodel.getShipToState();
+                                                String country = selectedmodel.getShipToCountry();
+                                                String zip = selectedmodel.getZipCode();
+
+                                                String cus_address = add +", "+street +", "+block +", "+city +", "+
+                                                        state +", "+country +"- "+zip;
+
+                                                binding.txtCusAddress.setVisibility(View.VISIBLE);
+                                                binding.txtCusAddress.setText(cus_address);
+
+                                               // binding.txtNote.setText("Clocked in at "+ AppUtil.convertTo12HourFormat(filList.get(0).getCheckOut()) );
+
+                                                System.out.println("selected CustomerName :"+selectedSlpName);
+//                                        binding.edRemark.setText(filList.get(0).getRemarkIn());
+
+
+//                                        if(!selectedSlpName.equals("")){
+//
+//                                        }
+                                            }
+                                        }
+                                    }
+
+                                    binding.ClockInOutCard.setVisibility(View.VISIBLE);
+                                    binding.txtNote.setVisibility(View.GONE);
+                                    binding.layoutCustomerList.setVisibility(View.GONE);
+                                }
+                            }
+
+                        }
+                        else{
+                            if(OPERATION.equals("out")){
+                                binding.ClockInOutCard.setVisibility(View.GONE);
+                                binding.txtNote.setVisibility(View.VISIBLE);
+                                binding.txtNote.setText("Clock in first, then clock out.");
+                            }else{
+                                binding.ClockInOutCard.setVisibility(View.VISIBLE);
+                            }
+                            // not clock in yet
+                        }
+                    }
+
+                  //  binding.txtNoData.setVisibility(View.GONE);
+                }else {
+                 //   binding.txtNoData.setVisibility(View.VISIBLE);
+                }
+                AppUtil.hideProgressDialog();
+            }
+        });
+
+
+    }
 
 }

@@ -58,11 +58,39 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ReportsActivity"
+            android:name=".ReportsActivity2"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ReportsActivity2"
+            android:name=".Ar_Credit_Note_InvoiceView"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".InOutInvoiceView"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".IncomingOutgoingList"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".IncomingOutgoingDetList"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Ap_Credit_Note_InvoiceView"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ApInvoiceView"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".PR_ReportsDetListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ReportsListActivity2"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".IncomingOutgoingInvoice"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

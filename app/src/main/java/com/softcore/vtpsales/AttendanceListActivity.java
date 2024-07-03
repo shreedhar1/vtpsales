@@ -362,6 +362,8 @@ public class AttendanceListActivity extends AppCompatActivity {
                     Date fromDate = null;
                     Date toDate = null;
 
+
+
                     try {
                         fromDate = formatter.parse(FromDate);
                         toDate = formatter.parse(ToDate);
@@ -379,11 +381,8 @@ public class AttendanceListActivity extends AppCompatActivity {
                                 if (itemDate != null){
                                     if (!itemDate.before(fromDate) && !itemDate.after(toDate)) {
 
-
-
                                         filteredList.add(item);
                                        // filList = filteredList;
-
 
                                     }
                                 }
@@ -489,8 +488,8 @@ public class AttendanceListActivity extends AppCompatActivity {
                                     selectedModelList.add(database);
                                 }
                                 break;
-                            case "Both":
-                                if (EmpTypePName.equals(database.getSalesPerson()) && EmpTypePName.equals(database.getCollectionPerson())) {
+                            case "Both (SE+CP)":
+                                if (EmpTypePName.equals(database.getSalesPerson()) || EmpTypePName.equals(database.getCollectionPerson())) {
                                     slpNames.add(database.getCardName());
                                     selectedModelList.add(database);
                                 }

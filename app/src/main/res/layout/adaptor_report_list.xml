@@ -18,7 +18,7 @@
             android:id="@+id/txt_cusName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="WE-23Y-SS-1052"
+            android:text=""
             android:textSize="@dimen/_14sdp"
             android:gravity="start"
             android:fontFamily="@font/poppins_medium"

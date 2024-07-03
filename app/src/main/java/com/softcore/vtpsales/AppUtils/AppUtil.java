@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.softcore.vtpsales.R;
 import com.softcore.vtpsales.databinding.ActivityMain2Binding;
-import com.softcore.vtpsales.databinding.FragmentDashboardBinding;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,6 +37,8 @@ public class AppUtil {
             progressDialog.dismiss();
         }
     }
+
+
 
     public static void saveStringData(Context context, String key, String value) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

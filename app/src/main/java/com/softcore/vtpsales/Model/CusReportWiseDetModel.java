@@ -16,10 +16,18 @@ public class CusReportWiseDetModel {
     private String customer_Code;
     @SerializedName("Customer_Name")
     private String customer_Name;
-    @SerializedName("Doc_No")
+    @SerializedName("DocNo")
     private String docNo;
+    @SerializedName("Doc_No")
+    private String doc_No;
+    @SerializedName("DocNum")
+    private String docNum;
     @SerializedName("VTPDocNo")
     private String VTPdocNo;
+
+    @SerializedName("Ref_Document")
+    private String Ref_Document;
+
     @SerializedName("DocEntry")
     private String DocEntry;
     @SerializedName("Posting Date")
@@ -32,6 +40,17 @@ public class CusReportWiseDetModel {
     private String vendor_Name;
     @SerializedName("Vendor_Code")
     private String vendor_Code;
+
+    @SerializedName("Vendor Name")
+    private String vendorName;
+    @SerializedName("Vendor Code")
+    private String vendorCode;
+
+    @SerializedName("Net Amount AR+CRN")
+    private String NetAmtINV_ARCRN;
+    @SerializedName("Gross Amount AR+CRN")
+    private String GrossAmtINV_ARCRN;
+
 
     @SerializedName("Net Amount INV+CRN")
     private String NetAmtINV_CRN;
@@ -60,6 +79,62 @@ public class CusReportWiseDetModel {
     private String NetDebitAmt;
     @SerializedName("Gross Debit Amount")
     private String GrossDebitAmt;
+
+    public String getRef_Document() {
+        return Ref_Document;
+    }
+
+    public void setRef_Document(String ref_Document) {
+        Ref_Document = ref_Document;
+    }
+
+    public String getDocNum() {
+        return docNum;
+    }
+
+    public void setDocNum(String docNum) {
+        this.docNum = docNum;
+    }
+
+    public String getDoc_No() {
+        return doc_No;
+    }
+
+    public void setDoc_No(String doc_No) {
+        this.doc_No = doc_No;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getVendorCode() {
+        return vendorCode;
+    }
+
+    public void setVendorCode(String vendorCode) {
+        this.vendorCode = vendorCode;
+    }
+
+    public String getNetAmtINV_ARCRN() {
+        return NetAmtINV_ARCRN;
+    }
+
+    public void setNetAmtINV_ARCRN(String netAmtINV_ARCRN) {
+        NetAmtINV_ARCRN = netAmtINV_ARCRN;
+    }
+
+    public String getGrossAmtINV_ARCRN() {
+        return GrossAmtINV_ARCRN;
+    }
+
+    public void setGrossAmtINV_ARCRN(String grossAmtINV_ARCRN) {
+        GrossAmtINV_ARCRN = grossAmtINV_ARCRN;
+    }
 
     public String getNetAmtApCrn() {
         return NetAmtApCrn;

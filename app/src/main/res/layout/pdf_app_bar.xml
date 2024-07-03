@@ -34,25 +34,24 @@
                 android:src="@drawable/baseline_arrow_back_ios_24"
                 app:tint="@color/white" />
 
+
             <TextView
                 android:id="@+id/appbar_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center_vertical"
-                android:layout_toStartOf="@id/laybar3"
                 android:layout_toEndOf="@id/back_id"
                 android:fontFamily="@font/poppins"
                 android:gravity="center"
+                android:layout_toStartOf="@id/laybar3"
+
                 android:padding="@dimen/_10sdp"
                 android:text="Toolbar"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/_14sdp"
                 android:textStyle="bold"
                 android:visibility="visible" />
-
-
-
             <LinearLayout
                 android:id="@+id/laytitle2"
                 android:visibility="gone"
@@ -98,6 +97,16 @@
                 android:layout_alignParentEnd="true"
                 >
                 <ImageButton
+                    android:visibility="gone"
+                    android:id="@+id/search_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/light_blue_900"
+                    android:src="@drawable/baseline_search_24"
+                    app:tint="@color/white" />
+                <ImageButton
                     android:visibility="visible"
                     android:id="@+id/share_id"
                     android:layout_width="wrap_content"
@@ -118,7 +127,38 @@
                     android:src="@drawable/baseline_print_24"
                     app:tint="@color/white" />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/SearchLay_id"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_toEndOf="@id/back_id"
 
+                >
+                <EditText
+                    android:id="@+id/searchEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Customer name..."
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:inputType="text" />
+
+
+
+                <ImageButton
+                    android:id="@+id/Cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/light_blue_900"
+                    android:src="@drawable/baseline_clear_24"
+                    app:tint="@color/white" />
+
+            </LinearLayout>
 
 
         </RelativeLayout>

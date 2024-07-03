@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".IncomingOutgoingList">
+
+    <include
+        android:id="@+id/laybar"
+        layout="@layout/pdf_app_bar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/laybar"
+
+            android:layout_marginTop="@dimen/_1sdp"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/_10ssp"
+                >
+
+
+                <TextView
+                    android:id="@+id/textCusName"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="17sp"
+                    />
+
+                <TextView
+                    android:id="@+id/textPostingDate"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/txt_HeadVtpDocNo"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/txt_HeadSapDocNo"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="FOR BILLS"
+                    android:background="@color/blue_10trans"
+                    android:padding="@dimen/_10ssp"
+                    android:textSize="17sp"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:nestedScrollingEnabled="false"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:padding="@dimen/_10ssp"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="2"
+                        >
+                        <TextView
+                            android:layout_marginTop="8dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Total"
+                            android:textColor="@color/light_blue_A200"
+                            android:textSize="20sp"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/txtTotalAmt"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:gravity="end"
+                            android:textColor="@color/light_blue_A200"
+                            android:textSize="20sp"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="PAYMENT DETAILS"
+                    android:background="@color/blue_10trans"
+                    android:padding="@dimen/_10ssp"
+                    android:textSize="17sp"
+                    />
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:paddingStart="@dimen/_10ssp"-->
+<!--                    android:paddingEnd="@dimen/_10ssp"-->
+<!--                    android:layout_weight="2"-->
+<!--                    >-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/txt_BankName"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="HDFC BANK"-->
+<!--                        android:textSize="20sp"-->
+<!--                        android:layout_weight="1"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/txtTotalAmt2"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text=""-->
+<!--                        android:gravity="end"-->
+<!--                        android:textColor="@color/light_blue_A200"-->
+<!--                        android:textSize="20sp"-->
+<!--                        android:layout_weight="1"/>-->
+<!--                </LinearLayout>-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:weightSum="3"
+                    android:padding="@dimen/_10ssp"
+                    >
+                    <LinearLayout
+                        android:id="@+id/Lay_Cheque"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cheque | No: "
+                                android:textSize="@dimen/_12sdp"
+                                android:gravity="end"
+                                android:fontFamily="@font/poppins_medium"
+                                />
+                            <TextView
+                                android:id="@+id/txt_ChequeNo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:textSize="@dimen/_12sdp"
+                                android:gravity="end"
+                                android:fontFamily="@font/poppins_medium"
+                                android:textColor="@color/medium_grey"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cheque Date: "
+                                android:textSize="@dimen/_12sdp"
+                                android:gravity="end"
+                                android:fontFamily="@font/poppins_medium"
+                                />
+                            <TextView
+                                android:id="@+id/txt_ChequeDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:textSize="@dimen/_12sdp"
+                                android:gravity="end"
+                                android:fontFamily="@font/poppins_medium"
+                                android:textColor="@color/medium_grey"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mode of Payment: "
+                            android:textSize="@dimen/_12sdp"
+                            android:gravity="end"
+                            android:fontFamily="@font/poppins_medium"
+                            />
+                        <TextView
+                            android:id="@+id/txt_MOP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="@dimen/_12sdp"
+                            android:gravity="end"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="@color/medium_grey"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NARRATION"
+                    android:background="@color/blue_10trans"
+                    android:padding="@dimen/_10ssp"
+                    android:textSize="17sp"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_Remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="@dimen/_12sdp"
+                    android:padding="@dimen/_10ssp"
+                    android:textColor="@color/medium_grey"
+                    android:fontFamily="@font/poppins_medium"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</LinearLayout>

@@ -12,13 +12,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.ARInvoiceModel;
 import com.softcore.vtpsales.Model.CommanResorce;
-import com.softcore.vtpsales.ViewModel.ARInvoiceViewModel;
+import com.softcore.vtpsales.ViewModel.ARCreditNoteInvoiceViewModel;
 import com.softcore.vtpsales.databinding.ActivityArInvoiceViewBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArInvoiceView extends AppCompatActivity {
+public class Ar_Credit_Note_InvoiceView extends AppCompatActivity {
 
     ActivityArInvoiceViewBinding binding;
 
@@ -26,7 +26,6 @@ public class ArInvoiceView extends AppCompatActivity {
     String VTPDocNo = "";
     String DocEntry = "";
     String CusName = "";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,7 @@ public class ArInvoiceView extends AppCompatActivity {
         DocEntry = getIntent().getStringExtra("DocEntry");
         CusName = getIntent().getStringExtra("CusName");
 
-
+        System.out.println("Entry "+DocNo+" "+VTPDocNo+" "+DocEntry+" "+CusName);
 
 
         GetInvoice();
@@ -63,8 +62,8 @@ public class ArInvoiceView extends AppCompatActivity {
 
         AppUtil.showProgressDialog(binding.getRoot(),"Loading");
 
-        ARInvoiceViewModel viewModel= new ViewModelProvider(this).get(ARInvoiceViewModel.class);
-        viewModel.getArInvoiceData(DbName).observe(this, new Observer<CommanResorce<List<ARInvoiceModel>>>() {
+        ARCreditNoteInvoiceViewModel viewModel= new ViewModelProvider(this).get(ARCreditNoteInvoiceViewModel.class);
+        viewModel.getArCNInvoiceData(DbName).observe(this, new Observer<CommanResorce<List<ARInvoiceModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<ARInvoiceModel>> listCommanResorce) {
 
@@ -125,7 +124,7 @@ public class ArInvoiceView extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), PdfViewerActivity.class);
                                 intent.putExtra("DocEntry", String.valueOf(list.get(0).getDocEntry()));
                                 intent.putExtra("CusName", String.valueOf(list.get(0).getCardName()));
-                                intent.putExtra("Ref_Document", "ArInvoice");
+                                intent.putExtra("Ref_Document", "ArCreditNote");
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }

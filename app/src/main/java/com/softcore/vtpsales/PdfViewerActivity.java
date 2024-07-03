@@ -1,35 +1,25 @@
 package com.softcore.vtpsales;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.print.PrintManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.github.barteksc.pdfviewer.BuildConfig;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.softcore.vtpsales.Adaptors.PdfPrintDocumentAdapter;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.databinding.ActivityPdfViewerBinding;
-import com.softcore.vtpsales.databinding.ActivityQrScreenBinding;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Random;
 
 public class PdfViewerActivity extends AppCompatActivity {
 
@@ -48,12 +37,14 @@ public class PdfViewerActivity extends AppCompatActivity {
     ImageView btnPrevious;
     ImageView btnNext;
 
+
     ActivityPdfViewerBinding binding;
 
     String pdfUrl = "https://www.tutorialspoint.com/java/java_tutorial.pdf";
 
     String DocEntry = "";
     String CusName = "";
+    String Ref_Document = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +55,7 @@ public class PdfViewerActivity extends AppCompatActivity {
 
         DocEntry = getIntent().getStringExtra("DocEntry");
         CusName = getIntent().getStringExtra("CusName");
+        Ref_Document = getIntent().getStringExtra("Ref_Document");
         String DbKey = "";
         String DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
@@ -82,7 +74,30 @@ public class PdfViewerActivity extends AppCompatActivity {
                 break;
         }
 
-        pdfUrl = "http://103.96.42.106:7279/api/sap/"+DbKey+"_Live_OpenARInvoice?DocEntry="+DocEntry+"&ObjectId=13";
+        String refDoc = "";
+
+        int ObjType = 13;
+
+        switch (Ref_Document) {
+            case "ApInvoice":
+                refDoc = "_Live_APInvoice";
+                ObjType = 18;
+                break;
+            case "ApCreditNote":
+                refDoc = "_Live_APCreditNote";
+                ObjType = 19;
+                break;
+            case "ArCreditNote":
+                refDoc = "_Live_ARCreditNote";
+                ObjType = 14;
+                break;
+            case "ArInvoice":
+                refDoc = "_Live_OpenARInvoice";
+                ObjType = 13;
+                break;
+        }
+
+        pdfUrl = "http://103.96.42.106:7279/api/sap/"+DbKey+refDoc+"?DocEntry="+DocEntry+"&ObjectId="+ObjType;
 
         btnNext = findViewById(R.id.btnNext);
         btnPrevious = findViewById(R.id.btnPrevious);

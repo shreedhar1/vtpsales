@@ -14,7 +14,7 @@ import com.softcore.vtpsales.ApInvoiceView;
 import com.softcore.vtpsales.Ap_Credit_Note_InvoiceView;
 import com.softcore.vtpsales.ArInvoiceView;
 import com.softcore.vtpsales.Ar_Credit_Note_InvoiceView;
-import com.softcore.vtpsales.Model.CusReportWiseDetModel;
+import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.R;
 
 import java.text.DecimalFormat;
@@ -22,19 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWiseDetReport.UserViewHolder> {
-    private List<CusReportWiseDetModel> modelList;
+public class PR_AdapterCustWiseDetReport extends RecyclerView.Adapter<PR_AdapterCustWiseDetReport.UserViewHolder> {
+    private List<CusReportWiseModel> modelList;
     Context context;
     String TYPE;
     String SortBy;
 
 
-    public AdapterCustWiseDetReport() {
+    public PR_AdapterCustWiseDetReport() {
         this.modelList = new ArrayList<>();
 
     }
 
-    public void setData(List<CusReportWiseDetModel> modelList, Context context, String TYPE, String sortBy) {
+    public void setData(List<CusReportWiseModel> modelList, Context context, String TYPE, String sortBy) {
         this.modelList = modelList;
         this.context = context;
         this.TYPE = TYPE;
@@ -45,14 +45,14 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
 
     @NonNull
     @Override
-    public AdapterCustWiseDetReport.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PR_AdapterCustWiseDetReport.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adaptor_report_det_list, parent, false);
-        return new AdapterCustWiseDetReport.UserViewHolder(view);
+        return new PR_AdapterCustWiseDetReport.UserViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdapterCustWiseDetReport.UserViewHolder holder, int position) {
-        CusReportWiseDetModel model = modelList.get(position);
+    public void onBindViewHolder(@NonNull PR_AdapterCustWiseDetReport.UserViewHolder holder, int position) {
+        CusReportWiseModel model = modelList.get(position);
 
          if(model.getCustomerName() == null || model.getCustomerName().equals("")){
 
@@ -127,6 +127,9 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                 else if(TYPE.equals("Purchase")){
                     Tamt += Double.parseDouble(model.getNetAmtApCrn());
                 }
+                else if(TYPE.equals("Purchase Register")){
+                    Tamt += Double.parseDouble(model.getNetAmt());
+                }
 
                 break;
             case "Gross":
@@ -139,6 +142,9 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                 else if(TYPE.equals("Purchase")){
                     Tamt += Double.parseDouble(model.getGrossAmtApCrn());
                 }
+                else if(TYPE.equals("Purchase Register")){
+                    Tamt += Double.parseDouble(model.getGrossAmt());
+                }
                 break;
         }
         DecimalFormat df = new DecimalFormat("0.00");
@@ -146,35 +152,20 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
 
         holder.TxtAmount.setText("₹ "+formattedTamt);
         holder.TxtDate.setText(model.getPostingDate());
-        holder.TxtVTPDocno.setText(model.getVTPdocNo());
-
-
-
-
-//        if(!DocNo.equals("") && model.getDocEntry() != null){
-//            String dn = DocNo;
-//            System.out.println("DocNum "+dn+" "+TYPE);
+        holder.TxtVTPDocno.setText(model.getVTP_Doc_No());
 
 
         String DocNo = "";
 
-        if(model.getDocNo() == null){
-            if(model.getDoc_No() == null){
-                if(model.getDocNum() == null){
+
+
+        if(model.getDocNum() == null){
                     DocNo="";
                 }else {
                     DocNo = model.getDocNum();
                     //  System.out.println("DocNo "+model.getDocNum());
                 }
-            }else {
-                DocNo = model.getDoc_No();
-                //  System.out.println("DocNo "+model.getDoc_No());
-            }
-        }else{
-            DocNo = model.getDocNo();
 
-            //  System.out.println("DocNo "+model.getDoc_No());
-        }
             holder.TxtDocno.setText(DocNo);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -183,21 +174,11 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
 
                     String DocNo = "";
 
-                    if(model.getDocNo() == null){
-                        if(model.getDoc_No() == null){
-                            if(model.getDocNum() == null){
-                                DocNo="";
-                            }else {
-                                DocNo = model.getDocNum();
-                                //  System.out.println("DocNo "+model.getDocNum());
-                            }
-                        }else {
-                            DocNo = model.getDoc_No();
-                            //  System.out.println("DocNo "+model.getDoc_No());
-                        }
-                    }else{
-                        DocNo = model.getDocNo();
-                        //  System.out.println("DocNo "+model.getDoc_No());
+                    if(model.getDocNum() == null){
+                        DocNo="";
+                    }else {
+                        DocNo = model.getDocNum();
+                        //  System.out.println("DocNo "+model.getDocNum());
                     }
 
 
@@ -216,7 +197,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                         if(model.getRef_Document().equals("Credit Note") || model.getRef_Document().equals("AR Credit Note") ){
                             intent = new Intent(context, Ar_Credit_Note_InvoiceView.class);
                             intent.putExtra("DocNo", dn);
-                            intent.putExtra("VTPDocNo", model.getVTPdocNo());
+                            intent.putExtra("VTPDocNo", model.getVTP_Doc_No());
                             intent.putExtra("DocEntry", model.getDocEntry());
                             intent.putExtra("CusName", model.getCustomerName());
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -225,7 +206,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                         else if(model.getRef_Document().equals("AR Invoice") || model.getRef_Document().equals("AR Inv")){
                             intent = new Intent(context, ArInvoiceView.class);
                             intent.putExtra("DocNo", dn);
-                            intent.putExtra("VTPDocNo", model.getVTPdocNo());
+                            intent.putExtra("VTPDocNo", model.getVTP_Doc_No());
                             intent.putExtra("DocEntry", model.getDocEntry());
                             intent.putExtra("CusName", model.getCustomerName());
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -234,7 +215,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                         else if(model.getRef_Document().equals("AP Invoice")){
                             intent = new Intent(context, ApInvoiceView.class);
                             intent.putExtra("DocNo", dn);
-                            intent.putExtra("VTPDocNo", model.getVTPdocNo());
+                            intent.putExtra("VTPDocNo", model.getVTP_Doc_No());
                             intent.putExtra("DocEntry", model.getDocEntry());
                             intent.putExtra("CusName", model.getCustomerName());
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -243,7 +224,7 @@ public class AdapterCustWiseDetReport extends RecyclerView.Adapter<AdapterCustWi
                         else if(model.getRef_Document().equals("AP Credit Note")){
                             intent = new Intent(context, Ap_Credit_Note_InvoiceView.class);
                             intent.putExtra("DocNo", dn);
-                            intent.putExtra("VTPDocNo", model.getVTPdocNo());
+                            intent.putExtra("VTPDocNo", model.getVTP_Doc_No());
                             intent.putExtra("DocEntry", model.getDocEntry());
                             intent.putExtra("CusName", model.getCustomerName());
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

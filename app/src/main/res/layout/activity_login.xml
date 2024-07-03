@@ -31,7 +31,7 @@
             android:layout_gravity="end"
             android:gravity="end"
             android:paddingEnd="@dimen/_10sdp"
-            android:text="version- v1.1.6"
+            android:text="version- v1.1.8"
             android:textColor="@color/text_color"
             android:layout_weight="0.4"
             />

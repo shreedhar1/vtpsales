@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softcore.vtpsales.Model.CusReportWiseModel;
+import com.softcore.vtpsales.PR_ReportsDetListActivity;
 import com.softcore.vtpsales.R;
 import com.softcore.vtpsales.ReportsDetListActivity;
 
@@ -74,7 +75,11 @@ public class AdapterCustWiseReport extends RecyclerView.Adapter<AdapterCustWiseR
 
             if((model.getCustomer_Name() == null || model.getCustomer_Name().equals(""))){
                 if((model.getVendor_Name() == null || model.getVendor_Name().equals(""))){
-                    holder.TxtCusName.setText("-");
+                    if((model.getVendorName() == null || model.getVendorName().equals(""))){
+                        holder.TxtCusName.setText("-");
+                    }else{
+                        holder.TxtCusName.setText(model.getVendorName());
+                    }
                 }else{
                     holder.TxtCusName.setText(model.getVendor_Name());
                 }
@@ -99,7 +104,9 @@ public class AdapterCustWiseReport extends RecyclerView.Adapter<AdapterCustWiseR
                 else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
                     Tamt += Double.parseDouble(model.getNetAmtApCrn());
                 }
-
+                else if(TYPE.equals("Purchase Register")){
+                    Tamt += Double.parseDouble(model.getNetAmt());
+                }
                 break;
             case "Gross":
                 if(TYPE.equals("Sales")){
@@ -110,6 +117,9 @@ public class AdapterCustWiseReport extends RecyclerView.Adapter<AdapterCustWiseR
                 }
                 else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
                     Tamt += Double.parseDouble(model.getGrossAmtApCrn());
+                }
+                else if(TYPE.equals("Purchase Register")){
+                    Tamt += Double.parseDouble(model.getGrossAmt());
                 }
                 break;
         }
@@ -123,16 +133,30 @@ public class AdapterCustWiseReport extends RecyclerView.Adapter<AdapterCustWiseR
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent;
                 String Flag="";
                 if(TYPE.equals("Sales")){
                     Flag = "Sales_Customer_Wise_DetailReport";
+                     intent = new Intent(context, ReportsDetListActivity.class);
                 }else if(TYPE.equals("Purchase")){
                     Flag = "Purchase_Vendor_Wise_DetailReport";
+                     intent = new Intent(context, ReportsDetListActivity.class);
+                }
+                else if(TYPE.equals("Customer Outstanding")){
+                    Flag = "Customer_Outstanding_Report";
+                     intent = new Intent(context, ReportsDetListActivity.class);
+                }
+                else if(TYPE.equals("Vendor Outstanding")){
+                    Flag = "Vendor_Outstanding_Report";
+                     intent = new Intent(context, ReportsDetListActivity.class);
+                }
+                else if(TYPE.equals("Purchase Register")){
+                    Flag = "Purchase_Register_Report";
+                     intent = new Intent(context, PR_ReportsDetListActivity.class);
                 }else{
                     return;
                 }
-                Intent intent = new Intent(context, ReportsDetListActivity.class);
+
                 intent.putExtra("TYPE", TYPE);
                 intent.putExtra("FromDatePost",PostFromDate);
                 intent.putExtra("ToDatePost",PostToDate);

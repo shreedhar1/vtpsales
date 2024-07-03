@@ -14,10 +14,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusReportWiseModel;
+import com.softcore.vtpsales.Model.InOutPayModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReport_CusOut_ViewModel;
+import com.softcore.vtpsales.ViewModel.CusWiseReport_Purchase_Reg_ViewModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReport_Purchase_ViewModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReport_Sales_ViewModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReport_VenOut_ViewModel;
+import com.softcore.vtpsales.ViewModel.InOutPayReportViewModel;
+import com.softcore.vtpsales.ViewModel.OutgoingPayReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityReportsBinding;
 
 import java.text.DecimalFormat;
@@ -26,8 +30,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ReportsActivity2 extends AppCompatActivity {
 
@@ -45,6 +51,7 @@ public class ReportsActivity2 extends AppCompatActivity {
     String EmpTypePName;
 
     List<CusReportWiseModel> MainSalesList ;
+    List<InOutPayModel> InOutPayList ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +86,19 @@ public class ReportsActivity2 extends AppCompatActivity {
 
         binding.imgOutstandings.setImageResource(R.drawable.svg_outstanding);
         binding.txtOutstandingstitle.setText("₹ 0.00");
-        binding.txtOutstandingsdesc.setText("Vendor Outstaning (Gross)");
+        binding.txtOutstandingsdesc.setText("Vendor Outstanding (Gross)");
+
+        binding.imgIncoming.setImageResource(R.drawable.baseline_arrow_circle_down_24);
+        binding.txtIncomingtitle.setText("₹ 0.00");
+        binding.txtIncomingdesc.setText("Incoming Payment");
+
+        binding.imgOutgoing.setImageResource(R.drawable.baseline_arrow_circle_down_24);
+        binding.txtOutgoingtitle.setText("₹ 0.00");
+        binding.txtOutgoingdesc.setText("Outgoing Payment");
+
+        binding.imgPurchaseReg.setImageResource(R.drawable.baseline_point_of_sale_24);
+        binding.txtPurchaseRegTitle.setText("₹ 0.00");
+        binding.txtPurchaseRegDesc.setText("Purchase Register");
 
         // Get the current date
         Calendar today = Calendar.getInstance();
@@ -175,6 +194,16 @@ public class ReportsActivity2 extends AppCompatActivity {
                 }
             }
         });
+        binding.layPurchaseReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(binding.txtPurchaseRegTitle.getText().equals("₹ 0.00")){
+                    Toast.makeText(ReportsActivity2.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }else {
+                    NextActivity3("Purchase Register","Purchase_Register_Report","", binding.txtPurchaseRegTitle.getText());
+                }
+            }
+        });
         binding.layReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,13 +226,53 @@ public class ReportsActivity2 extends AppCompatActivity {
         });
 
 
+        binding.layIncoming.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             NextActivity2("Incoming","Incoming_Payment_Report");
+            }
+        });
+        binding.layOutgoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NextActivity2("Outgoing","Outgoing_Payment_Report");
+            }
+        });
 
+    }
+
+    private void NextActivity2(String TYPE,String Flag) {
+        Intent intent = new Intent(ReportsActivity2.this, IncomingOutgoingList.class);
+        intent.putExtra("TYPE", TYPE);
+        intent.putExtra("FromDatePost",FromDatePost);
+        intent.putExtra("ToDatePost",ToDatePost);
+        intent.putExtra("ViewToDate",ViewToDate);
+        intent.putExtra("ViewFromDate",ViewFromDate);
+        intent.putExtra("SlpName","");
+        intent.putExtra("Flag",Flag);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void NextActivity(String Type, String Flag,String MFlag, CharSequence amount) {
 
 //        System.out.println("SlpName send to ReportsListActivity: "+SlpName);
         Intent intent = new Intent(ReportsActivity2.this, ReportsListActivity.class);
+        intent.putExtra("TYPE", Type);
+        intent.putExtra("FromDatePost",FromDatePost);
+        intent.putExtra("ToDatePost",ToDatePost);
+        intent.putExtra("ViewToDate",ViewToDate);
+        intent.putExtra("ViewFromDate",ViewFromDate);
+        intent.putExtra("SlpName","");
+        intent.putExtra("Flag",Flag);
+        intent.putExtra("MFlag",MFlag);
+        intent.putExtra("Amount",amount);
+        startActivity(intent);
+    }
+    private void NextActivity3(String Type, String Flag,String MFlag, CharSequence amount) {
+
+//        System.out.println("SlpName send to ReportsListActivity: "+SlpName);
+        Intent intent = new Intent(ReportsActivity2.this, ReportsListActivity2.class);
         intent.putExtra("TYPE", Type);
         intent.putExtra("FromDatePost",FromDatePost);
         intent.putExtra("ToDatePost",ToDatePost);
@@ -275,8 +344,14 @@ public class ReportsActivity2 extends AppCompatActivity {
         GetCusWiseReportList2(FromDatePost,ToDatePost,"","Purchase_Vendor_Wise_Report");
         GetCusWiseReportList3(FromDatePost,ToDatePost,"","CustomerWise_Outstanding_Amount");
         GetCusWiseReportList4(FromDatePost,ToDatePost,"","CustomerWise_Vendor_Outstanding_Amount");
+        GetCusWiseReportList5(FromDatePost,ToDatePost,"","Incoming_Payment_Report");
+        GetCusWiseReportList6(FromDatePost,ToDatePost,"","Outgoing_Payment_Report");
+        GetCusWiseReportList7(FromDatePost,ToDatePost,"","Purchase_Register_Report");
 
     }
+
+
+
     public void fromDatepicker() {
         // Get current date
         Calendar calendar = Calendar.getInstance();
@@ -410,34 +485,37 @@ public class ReportsActivity2 extends AppCompatActivity {
                     List<CusReportWiseModel>  filterList ;
                     filterList = new ArrayList<>();
 
-                    for(int i = 0;i < MainSalesList.size();i++){
-switch (EmpType) {
+                    for (int i = 0; i < MainSalesList.size(); i++) {
+                        String salesPerson = MainSalesList.get(i).getSalesPerson();
+                        String collectionPerson = MainSalesList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
+                        switch (EmpType) {
                             case "Sales Employee":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                               if(MainSalesList.get(i).getSalesPerson() != null){
-                                   if (EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase())) {
-                                       filterList.add(MainSalesList.get(i));
-                                   }
-                               }
-                                break;
-                            case "Collection Person":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getCollectionPerson() != null){
-                                    if (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase())) {
-                                        filterList.add(MainSalesList.get(i));
-                                    } 
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    System.out.println("MainSalesList Amt: " + MainSalesList.get(i).getGrossAmtINV_ARCRN());
+                                    filterList.add(MainSalesList.get(i));
                                 }
                                 break;
-                            case "Both":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                              if(MainSalesList.get(i).getSalesPerson() != null && MainSalesList.get(i).getCollectionPerson() != null){
-                                  if ((EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase() ) && (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) ||EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase()) ) )){
-                                      filterList.add(MainSalesList.get(i));
-                                  }
-                              }
-                              
+
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
                                 break;
-                        }                    }
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+                        }
+                    }
+
 
 //                        UpdateList(filterList,ReportTYPE);
 
@@ -490,35 +568,37 @@ switch (EmpType) {
                     List<CusReportWiseModel>  filterList ;
                     filterList = new ArrayList<>();
 
-                    for(int i = 0;i < MainSalesList.size();i++){
+                    for (int i = 0; i < MainSalesList.size(); i++) {
+                        String salesPerson = MainSalesList.get(i).getSalesPerson();
+                        String collectionPerson = MainSalesList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
                         switch (EmpType) {
                             case "Sales Employee":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getSalesPerson() != null){
-                                    if (EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase())) {
-                                        filterList.add(MainSalesList.get(i));
-                                    }
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    System.out.println("MainSalesList Amt: " + MainSalesList.get(i).getGrossAmtINV_ARCRN());
+                                    filterList.add(MainSalesList.get(i));
                                 }
                                 break;
-                            case "Collection Person":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getCollectionPerson() != null){
-                                    if (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase())) {
-                                        filterList.add(MainSalesList.get(i));
-                                    }
-                                }
-                                break;
-                            case "Both":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getSalesPerson() != null && MainSalesList.get(i).getCollectionPerson() != null){
-                                    if ((EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase() ) && (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) ||EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase()) ) )){
-                                        filterList.add(MainSalesList.get(i));
-                                    }
-                                }
 
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
                                 break;
                         }
                     }
+
 
 //                        UpdateList(filterList,ReportTYPE);
 
@@ -572,34 +652,36 @@ switch (EmpType) {
                     List<CusReportWiseModel>  filterList ;
                     filterList = new ArrayList<>();
 
-                    for(int i = 0;i < MainSalesList.size();i++){
+                    for (int i = 0; i < MainSalesList.size(); i++) {
+                        String salesPerson = MainSalesList.get(i).getSalesPerson();
+                        String collectionPerson = MainSalesList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
                         switch (EmpType) {
                             case "Sales Employee":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                               if(MainSalesList.get(i).getSalesPerson() != null){
-                                   if (EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase())) {
-                                       filterList.add(MainSalesList.get(i));
-                                   }
-                               }
-                                break;
-                            case "Collection Person":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getCollectionPerson() != null){
-                                    if (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase())) {
-                                        filterList.add(MainSalesList.get(i));
-                                    } 
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    System.out.println("MainSalesList Amt: " + MainSalesList.get(i).getGrossAmtINV_ARCRN());
+                                    filterList.add(MainSalesList.get(i));
                                 }
                                 break;
-                            case "Both":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                              if(MainSalesList.get(i).getSalesPerson() != null && MainSalesList.get(i).getCollectionPerson() != null){
-                                  if ((EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase() ) && (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) ||EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase()) ) )){
-                                      filterList.add(MainSalesList.get(i));
-                                  }
-                              }
-                              
+
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
                                 break;
-                        }                    }
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+                        }
+                    }
 
 //                        UpdateList(filterList,ReportTYPE);
 
@@ -652,32 +734,33 @@ switch (EmpType) {
                     List<CusReportWiseModel>  filterList ;
                     filterList = new ArrayList<>();
 
-                    for(int i = 0;i < MainSalesList.size();i++){
+                    for (int i = 0; i < MainSalesList.size(); i++) {
+                        String salesPerson = MainSalesList.get(i).getSalesPerson();
+                        String collectionPerson = MainSalesList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
                         switch (EmpType) {
                             case "Sales Employee":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                               if(MainSalesList.get(i).getSalesPerson() != null){
-                                   if (EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase())) {
-                                       filterList.add(MainSalesList.get(i));
-                                   }
-                               }
-                                break;
-                            case "Collection Person":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                                if(MainSalesList.get(i).getCollectionPerson() != null){
-                                    if (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase())) {
-                                        filterList.add(MainSalesList.get(i));
-                                    }
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    System.out.println("MainSalesList Amt: " + MainSalesList.get(i).getGrossAmtINV_ARCRN());
+                                    filterList.add(MainSalesList.get(i));
                                 }
                                 break;
-                            case "Both":
-                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+MainSalesList.size());
-                              if(MainSalesList.get(i).getSalesPerson() != null && MainSalesList.get(i).getCollectionPerson() != null){
-                                  if ((EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toLowerCase()) || EmpTypePName.equals(MainSalesList.get(i).getSalesPerson().toUpperCase() ) && (EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toLowerCase()) ||EmpTypePName.equals(MainSalesList.get(i).getCollectionPerson().toUpperCase()) ) )){
-                                      filterList.add(MainSalesList.get(i));
-                                  }
-                              }
 
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
                                 break;
                         }
                     }
@@ -712,5 +795,332 @@ switch (EmpType) {
 
     }
 
+    private void GetCusWiseReportList5(String FromDate, String ToDate, String SlpName, String Flag) {
+
+        String DbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
+
+        System.out.println("Get Incoming Payment List : " + FromDate + " " + ToDate + " " + SlpName + " " + DbName + " " + Flag);
+        InOutPayReportViewModel inOutPayReportViewModel = new ViewModelProvider(this).get(InOutPayReportViewModel.class);
+        inOutPayReportViewModel.getInOutDetails(FromDate, ToDate, "", DbName, Flag).observe(this, new Observer<CommanResorce<List<InOutPayModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<InOutPayModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    InOutPayList = listCommanResorce.data;
+
+                    System.out.println(InOutPayList.size());
+
+                    //  EmpTypeFilterList(MainSalesList,ReportTYPE);
+
+                    List<InOutPayModel>  filterList ;
+                    filterList = new ArrayList<>();
+
+                    for (int i = 0; i < InOutPayList.size(); i++) {
+                        String salesPerson = InOutPayList.get(i).getSalesPerson();
+                        String collectionPerson = InOutPayList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+                        }
+                    }
+
+                    List<InOutPayModel> INOUTList = new ArrayList<>();
+
+                    Set<String> BpNameAndDoc = new HashSet<>();
+                    for (InOutPayModel model : filterList) {
+                        if (!BpNameAndDoc.contains(model.getBPName()+"_"+model.getSAP_Doc_No())) {
+                            BpNameAndDoc.add(model.getBPName()+"_"+model.getSAP_Doc_No());
+
+                            INOUTList.add(model);
+                        }
+                    }
+
+                    Set<String> BpNames = new HashSet<>();
+                    for (int a = 0; a < INOUTList.size(); a++) {
+                        if (!BpNames.contains(INOUTList.get(a).getBPName())) {
+                            BpNames.add(INOUTList.get(a).getBPName());
+
+                        }
+                    }
+                    List<InOutPayModel> finalList = new ArrayList<>();
+
+                    for(int i = 0; i<INOUTList.size();i++){
+                        InOutPayModel model = new InOutPayModel();
+                        String SPName = INOUTList.get(i).getBPName();
+                        double Tamt = 0;
+                        for(int j = 0; j<INOUTList.size();j++){
+                            if(SPName.equals(INOUTList.get(j).getBPName())){
+                                Tamt += INOUTList.get(j).getTotal();
+                            }
+                        }
+                        model.setTotal(Tamt);
+                        model.setBPName(SPName);
+                        finalList.add(model);
+                    }
+
+                    List<InOutPayModel> finalList2 = new ArrayList<>();
+
+                    Set<String> BpNames2 = new HashSet<>();
+                    for (int a = 0; a < finalList.size(); a++) {
+                        if (!BpNames2.contains(finalList.get(a).getBPName())) {
+                            BpNames2.add(finalList.get(a).getBPName());
+                            finalList2.add(finalList.get(a));
+                        }
+                    }
+
+                    double Tamt = 0;
+                    for(int i = 0;i<finalList2.size();i++){
+                        Tamt += finalList2.get(i).getTotal();
+                    }
+
+                    binding.txtIncomingtitle.setText("₹ "+String.format("%.2f", Tamt));
+
+                }
+
+                else {
+                    binding.txtIncomingtitle.setText("₹ 0.00");
+                }
+
+                //AppUtil.hideProgressDialog();
+            }
+        });
+
+
+    }
+
+    private void GetCusWiseReportList6(String FromDate, String ToDate, String SlpName, String Flag) {
+
+        String DbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
+
+        System.out.println("Get Outgoing Payment List : " + FromDate + " " + ToDate + " " + SlpName + " " + DbName + " " + Flag);
+        OutgoingPayReportViewModel outPayReportViewModel = new ViewModelProvider(this).get(OutgoingPayReportViewModel.class);
+        outPayReportViewModel.getOutDetails(FromDate, ToDate, "", DbName, Flag).observe(this, new Observer<CommanResorce<List<InOutPayModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<InOutPayModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    InOutPayList = listCommanResorce.data;
+
+                    System.out.println(InOutPayList.size());
+
+                    //  EmpTypeFilterList(MainSalesList,ReportTYPE);
+
+                    List<InOutPayModel>  filterList ;
+                    filterList = new ArrayList<>();
+
+                    for (int i = 0; i < InOutPayList.size(); i++) {
+                        String salesPerson = InOutPayList.get(i).getSalesPerson();
+                        String collectionPerson = InOutPayList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + InOutPayList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(InOutPayList.get(i));
+                                }
+                                break;
+                        }
+                    }
+
+//                        UpdateList(filterList,ReportTYPE);
+
+                    List<InOutPayModel> INOUTList = new ArrayList<>();
+
+                    Set<String> BpNameAndDoc = new HashSet<>();
+                    for (InOutPayModel model : filterList) {
+                        if (!BpNameAndDoc.contains(model.getBPName()+"_"+model.getSAP_Doc_No())) {
+                            BpNameAndDoc.add(model.getBPName()+"_"+model.getSAP_Doc_No());
+
+                            INOUTList.add(model);
+                        }
+                    }
+
+                    Set<String> BpNames = new HashSet<>();
+                    for (int a = 0; a < INOUTList.size(); a++) {
+                        if (!BpNames.contains(INOUTList.get(a).getBPName())) {
+                            BpNames.add(INOUTList.get(a).getBPName());
+
+                        }
+                    }
+                    List<InOutPayModel> finalList = new ArrayList<>();
+
+                    for(int i = 0; i<INOUTList.size();i++){
+                        InOutPayModel model = new InOutPayModel();
+                        String SPName = INOUTList.get(i).getBPName();
+                        double Tamt = 0;
+                        for(int j = 0; j<INOUTList.size();j++){
+                            if(SPName.equals(INOUTList.get(j).getBPName())){
+                                Tamt += INOUTList.get(j).getTotal();
+                            }
+                        }
+                        model.setTotal(Tamt);
+                        model.setBPName(SPName);
+                        finalList.add(model);
+                    }
+
+                    List<InOutPayModel> finalList2 = new ArrayList<>();
+
+                    Set<String> BpNames2 = new HashSet<>();
+                    for (int a = 0; a < finalList.size(); a++) {
+                        if (!BpNames2.contains(finalList.get(a).getBPName())) {
+                            BpNames2.add(finalList.get(a).getBPName());
+                            finalList2.add(finalList.get(a));
+                        }
+                    }
+
+                    double Tamt = 0;
+                    for(int i = 0;i<finalList2.size();i++){
+                        Tamt += finalList2.get(i).getTotal();
+                    }
+
+                    binding.txtOutgoingtitle.setText("₹ "+String.format("%.2f", Tamt));
+
+                }
+
+                else {
+                    binding.txtOutgoingtitle.setText("₹ 0.00");
+
+
+                }
+
+
+                //AppUtil.hideProgressDialog();
+            }
+        });
+
+
+    }
+
+
+    private void GetCusWiseReportList7(String FromDate, String ToDate, String SlpName, String Flag) {
+
+        String DbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
+
+        System.out.println("Purchase reg Data  : " + FromDate + " " + ToDate + " " + SlpName + " " + DbName + " " + Flag);
+        CusWiseReport_Purchase_Reg_ViewModel cusWiseReportViewModel = new ViewModelProvider(this).get(CusWiseReport_Purchase_Reg_ViewModel.class);
+        cusWiseReportViewModel.getCusWiseReportData(FromDate, ToDate, "", DbName, Flag).observe(this, new Observer<CommanResorce<List<CusReportWiseModel>>>() {
+            @Override
+            public void onChanged(CommanResorce<List<CusReportWiseModel>> listCommanResorce) {
+
+                if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
+
+                    MainSalesList = listCommanResorce.data;
+
+                    System.out.println("Purchase reg list"+MainSalesList.size());
+
+                    List<CusReportWiseModel>  filterList ;
+                    filterList = new ArrayList<>();
+
+                    for (int i = 0; i < MainSalesList.size(); i++) {
+                        String salesPerson = MainSalesList.get(i).getSalesPerson();
+                        String collectionPerson = MainSalesList.get(i).getCollectionPerson();
+                        String empTypePNameLower = EmpTypePName.toLowerCase();
+
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) {
+                                    System.out.println("MainSalesList Amt: " + MainSalesList.get(i).getGrossAmtINV_ARCRN());
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+
+                            case "Collection Person":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase())) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+
+                            case "Both (SE+CP)":
+                                System.out.println("EmpType " + EmpType + " " + EmpTypePName + " " + MainSalesList.size());
+                                if ((salesPerson != null && empTypePNameLower.equals(salesPerson.toLowerCase())) ||
+                                        (collectionPerson != null && empTypePNameLower.equals(collectionPerson.toLowerCase()))) {
+                                    filterList.add(MainSalesList.get(i));
+                                }
+                                break;
+                        }
+                    }
+
+                    List<CusReportWiseModel>  newfilterList ;
+                    newfilterList = new ArrayList<>();
+
+                        Set<String> DocEntries = new HashSet<>();
+                        for (int a = 0; a < filterList.size(); a++) {
+                            if (!DocEntries.contains(filterList.get(a).getDocEntry())) {
+                                DocEntries.add(filterList.get(a).getDocEntry());
+                                newfilterList.add(filterList.get(a));
+                            }
+                        }
+
+                    double Crn = 0;
+
+                        System.out.println("newfilterList.size() "+newfilterList.size());
+                    for(int i = 0;i < newfilterList.size();i++){
+
+                        if (newfilterList.get(i).getGrossAmt() != null) {
+                            Crn += Double.parseDouble(newfilterList.get(i).getGrossAmt());
+                        }
+
+                    }
+
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String formattedCrn = df.format(Crn);
+                    System.out.println("Report Report Purchase amt "+formattedCrn);
+
+                    binding.txtPurchaseRegTitle.setText("₹ "+formattedCrn);
+
+                }
+
+                else {
+                    binding.txtPurchaseRegTitle.setText("₹ 0.00");
+
+                }
+
+                //AppUtil.hideProgressDialog();
+            }
+        });
+
+
+    }
 
 }

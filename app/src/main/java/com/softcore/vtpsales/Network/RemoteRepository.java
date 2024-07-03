@@ -14,6 +14,7 @@ import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.Model.CustomerModel;
 import com.softcore.vtpsales.Model.Database;
 import com.softcore.vtpsales.Model.GeneralModel;
+import com.softcore.vtpsales.Model.InOutPayModel;
 import com.softcore.vtpsales.Model.LeadGenModel;
 import com.softcore.vtpsales.Model.LeadSeriesModel;
 import com.softcore.vtpsales.Model.MyTeamMember;
@@ -168,10 +169,27 @@ public class RemoteRepository {
         call.enqueue(callback);
     }
 
+//getInOutWiseData
+    public void getInOutWiseData(String FromDate,String ToDate,String SlpName,String DbName,String Flag,Callback<List<InOutPayModel>> callback){
+        Call<List<InOutPayModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getInOutWiseDetails(FromDate,ToDate,SlpName,DbName,Flag);
+        call.enqueue(callback);
+    }
+
     public void getArInvDet(String DbName,Callback<List<ARInvoiceModel>> callback){
         Call<List<ARInvoiceModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getArInvoiceDetails(DbName);
         call.enqueue(callback);
     }
+    public void getArCreditNoteInvDet(String DbName,Callback<List<ARInvoiceModel>> callback){
+        Call<List<ARInvoiceModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getArCreditNoteDetails(DbName);
+        call.enqueue(callback);
+    }
 
-
+    public void getApInvDet(String DbName,Callback<List<ARInvoiceModel>> callback){
+        Call<List<ARInvoiceModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getApInvoiceDetails(DbName);
+        call.enqueue(callback);
+    }
+    public void getApCreditNoteInvDet(String DbName,Callback<List<ARInvoiceModel>> callback){
+        Call<List<ARInvoiceModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getApCreditNoteDetails(DbName);
+        call.enqueue(callback);
+    }
 }

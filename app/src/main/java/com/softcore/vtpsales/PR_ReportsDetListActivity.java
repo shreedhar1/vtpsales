@@ -19,12 +19,11 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.google.gson.Gson;
-import com.softcore.vtpsales.Adaptors.AdapterCustWiseDetReport;
+import com.softcore.vtpsales.Adaptors.PR_AdapterCustWiseDetReport;
 import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
-import com.softcore.vtpsales.Model.CusReportWiseDetModel;
-import com.softcore.vtpsales.ViewModel.CusWiseDetReportViewModel;
+import com.softcore.vtpsales.Model.CusReportWiseModel;
+import com.softcore.vtpsales.ViewModel.CusWiseReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityReportsDetListBinding;
 
 import org.json.JSONArray;
@@ -41,10 +40,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class ReportsDetListActivity extends AppCompatActivity {
+public class PR_ReportsDetListActivity extends AppCompatActivity {
     ActivityReportsDetListBinding binding;
 
     String ViewFromDate;
@@ -57,16 +58,19 @@ public class ReportsDetListActivity extends AppCompatActivity {
     String TYPE;
     String CusName;
     String SortBy;
+    String EmpType;
+    String EmpTypePName;
 
-    AdapterCustWiseDetReport adapter;
+    PR_AdapterCustWiseDetReport adapter;
 
-    List<CusReportWiseDetModel> list;
+    List<CusReportWiseModel> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding= ActivityReportsDetListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.layAmtBar.setVisibility(View.GONE);
         ViewFromDate=getIntent().getStringExtra("ViewFromDate");
         ViewToDate=getIntent().getStringExtra("ViewToDate");
         PostFromDate=getIntent().getStringExtra("FromDatePost");
@@ -77,6 +81,10 @@ public class ReportsDetListActivity extends AppCompatActivity {
         TYPE=getIntent().getStringExtra("TYPE");
         CusName =getIntent().getStringExtra("CusName");
         binding.laybar.appbarTextView.setText(TYPE);
+
+        EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
+        EmpTypePName = AppUtil.getStringData(getApplicationContext(),"EmpTypePName","");
+
 
         binding.laybar.backId.setVisibility(View.VISIBLE);
         binding.laybar.backId.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +109,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
         GetCusWiseReportList(PostFromDate,PostToDate,SlpName,Flag);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AdapterCustWiseDetReport();
+        adapter = new PR_AdapterCustWiseDetReport();
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setNestedScrollingEnabled(false);
 
@@ -123,15 +131,15 @@ public class ReportsDetListActivity extends AppCompatActivity {
         String DbName = AppUtil.getStringData(getApplicationContext(),"DatabaseName","");
 
         System.out.println("Get CusWise List : "+FromDate+" "+ToDate+" "+ SlpName+" "+ DbName+" "+ Flag);
-        CusWiseDetReportViewModel cusWiseDetReportViewModel= new ViewModelProvider(this).get(CusWiseDetReportViewModel.class);
-        cusWiseDetReportViewModel.getCusWiseReportData(FromDate,ToDate, SlpName, DbName, Flag).observe(this, new Observer<CommanResorce<List<CusReportWiseDetModel>>>() {
+        CusWiseReportViewModel cusWiseDetReportViewModel= new ViewModelProvider(this).get(CusWiseReportViewModel.class);
+        cusWiseDetReportViewModel.getCusWiseReportData(FromDate,ToDate, SlpName, DbName, Flag).observe(this, new Observer<CommanResorce<List<CusReportWiseModel>>>() {
             @Override
-            public void onChanged(CommanResorce<List<CusReportWiseDetModel>> listCommanResorce) {
+            public void onChanged(CommanResorce<List<CusReportWiseModel>> listCommanResorce) {
 
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
 
                      list = new ArrayList<>();
-                    for (CusReportWiseDetModel model : listCommanResorce.data) {
+                    for (CusReportWiseModel model : listCommanResorce.data) {
                          if (CusName.equalsIgnoreCase(model.getCustomerName())) {
                              list.add(model);
                          }else if(CusName.equalsIgnoreCase(model.getCustomer_Name())){
@@ -143,17 +151,91 @@ public class ReportsDetListActivity extends AppCompatActivity {
                              list.add(model);
                          }
                     }
-                    Gson gson = new Gson();
-                    String json = gson.toJson(list);
+//                    Gson gson = new Gson();
+//                    String json = gson.toJson(list);
+//
+//                    System.out.println("Json list barchart:"+json);
 
-                    System.out.println("Json list barchart:"+json);
+//                    List<CusReportWiseModel> list = new ArrayList<>() ;
+//
+//                    list = listCommanResorce.data;
 
-                    UpdateList(list,"Gross");
+
+                    List<CusReportWiseModel>  filterList ;
+                    filterList = new ArrayList<>();
+
+
+                    for(int i = 0;i < list.size();i++){
+                        switch (EmpType) {
+                            case "Sales Employee":
+                                if (EmpTypePName.equals(list.get(i).getSalesPerson())) {
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                            case "Collection Person":
+                                if (EmpTypePName.equals(list.get(i).getCollectionPerson())) {
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                            case "Both (SE+CP)":
+//                                if (EmpTypePName.equals(list.get(i).getSalesPerson()) && EmpTypePName.equals(list.get(i).getCollectionPerson())) {
+//                                    filterList.add(list.get(i));
+//                                }
+                                System.out.println("EmpType "+EmpType +" " +EmpTypePName+" "+list.size());
+                                String SP = "";
+                                String CP = "";
+                                if(list.get(i).getSalesPerson() != null){
+                                    SP = list.get(i).getSalesPerson();
+                                }
+                                if(list.get(i).getCollectionPerson() != null){
+                                    CP = list.get(i).getCollectionPerson();
+                                }
+
+                                if ((EmpTypePName.equals(SP.toLowerCase()) || EmpTypePName.equals(SP.toUpperCase() ) || (EmpTypePName.equals(CP.toLowerCase()) ||EmpTypePName.equals(CP.toUpperCase()) ) )){
+                                    filterList.add(list.get(i));
+                                }
+                                break;
+                        }
+
+                    }
+
+                    List<CusReportWiseModel>  newfilterList = new ArrayList<>();
+
+
+                    Set<String> DocEntries = new HashSet<>();
+                    for (int a = 0; a < filterList.size(); a++) {
+                        if (!DocEntries.contains(filterList.get(a).getDocEntry())) {
+                            DocEntries.add(filterList.get(a).getDocEntry());
+                            newfilterList.add(filterList.get(a));
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   list =  newfilterList;
+
+                    UpdateList(newfilterList,"Gross");
 
 
 
                    // we Need to customise list properly like in Jan 23 and Amount
-                  if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding")  ) {
+                  if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding") || TYPE.equals("Purchase Register")  ) {
 
                   }else{
                       CustomizeList(list,"Gross");
@@ -183,7 +265,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
                     if(list != null){
                         UpdateList(list,"Gross");
-                        if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding")  ) {
+                        if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding") || TYPE.equals("Purchase Register")  ) {
 
                         }else {
                             CustomizeList(list, "Gross");
@@ -194,7 +276,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
                     SortBy = "Net sales Amount";
                     if(list != null){
                         UpdateList(list,"Net");
-                        if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding")  ) {
+                        if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding") || TYPE.equals("Purchase Register")  ) {
 
                         }else {
                             CustomizeList(list, "Net");
@@ -217,6 +299,9 @@ public class ReportsDetListActivity extends AppCompatActivity {
         } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
             arrayResource = R.array.PurchaseOptions;
         } else if (TYPE.equals("Customer Outstanding")) {
+            arrayResource = R.array.CustomerOutstanding;
+        }
+        else if (TYPE.equals("Purchase Register")) {
             arrayResource = R.array.CustomerOutstanding;
         }
 
@@ -242,7 +327,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
 
                         if(list != null){
                             UpdateList(list,"Gross");
-                            if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding")  ) {
+                            if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding") || TYPE.equals("Purchase Register")  ) {
 
                             }else {
                                 CustomizeList(list, "Gross");
@@ -253,7 +338,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
                         SortBy = "Net sales Amount";
                         if(list != null){
                             UpdateList(list,"Net");
-                            if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding")  ) {
+                            if(TYPE.equals("Vendor Outstanding") || TYPE.equals("Customer Outstanding") || TYPE.equals("Purchase Register")  ) {
 
                             }else {
                                 CustomizeList(list, "Net");
@@ -285,7 +370,7 @@ public class ReportsDetListActivity extends AppCompatActivity {
 //
 //    }
 
-    private void UpdateList(List<CusReportWiseDetModel> list, String value) {
+    private void UpdateList(List<CusReportWiseModel> list, String value) {
 
         String sortBy = "";
         if(value.equals("Gross")) {
@@ -300,106 +385,121 @@ public class ReportsDetListActivity extends AppCompatActivity {
         double Tamt = 0;
         double Crn = 0;
         double CDAmt = 0;
-        for(int i = 0;i < list.size();i++){
-
-            if(value.equals("Gross")){
-                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
-                    if(list.get(i).getGrossSalesAmt() != null){
-                        Tamt += Double.parseDouble(list.get(i).getGrossSalesAmt());
-                    }
-                }
-                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
-                    if(list.get(i).getGrossPurchaseAmt() != null){
-                        Tamt += Double.parseDouble(list.get(i).getGrossPurchaseAmt());
-                    }
-                }
-
-                if (TYPE.equals("Sales")) {
-                    if (list.get(i).getGrossAmtINV_CRN() != null) {
-                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_CRN());
-                    }
-                }
-                else if (TYPE.equals("Customer Outstanding")|| TYPE.equals("Vendor Outstanding")) {
-                    if (list.get(i).getGrossAmtINV_ARCRN() != null) {
-                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_ARCRN());
-                    }
-                }
-                else if(TYPE.equals("Purchase")){
-                    if (list.get(i).getGrossAmtApCrn() != null) {
-                        Crn += Double.parseDouble(list.get(i).getGrossAmtApCrn());
-                    }
-                }
 
 
-                if (TYPE.equals("Sales")) {
-                    if (list.get(i).getGrossCrditAmt() != null) {
-                        CDAmt += Double.parseDouble(list.get(i).getGrossCrditAmt());
-                    }
 
-                }
-//                else if (TYPE.equals("Customer Outstanding")) {
-//                    if (list.get(i).getGrossCrdAmt() != null) {
-//                        CDAmt += Double.parseDouble(list.get(i).getGrossCrdAmt());
-//                    }
-//                }
-                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
-                    if (list.get(i).getGrossDebitAmt() != null) {
-                        CDAmt += Double.parseDouble(list.get(i).getGrossDebitAmt());
-                    }
-                }
+        for(int i = 0;i < list.size();i++) {
 
+            if(value.equals("Gross")) {
+                Tamt += Double.parseDouble(list.get(i).getGrossAmt());
             }
             else if(value.equals("Net")){
-
-                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
-                    if(list.get(i).getNetSalesAmt() != null){
-                        Tamt += Double.parseDouble(list.get(i).getNetSalesAmt());
-                    }
-                }
-                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
-                    if(list.get(i).getNetPurchaseAmt() != null){
-                        Tamt += Double.parseDouble(list.get(i).getNetPurchaseAmt());
-                    }
-                }
-
-                if(TYPE.equals("Sales")){
-                    if(list.get(i).getNetAmtINV_CRN() != null) {
-                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_CRN());
-                    }
-                }
-                else if(TYPE.equals("Customer Outstanding")|| TYPE.equals("Vendor Outstanding")) {
-                    if (list.get(i).getNetAmtINV_ARCRN() != null) {
-                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_ARCRN());
-                    }
-                }
-                else if(TYPE.equals("Purchase")){
-                    if(list.get(i).getNetAmtApCrn() != null){
-                        Crn += Double.parseDouble(list.get(i).getNetAmtApCrn());
-                    }
-                }
-
-                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
-                    if(list.get(i).getNetCrdAmt() != null){
-                        CDAmt += Double.parseDouble(list.get(i).getNetCrdAmt());
-                    }
-                }
-                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
-                    if(list.get(i).getNetDebitAmt() != null){
-                        CDAmt += Double.parseDouble(list.get(i).getNetDebitAmt());
-                        System.out.println("Type and Debit :" + TYPE+" "+String.valueOf(CDAmt));
-                    }
-                }
+                Tamt += Double.parseDouble(list.get(i).getNetAmt());
 
             }
+        }
+
+        
+        for(int i = 0;i < list.size();i++){
+
+//            if(value.equals("Gross")){
+//                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+//                    if(list.get(i).getGrossSalesAmt() != null){
+//                        Tamt += Double.parseDouble(list.get(i).getGrossSalesAmt());
+//                    }
+//                }
+//                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+//                    if(list.get(i).getGrossPurchaseAmt() != null){
+//                        Tamt += Double.parseDouble(list.get(i).getGrossPurchaseAmt());
+//                    }
+//                }
+//
+//                if (TYPE.equals("Sales")) {
+//                    if (list.get(i).getGrossAmtINV_CRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_CRN());
+//                    }
+//                }
+//                else if (TYPE.equals("Customer Outstanding")|| TYPE.equals("Vendor Outstanding")) {
+//                    if (list.get(i).getGrossAmtINV_ARCRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getGrossAmtINV_ARCRN());
+//                    }
+//                }
+//                else if(TYPE.equals("Purchase")){
+//                    if (list.get(i).getGrossAmtApCrn() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getGrossAmtApCrn());
+//                    }
+//                }
+//
+//
+//                if (TYPE.equals("Sales")) {
+//                    if (list.get(i).getGrossCrditAmt() != null) {
+//                        CDAmt += Double.parseDouble(list.get(i).getGrossCrditAmt());
+//                    }
+//
+//                }
+////                else if (TYPE.equals("Customer Outstanding")) {
+////                    if (list.get(i).getGrossCrdAmt() != null) {
+////                        CDAmt += Double.parseDouble(list.get(i).getGrossCrdAmt());
+////                    }
+////                }
+//                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+//                    if (list.get(i).getGrossDebitAmt() != null) {
+//                        CDAmt += Double.parseDouble(list.get(i).getGrossDebitAmt());
+//                    }
+//                }
+//
+//            }
+//            else if(value.equals("Net")){
+//
+//                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+//                    if(list.get(i).getNetSalesAmt() != null){
+//                        Tamt += Double.parseDouble(list.get(i).getNetSalesAmt());
+//                    }
+//                }
+//                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+//                    if(list.get(i).getNetPurchaseAmt() != null){
+//                        Tamt += Double.parseDouble(list.get(i).getNetPurchaseAmt());
+//                    }
+//                }
+//
+//                if(TYPE.equals("Sales")){
+//                    if(list.get(i).getNetAmtINV_CRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_CRN());
+//                    }
+//                }
+//                else if(TYPE.equals("Customer Outstanding")|| TYPE.equals("Vendor Outstanding")) {
+//                    if (list.get(i).getNetAmtINV_ARCRN() != null) {
+//                        Crn += Double.parseDouble(list.get(i).getNetAmtINV_ARCRN());
+//                    }
+//                }
+//                else if(TYPE.equals("Purchase")){
+//                    if(list.get(i).getNetAmtApCrn() != null){
+//                        Crn += Double.parseDouble(list.get(i).getNetAmtApCrn());
+//                    }
+//                }
+//
+//                if(TYPE.equals("Sales" )|| TYPE.equals("Customer Outstanding")){
+//                    if(list.get(i).getNetCrdAmt() != null){
+//                        CDAmt += Double.parseDouble(list.get(i).getNetCrdAmt());
+//                    }
+//                }
+//                else if(TYPE.equals("Purchase")|| TYPE.equals("Vendor Outstanding")){
+//                    if(list.get(i).getNetDebitAmt() != null){
+//                        CDAmt += Double.parseDouble(list.get(i).getNetDebitAmt());
+//                        System.out.println("Type and Debit :" + TYPE+" "+String.valueOf(CDAmt));
+//                    }
+//                }
+//
+//            }
 
             DecimalFormat df = new DecimalFormat("0.00");
             String formattedTamt = df.format(Tamt);
-            String formattedCrn = df.format(Crn);
-            String formattedCDAmt = df.format(CDAmt);
+//            String formattedCrn = df.format(Crn);
+//            String formattedCDAmt = df.format(CDAmt);
 
-            binding.txtTotalAmt.setText("₹ "+formattedCrn);
-            binding.CrnAmt.setText("₹ "+formattedTamt);
-            binding.CDAmt.setText("₹ "+formattedCDAmt);
+            binding.txtTotalAmt.setText("₹ "+formattedTamt);
+//            binding.CrnAmt.setText("₹ "+formattedTamt);
+//            binding.CDAmt.setText("₹ "+formattedCDAmt);
 
             binding.CrnName.setText(TYPE);
             binding.CDName.setText("Return / Credit Note");
@@ -408,12 +508,12 @@ public class ReportsDetListActivity extends AppCompatActivity {
         }
     }
 
-    private void CustomizeList(List<CusReportWiseDetModel> list, String value) {
+    private void CustomizeList(List<CusReportWiseModel> list, String value) {
         Map<String, Double> monthYearToTotalBalanceMap = new HashMap<>();
         Map<String, List<Double>> monthYearToBalanceListMap = new HashMap<>();
 
         // Iterate over the list and sum up the BalanceDue values for each month-year combination
-        for (CusReportWiseDetModel model : list) {
+        for (CusReportWiseModel model : list) {
 
             double balanceDue = 0;
             if (value.equals("Gross")) {
