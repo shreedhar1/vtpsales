@@ -20,7 +20,7 @@ import androidx.core.content.FileProvider;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.softcore.vtpsales.AppUtils.AppUtil;
-import com.softcore.vtpsales.Model.CusReportWiseModel;
+import com.softcore.vtpsales.Model.InOutPayModel;
 import com.softcore.vtpsales.databinding.ActivityPdfViewerBinding;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class generalPdfViewerActivity extends AppCompatActivity {
+public class InOutPdfViewerActivity extends AppCompatActivity {
 
     private PDFView pdfView;
     private int currentPage = 0;
@@ -44,7 +44,7 @@ public class generalPdfViewerActivity extends AppCompatActivity {
 
     String TYPE = "";
     String SortBy ="";
-    List<CusReportWiseModel> Mainlist ;
+    List<InOutPayModel> Mainlist ;
 
      String CompnyName;
      String CompnyAddr;
@@ -68,7 +68,7 @@ public class generalPdfViewerActivity extends AppCompatActivity {
          E_Mail = AppUtil.getStringData(getApplicationContext(),"ComE_Mail","");
 
         Mainlist = new ArrayList<>();
-        List<CusReportWiseModel> list = (List<CusReportWiseModel>) getIntent().getSerializableExtra("ReportList");
+        List<InOutPayModel> list = (List<InOutPayModel>) getIntent().getSerializableExtra("ReportList");
         Mainlist = list;
 
         System.out.println("Mainlist Size"+String.valueOf(Mainlist.size())+" "+ SortBy+" "+TYPE);
@@ -99,7 +99,7 @@ public class generalPdfViewerActivity extends AppCompatActivity {
                     currentPage++;
                     pdfView.jumpTo(currentPage, true);
                 } else {
-                    Toast.makeText(generalPdfViewerActivity.this, "Already on the last page", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InOutPdfViewerActivity.this, "Already on the last page", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -111,7 +111,7 @@ public class generalPdfViewerActivity extends AppCompatActivity {
                     currentPage--;
                     pdfView.jumpTo(currentPage, true);
                 } else {
-                    Toast.makeText(generalPdfViewerActivity.this, "Already on the first page", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InOutPdfViewerActivity.this, "Already on the first page", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -250,7 +250,7 @@ public class generalPdfViewerActivity extends AppCompatActivity {
 
             // Draw items for the current page
             for (int i = pageIndex * itemsPerPage; i < Math.min((pageIndex + 1) * itemsPerPage, itemCount); i++) {
-                CusReportWiseModel model = Mainlist.get(i);
+                InOutPayModel model = Mainlist.get(i);
                 String itemName = getItemName(model);
 
                 double Tamt = getItemAmount(model);
@@ -292,59 +292,18 @@ public class generalPdfViewerActivity extends AppCompatActivity {
     }
 
 
-    private String getItemName(CusReportWiseModel model) {
-        if (model.getCustomerName() == null || model.getCustomerName().equals("")) {
-            if ((model.getCustomer_Name() == null || model.getCustomer_Name().equals(""))) {
-                if ((model.getVendor_Name() == null || model.getVendor_Name().equals(""))) {
-                    if ((model.getVendorName() == null || model.getVendorName().equals(""))) {
-                        return "-";
-                    } else {
-                        return model.getVendorName();
-                    }
+    private String getItemName(InOutPayModel model) {
 
-                } else {
-                    return model.getVendor_Name();
-                }
-            } else {
-                return model.getCustomer_Name();
-            }
+        if ((model.getBPName() == null || model.getBPName().equals(""))) {
+            return "-";
         } else {
-            return model.getCustomerName();
+            return model.getBPName();
         }
     }
 
-    private double getItemAmount(CusReportWiseModel model) {
+    private double getItemAmount(InOutPayModel model) {
         double Tamt = 0;
-        switch (SortBy) {
-            case "Net":
-                if (TYPE.equals("Sales")) {
-                    Tamt += Double.parseDouble(model.getNetAmtINV_CRN());
-                } else if (TYPE.equals("Customer Outstanding")) {
-                    Tamt += Double.parseDouble(model.getNetAmtINV_ARCRN());
-                } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
-                    Tamt += Double.parseDouble(model.getNetAmtApCrn());
-                }
-                else if (TYPE.equals("Purchase Register") ) {
-                    Tamt += Float.parseFloat(model.getNetAmt());
-                }
-                break;
-            case "Gross":
-                if (TYPE.equals("Sales")) {
-                    Tamt += Double.parseDouble(model.getGrossAmtINV_CRN());
-                } else if (TYPE.equals("Customer Outstanding")) {
-                    Tamt += Double.parseDouble(model.getGrossAmtINV_ARCRN());
-                } else if (TYPE.equals("Purchase") || TYPE.equals("Vendor Outstanding")) {
-                    Tamt += Double.parseDouble(model.getGrossAmtApCrn());
-                }
-                else if (TYPE.equals("Purchase Register") ) {
-                    if(model.getGrossAmt() != null){
-                        System.out.println("Purchase Register Gross"+model.getGrossAmt().toString().trim());
-                        Tamt += Float.parseFloat(model.getGrossAmt());
-                    }
-
-                }
-                break;
-        }
+        Tamt += model.getTotal();
         return Tamt;
     }
 

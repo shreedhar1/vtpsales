@@ -137,10 +137,11 @@ public class CustAttendanceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(CurrentLocation.equals("")){
                     Toast.makeText(CustAttendanceActivity.this, "location not available", Toast.LENGTH_SHORT).show();
-                }else if(selectedmodel != null){
+                }
+                else if(selectedmodel != null || !binding.edRemark.getText().toString().equals("")){
                     Clock_In_Out(v, OPERATION);
                 }else {
-                    Toast.makeText(CustAttendanceActivity.this, "Select Company Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustAttendanceActivity.this, "Select customer name or add a remark", Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ReportsListActivity2 extends AppCompatActivity {
+public class PR_ReportsListActivity extends AppCompatActivity {
     ActivityReportsListBinding binding;
     String TYPE;
     String ViewFromDate;
@@ -99,7 +99,7 @@ public class ReportsListActivity2 extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), generalPdfViewerActivity.class);
                 intent.putExtra("ReportTYPE", String.valueOf(TYPE));
                 intent.putExtra("SortBy", String.valueOf(SortBy));
-                intent.putExtra("ReportList", (Serializable) Mainlist);
+                intent.putExtra("ReportList", (Serializable) BackUpList);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

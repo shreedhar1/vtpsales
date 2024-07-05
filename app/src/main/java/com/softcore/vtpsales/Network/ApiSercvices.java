@@ -132,6 +132,12 @@ public interface ApiSercvices {
                                                     @Query("DB_NAME") String DB_NAME,
                                                     @Query("Flag") String Flag);
 
+    @GET("SCS_Month_Wise_Reports")
+    Call<List<CusReportWiseModel>> getMonthsWiseReport(@Query("FromDate") String FromDate,
+                                                    @Query("ToDate") String ToDate,
+                                                    @Query("SlpName") String SlpName,
+                                                    @Query("DB_NAME") String DB_NAME,
+                                                    @Query("Flag") String Flag);
     @GET("SCS_Outstanding_Reports")
     Call<List<CusReportWiseDetModel>> getCusWiseDetreport(@Query("FromDate") String FromDate,
                                                           @Query("ToDate") String ToDate,

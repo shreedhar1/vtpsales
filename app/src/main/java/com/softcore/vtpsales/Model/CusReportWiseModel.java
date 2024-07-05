@@ -20,6 +20,11 @@ public class CusReportWiseModel implements Parcelable {
     @SerializedName("Ref_Document")
     private String Ref_Document;
 
+    @SerializedName("Type")
+    private String Type;
+    @SerializedName("Employee Name")
+    private String EmployeeName;
+
 
 
 
@@ -108,6 +113,10 @@ public class CusReportWiseModel implements Parcelable {
         count = in.readString();
         vendor_Name = in.readString();
         vendor_Code = in.readString();
+        vendorName = in.readString();
+        vendorCode = in.readString();
+        GrossAmt = in.readString();
+        NetAmt = in.readString();
         Month = in.readString();
         NetAmtINV_CRN = in.readString();
         GrossAmtINV_CRN = in.readString();
@@ -150,6 +159,10 @@ public class CusReportWiseModel implements Parcelable {
         dest.writeString(count);
         dest.writeString(vendor_Name);
         dest.writeString(vendor_Code);
+        dest.writeString(vendorName);
+        dest.writeString(vendorCode);
+        dest.writeString(GrossAmt);
+        dest.writeString(NetAmt);
         dest.writeString(Month);
         dest.writeString(NetAmtINV_CRN);
         dest.writeString(GrossAmtINV_CRN);
@@ -207,6 +220,22 @@ public class CusReportWiseModel implements Parcelable {
 
     public String getRef_Document() {
         return Ref_Document;
+    }
+
+    public String getType() {
+        return Type;
+    }
+
+    public void setType(String type) {
+        Type = type;
+    }
+
+    public String getEmployeeName() {
+        return EmployeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        EmployeeName = employeeName;
     }
 
     public void setRef_Document(String ref_Document) {

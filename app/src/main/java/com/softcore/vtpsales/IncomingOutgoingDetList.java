@@ -69,6 +69,8 @@ public class IncomingOutgoingDetList extends AppCompatActivity {
             }
         });
 
+        binding.laybar.print.setVisibility(View.GONE);
+        binding.laybar.shareId.setVisibility(View.GONE);
         binding.txtDates.setText(ViewFromDate+" to "+ViewToDate);
 
 //        binding.txtSlPName.setText(SlpName);

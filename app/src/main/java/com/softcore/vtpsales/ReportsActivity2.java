@@ -272,7 +272,7 @@ public class ReportsActivity2 extends AppCompatActivity {
     private void NextActivity3(String Type, String Flag,String MFlag, CharSequence amount) {
 
 //        System.out.println("SlpName send to ReportsListActivity: "+SlpName);
-        Intent intent = new Intent(ReportsActivity2.this, ReportsListActivity2.class);
+        Intent intent = new Intent(ReportsActivity2.this, PR_ReportsListActivity.class);
         intent.putExtra("TYPE", Type);
         intent.putExtra("FromDatePost",FromDatePost);
         intent.putExtra("ToDatePost",ToDatePost);

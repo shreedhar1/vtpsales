@@ -86,11 +86,15 @@
         <activity android:name=".PR_ReportsDetListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity android:name=".ReportsListActivity2"
+        <activity android:name=".PR_ReportsListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
             android:name=".IncomingOutgoingInvoice"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".InOutPdfViewerActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

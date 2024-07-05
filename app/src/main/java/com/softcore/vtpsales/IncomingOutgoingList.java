@@ -1,7 +1,12 @@
 package com.softcore.vtpsales;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -16,6 +21,7 @@ import com.softcore.vtpsales.Model.InOutPayModel;
 import com.softcore.vtpsales.ViewModel.InOutPayReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityInOutPaymentListBinding;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +45,8 @@ public class IncomingOutgoingList extends AppCompatActivity {
     String EmpTypePName;
     String EmpType;
     List<InOutPayModel> list;
+    List<InOutPayModel> FList;
+    List<InOutPayModel> BackupList;
     Gson gson;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,7 @@ public class IncomingOutgoingList extends AppCompatActivity {
         EmpType = AppUtil.getStringData(getApplicationContext(),"EmpType","");
         EmpTypePName = AppUtil.getStringData(getApplicationContext(),"EmpTypePName","");
 
+        BackupList = new ArrayList<>();
 
         ViewFromDate=getIntent().getStringExtra("ViewFromDate");
         ViewToDate=getIntent().getStringExtra("ViewToDate");
@@ -73,6 +82,67 @@ public class IncomingOutgoingList extends AppCompatActivity {
 
 //        binding.txtSlPName.setText(SlpName);
         binding.txtTotalAmt.setText(TotalAmt);
+        binding.laybar.print.setVisibility(View.GONE);
+        binding.laybar.shareId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(BackupList.size() != 0){
+                    Intent intent = new Intent(getApplicationContext(), InOutPdfViewerActivity.class);
+                    intent.putExtra("ReportTYPE", String.valueOf(TYPE));
+                    intent.putExtra("SortBy", String.valueOf(SortBy));
+                    intent.putExtra("ReportList", (Serializable) BackupList);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+            }
+        });
+        binding.laybar.searchId.setVisibility(View.VISIBLE);
+        binding.laybar.searchId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.laybar.laybar3.setVisibility(View.GONE);
+                binding.laybar.SearchLayId.setVisibility(View.VISIBLE);
+                binding.laybar.appbarTextView.setVisibility(View.GONE);
+
+                binding.laybar.searchEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(binding.laybar.searchEditText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+        binding.laybar.searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update the list when the text changes
+                updateListTxt(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No action needed after text is changed
+            }
+        });
+
+        binding.laybar.Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.laybar.laybar3.setVisibility(View.VISIBLE);
+                binding.laybar.SearchLayId.setVisibility(View.GONE);
+                binding.laybar.appbarTextView.setVisibility(View.VISIBLE);
+
+
+                FList = BackupList;
+
+                UpdateList();
+
+            }
+        });
+
 
         // binding.txtTotalAmt.setText(String.format("%.2f", Double.parseDouble(TotalAmt)));
 
@@ -98,6 +168,35 @@ public class IncomingOutgoingList extends AppCompatActivity {
 //        });
 
     }
+
+    private void updateListTxt(String CustomerName) {
+        List<InOutPayModel> filterList = new ArrayList<>();
+        String searchText = CustomerName.toLowerCase();
+
+        for (int i = 0; i < BackupList.size(); i++) {
+            InOutPayModel model = BackupList.get(i);
+
+            if((model.getBPName() == null || model.getBPName().equals(""))){
+            }else{
+
+                if (BackupList.get(i).getBPName().toLowerCase().contains(searchText)) {
+                    filterList.add(BackupList.get(i));
+                }
+            }
+
+
+        }
+
+        if (filterList.isEmpty()) {
+            FList = BackupList;
+        } else {
+            FList = filterList;
+        }
+
+
+        UpdateList();  // Ensure the adapter is updated with the new list
+    }
+
 
 
     private void GetCusWiseReportList (String FromDate,String ToDate,String SlpName,String Flag){
@@ -203,7 +302,9 @@ public class IncomingOutgoingList extends AppCompatActivity {
                         }
                     }
 
-                    UpdateList(finalList2);
+                    BackupList = finalList2;
+                    FList = finalList2;
+                    UpdateList();
 
                 }
 
@@ -214,20 +315,20 @@ public class IncomingOutgoingList extends AppCompatActivity {
     }
 
 
-    private void UpdateList(List<InOutPayModel> list) {
+    private void UpdateList() {
 
         double Tamt = 0;
-        for(int i = 0;i<list.size();i++){
-            Tamt += list.get(i).getTotal();
+        for(int i = 0;i<FList.size();i++){
+            Tamt += FList.get(i).getTotal();
         }
         String TotalAmt = String.format("%.2f", Tamt);
          binding.txtTotalAmt.setText(TotalAmt);
 
          gson = new Gson();
-        String json = gson.toJson(list);
+        String json = gson.toJson(FList);
 
         System.out.println("Json list in out pay List:"+json);
-        adapter.setData(list,getApplicationContext(),TYPE,PostFromDate,PostToDate,ViewFromDate,ViewToDate,Flag);
+        adapter.setData(FList,getApplicationContext(),TYPE,PostFromDate,PostToDate,ViewFromDate,ViewToDate,Flag);
     }
 
 

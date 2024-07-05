@@ -1,6 +1,11 @@
 package com.softcore.vtpsales.Model;
 
-public class InOutPayModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class InOutPayModel implements Parcelable {
     String BPCode;
     String BPName;
     int SAP_Doc_No;
@@ -18,6 +23,69 @@ public class InOutPayModel {
     String Remarks;
     String Inv_Doc_No;
     String VTPDocNo;
+
+    public InOutPayModel() {
+    }
+
+    protected InOutPayModel(Parcel in) {
+        BPCode = in.readString();
+        BPName = in.readString();
+        SAP_Doc_No = in.readInt();
+        VTP_Doc_No = in.readString();
+        PostingDate = in.readString();
+        Reference = in.readString();
+        SalesPerson = in.readString();
+        CollectionPerson = in.readString();
+        Payment_On_Account = in.readDouble();
+        Total = in.readDouble();
+        Amount = in.readDouble();
+        Cheque_No = in.readInt();
+        Cheque_Date = in.readString();
+        Mode_Of_Payment = in.readString();
+        Remarks = in.readString();
+        Inv_Doc_No = in.readString();
+        VTPDocNo = in.readString();
+    }
+
+    public static final Creator<InOutPayModel> CREATOR = new Creator<InOutPayModel>() {
+        @Override
+        public InOutPayModel createFromParcel(Parcel in) {
+            return new InOutPayModel(in);
+        }
+
+        @Override
+        public InOutPayModel[] newArray(int size) {
+            return new InOutPayModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(BPCode);
+        dest.writeString(BPName);
+        dest.writeInt(SAP_Doc_No);
+        dest.writeString(VTP_Doc_No);
+        dest.writeString(PostingDate);
+        dest.writeString(Reference);
+        dest.writeString(SalesPerson);
+        dest.writeString(CollectionPerson);
+        dest.writeDouble(Payment_On_Account);
+        dest.writeDouble(Total);
+        dest.writeDouble(Amount);
+        dest.writeInt(Cheque_No);
+        dest.writeString(Cheque_Date);
+        dest.writeString(Mode_Of_Payment);
+        dest.writeString(Remarks);
+        dest.writeString(Inv_Doc_No);
+        dest.writeString(VTPDocNo);
+    }
+
+    // Getter and Setter methods
 
     public String getBPCode() {
         return BPCode;

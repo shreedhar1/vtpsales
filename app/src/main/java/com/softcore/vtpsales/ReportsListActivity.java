@@ -31,6 +31,7 @@ import com.softcore.vtpsales.AppUtils.AppUtil;
 import com.softcore.vtpsales.Model.CommanResorce;
 import com.softcore.vtpsales.Model.CusReportWiseModel;
 import com.softcore.vtpsales.ViewModel.CusWiseReportViewModel;
+import com.softcore.vtpsales.ViewModel.MonthWiseReportViewModel;
 import com.softcore.vtpsales.databinding.ActivityReportsListBinding;
 
 import java.io.Serializable;
@@ -212,18 +213,41 @@ public class ReportsListActivity extends AppCompatActivity {
         UpdateList(SortBy);  // Ensure the adapter is updated with the new list
     }
 
-    private void GetBarChart(String fromDate, String toDate, String slpName, String mFlag) {
+    private void GetBarChart(String fromDate, String toDate, String slpName, String mFlag, String empType, String empTypePName) {
         System.out.println("MFlag:"+mFlag);
         String dbName = AppUtil.getStringData(getApplicationContext(), "DatabaseName", "");
 
-        CusWiseReportViewModel cusWiseReportViewModel = new ViewModelProvider(this).get(CusWiseReportViewModel.class);
-        cusWiseReportViewModel.getCusWiseReportData(fromDate, toDate, slpName, dbName, mFlag).observe(this, new Observer<CommanResorce<List<CusReportWiseModel>>>() {
+        MonthWiseReportViewModel viewModel = new ViewModelProvider(this).get(MonthWiseReportViewModel.class);
+        viewModel.getMonthsWiseReportData(fromDate, toDate, slpName, dbName, mFlag).observe(this, new Observer<CommanResorce<List<CusReportWiseModel>>>() {
             @Override
             public void onChanged(CommanResorce<List<CusReportWiseModel>> listCommanResorce) {
                 if (listCommanResorce.data != null && !listCommanResorce.data.isEmpty()) {
                     List<CusReportWiseModel> monList = listCommanResorce.data;
 
-                    MonList = monList;
+
+
+
+                    List<CusReportWiseModel> filterMonList = new ArrayList<>();
+
+//                    Set<String> EmpName_TYPE_Month = new HashSet<>();
+//                    for (CusReportWiseModel model : monList) {
+//                        if (!EmpName_TYPE_Month.contains(model.getEmployeeName()+"_"+model.getType()+"_"+model.getMonth())) {
+//                            EmpName_TYPE_Month.add(model.getEmployeeName()+"_"+model.getType()+"_"+model.getMonth());
+//
+//                            filterMonList.add(model);
+//                        }
+//                    }
+
+                    for(CusReportWiseModel model : monList){
+                        if(EmpType.equals(model.getType()) && EmpTypePName.equals(model.getEmployeeName())){
+                            filterMonList.add(model);
+                        }
+                    }
+
+
+
+
+                    MonList = filterMonList;
                     if(!TYPE.equals("Purchase Register")){
                         UpdateBarchart(MonList,SortBy);
                     }
@@ -294,7 +318,7 @@ public class ReportsListActivity extends AppCompatActivity {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(getLabels(monList)));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
-        xAxis.setLabelRotationAngle(45f);
+       // xAxis.setLabelRotationAngle(45f);
 
 //                    binding.idBarChart.getDescription().setEnabled(false);
 //                    binding.idBarChart.setFitBars(true);
@@ -351,6 +375,7 @@ public class ReportsListActivity extends AppCompatActivity {
     private String[] getLabels(List<CusReportWiseModel> data) {
         String[] labels = new String[data.size()];
         for (int i = 0; i < data.size(); i++) {
+
             labels[i] = data.get(i).getMonth();
         }
         return labels;
@@ -419,7 +444,7 @@ public class ReportsListActivity extends AppCompatActivity {
 
                     UpdateList("Gross");
 
-                    GetBarChart(PostFromDate,PostToDate,SlpName,MFlag);
+                    GetBarChart(PostFromDate,PostToDate,SlpName,MFlag,EmpType,EmpTypePName);
                 }
 
                 AppUtil.hideProgressDialog();

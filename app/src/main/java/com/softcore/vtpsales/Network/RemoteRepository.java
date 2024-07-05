@@ -163,6 +163,10 @@ public class RemoteRepository {
         Call<List<CusReportWiseModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getCusWiseReport(FromDate,ToDate,SlpName,DbName,Flag);
         call.enqueue(callback);
     }
+    public void getMonthWiseReportDetails(String FromDate,String ToDate,String SlpName,String DbName,String Flag,Callback<List<CusReportWiseModel>> callback){
+        Call<List<CusReportWiseModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getMonthsWiseReport(FromDate,ToDate,SlpName,DbName,Flag);
+        call.enqueue(callback);
+    }
 
     public void getCusWiseDet(String FromDate,String ToDate,String SlpName,String DbName,String Flag,Callback<List<CusReportWiseDetModel>> callback){
         Call<List<CusReportWiseDetModel>> call= NetworkController.getInstance(AppConstant.BASE_URL).getService().getCusWiseDetreport(FromDate,ToDate,SlpName,DbName,Flag);
