@@ -184,6 +184,7 @@ public class ReportsActivity2 extends AppCompatActivity {
                 }
             }
         });
+
         binding.layPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,6 +195,7 @@ public class ReportsActivity2 extends AppCompatActivity {
                 }
             }
         });
+
         binding.layPurchaseReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -227,7 +227,7 @@ public class AttendanceActivity extends AppCompatActivity {
                     intent.putExtra("type","emp");
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-
+                    finish();
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();

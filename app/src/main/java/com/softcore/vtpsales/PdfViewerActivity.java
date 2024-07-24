@@ -177,6 +177,7 @@ public class PdfViewerActivity extends AppCompatActivity {
     }
 
 
+
     private void downloadAndDisplayPdf(String pdfUrl) throws IOException {
         URL url = new URL(pdfUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -184,7 +185,7 @@ public class PdfViewerActivity extends AppCompatActivity {
         connection.setDoOutput(true);
         connection.connect();
 
-        File outputFile = new File(getCacheDir(), "temp.pdf");
+        File outputFile = new File(getCacheDir(), "Tax invoice.pdf");
         OutputStream outputStream = new FileOutputStream(outputFile);
 
         try (InputStream inputStream = connection.getInputStream()) {

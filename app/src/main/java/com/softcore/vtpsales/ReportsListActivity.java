@@ -249,7 +249,10 @@ public class ReportsListActivity extends AppCompatActivity {
 
                     MonList = filterMonList;
                     if(!TYPE.equals("Purchase Register")){
-                        UpdateBarchart(MonList,SortBy);
+                        if(!MonList.isEmpty()){
+                            UpdateBarchart(MonList,SortBy);
+                        }
+
                     }
 
 
@@ -467,7 +470,9 @@ public class ReportsListActivity extends AppCompatActivity {
                     UpdateList("Gross");
                     if(MonList != null){
                         if(!TYPE.equals("Purchase Register")){
-                            UpdateBarchart(MonList,"Gross");
+                            if(!MonList.isEmpty()) {
+                                UpdateBarchart(MonList, "Gross");
+                            }
                         }
 
 
@@ -478,8 +483,10 @@ public class ReportsListActivity extends AppCompatActivity {
                     SortBy = "Net";
                     UpdateList("Net");
                     if(MonList != null) {
-                        if(!TYPE.equals("Purchase Register")){
-                            UpdateBarchart(MonList, "Net");
+                        if(!TYPE.equals("Purchase Register")) {
+                            if (!MonList.isEmpty()) {
+                                UpdateBarchart(MonList, "Net");
+                            }
                         }
 
                     }
@@ -522,7 +529,9 @@ public class ReportsListActivity extends AppCompatActivity {
                     UpdateList("Gross");
                     if(MonList != null){
                         if(!TYPE.equals("Purchase Register")){
-                            UpdateBarchart(MonList,"Gross");
+                            if(!MonList.isEmpty()) {
+                                UpdateBarchart(MonList, "Gross");
+                            }
                         }
 
                     }
@@ -533,7 +542,9 @@ public class ReportsListActivity extends AppCompatActivity {
                     UpdateList("Net");
                     if(MonList != null) {
                         if(!TYPE.equals("Purchase Register")){
-                            UpdateBarchart(MonList, "Net");
+                            if(!MonList.isEmpty()) {
+                                UpdateBarchart(MonList, "Net");
+                            }
                         }
 
                     }

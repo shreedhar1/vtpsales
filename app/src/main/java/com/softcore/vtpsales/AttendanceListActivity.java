@@ -422,7 +422,6 @@ public class AttendanceListActivity extends AppCompatActivity {
                             }
                         }
 
-
                         if(EmpName.equals(filteredList.get(i).getEmpName())) {
                             mainfilterList.add(filteredList.get(i));
 

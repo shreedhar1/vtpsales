@@ -255,6 +255,7 @@ public class CustAttendanceActivity extends AppCompatActivity {
                     intent.putExtra("type","cust");
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                     // Handle success
                 } else {
                     AppUtil.hideProgressDialog();
